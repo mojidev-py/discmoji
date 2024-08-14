@@ -27,10 +27,10 @@ import aiohttp
 
 
 class API:
-    """Represents a connection between the user/bot and the Github REST API.
+    """Represents a connection between the user and the Github REST API. For creating github bot
     ## Attributes
     - `token` `str`
-      - the token that you are using to authenticate your script/bot. For bots, this needs to be a JWT, but for users, this needs to be a token from your Github page."""
+      - the token that you are using to authenticate your script. For users, this needs to be a token from your Github page."""
     def __init__(self,token = str):
         self.token = token
 

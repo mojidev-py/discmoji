@@ -7,10 +7,10 @@ name = "my_package"
 authors = [
     {name = "mojidev-py"},
 ]
-description = "A github API wrapper."
+description = "A discord API wrapper."
 readme = "README.md"
 requires-python = ">=3.8"
-keywords = ["API", "wrapper","github","library"]
+keywords = ["API", "wrapper","discord","library"]
 license = {text = "LICENSE"}
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
