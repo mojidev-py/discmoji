@@ -18,24 +18,35 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
+SOFTWARE."""
 
-import typing as t
+import websockets
+from typing import *
 import asyncio
-import aiohttp
+import json
+import logging
+from colorama import Fore
 
 
-class API:
-    """Represents a connection between the user and the Github REST API. For creating github bot
-    ## Attributes
-    - `token` `str`
-      - the token that you are using to authenticate your script. For users, this needs to be a token from your Github page."""
-    def __init__(self,token = str):
-        self.token = token
 
-    async def connect(self):
-        """
-        :coro:
-        Connects to the API with your token/authentication method."""
-        session = aiohttp.ClientSession("https://github.com")
+class Bot:
+    def __init__(self,prefix: str):
+        # future me, make sure to add Intents later
+        self.prefix = prefix
+        self.logger = logging.getLogger(name="inkling")
+        self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
+        
+    
+    async def connect(self,token: str) -> None:
+        """Connects to your Discord bot.
+        ## Args
+        - `token` - `str`
+          - The token that allows the library to authenticate to the API"""
+        ws = websockets.connect("wss://gateway.discord.gg/?v=10&encoding=json")
+        async with ws as ws:
+            recvd = json.loads(await ws.recv())
+            hb_int = recvd["d"]["heartbeat_interval"]
+            self.logger.info(msg=f"Successfully connected to gateway. Establishing shard heartbeat of {hb_int / 1000}s.")
+            
+            
+            
