@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "my_package"
+authors = [
+    {name = "mojidev-py"},
+]
+description = "A github API wrapper."
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["API", "wrapper","github","library"]
+license = {text = "LICENSE"}
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Typing :: Typed"
+
+]
+dependencies = [
+    "requests"
+]
+version = "0.0.1pa"
+
+[project.urls]
+github = "https://github.com/mojidev-py/inkling/tree/main"
+
+[tool.setuptools]
+packages = [
+    "inkling"
+]
