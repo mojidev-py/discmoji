@@ -26,10 +26,21 @@ import asyncio
 import json
 import logging
 from colorama import Fore
+from random import uniform
 
 
 
 class Bot:
+    """Represents the discord bot.
+    
+    ## Attributes:
+    - prefix: `str`
+      - The prefix to use with the bot.
+    - logger: `Logger`
+      - Internal attribute.
+    - config: `Formatter`
+      - Internal Attribute
+    """
     def __init__(self,prefix: str):
         # future me, make sure to add Intents later
         self.prefix = prefix
@@ -47,6 +58,22 @@ class Bot:
             recvd = json.loads(await ws.recv())
             hb_int = recvd["d"]["heartbeat_interval"]
             self.logger.info(msg=f"Successfully connected to gateway. Establishing shard heartbeat of {hb_int / 1000}s.")
+            if recvd["code"] is int:
+                if recvd["code"] == 4000:
+                    self.logger.fatal(msg=f"Encountered a unknown error when trying to connect to gateway socket. Payload recieved:{recvd}")
+                    await ws.close()
+                if recvd["code"] == 4014:
+                    self.logger.fatal(msg=f"The bot is running with intents that have not been approved through the Discord Developer Portal. Bot may not work as expected. Payload recieved:{recvd}")
+                    await ws.close()
+                if recvd["code"] == 4011:
+                    self.logger.fatal(msg=f"The gateway API is stopping you from running this. This instance would have covered too much guilds. When using Bot, set the sharding attribute to True. Payload: {recvd}")
+                    await ws.close()
+                if recvd["code"] == 4009:
+                    self.logger.fatal(msg=f"Connection was timed out. Payload: {recvd}")
+                    await ws.close()
+            # establishing heartbeat and ACKs, not sure if discord gateway provides jitter or not
+                    
+                    
             
             
             
