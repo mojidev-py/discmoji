@@ -82,10 +82,13 @@ class Bot:
             })
             recvd = json.loads(await ws.recv())
             if recvd["op"] == 11:
-              await asyncio.sleep(delay=hb_int)
-              # TODO:
-              # need to get sequence number and enter it in the "s" field, need to implement events, so ellipsis here ig
-              ...
+              while True: # prob not the best way to do this ;(
+                await asyncio.sleep(delay=hb_int)
+                await ws.send(message={
+                  "op": 1,
+                  "d": {
+                    # place holder, add logic for getting the sequence number from the api call that the .command dec makes
+                  }})
               
                     
                     
