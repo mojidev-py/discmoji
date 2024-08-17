@@ -29,7 +29,7 @@ from colorama import Fore
 from random import uniform
 
 
-
+# very unefficient code, might refine later
 class Bot:
     """Represents the discord bot.
     
@@ -58,6 +58,9 @@ class Bot:
             recvd = json.loads(await ws.recv())
             hb_int = recvd["d"]["heartbeat_interval"]
             self.logger.info(msg=f"Successfully connected to gateway. Establishing shard heartbeat of {hb_int / 1000}s.")
+            # |
+            # V
+            # This code is a bit weird since this starts before the heart beat
             if recvd["code"] is int:
                 if recvd["code"] == 4000:
                     self.logger.fatal(msg=f"Encountered a unknown error when trying to connect to gateway socket. Payload recieved:{recvd}")
@@ -72,6 +75,18 @@ class Bot:
                     self.logger.fatal(msg=f"Connection was timed out. Payload: {recvd}")
                     await ws.close()
             # establishing heartbeat and ACKs, not sure if discord gateway provides jitter or not
+            await asyncio.sleep(delay=hb_int * uniform(0,1.00))
+            await ws.send(message={
+              "op": 1,
+              "d" : {}
+            })
+            recvd = json.loads(await ws.recv())
+            if recvd["op"] == 11:
+              await asyncio.sleep(delay=hb_int)
+              # TODO:
+              # need to get sequence number and enter it in the "s" field, need to implement events, so ellipsis here ig
+              ...
+              
                     
                     
             

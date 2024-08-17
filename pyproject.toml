@@ -29,5 +29,6 @@ github = "https://github.com/mojidev-py/inkling/tree/main"
 
 [tool.setuptools]
 packages = [
-    "inkling"
+    "inkling",
+    "inkling.types",
 ]
