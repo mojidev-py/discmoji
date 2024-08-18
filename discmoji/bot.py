@@ -99,6 +99,8 @@ class Bot:
           recved = json.loads(await ws.recv())
           if recved["v"] is int:
             self.logger.info(f"Logged in as {recved["user"]["username"]}{recved["user"]["discriminator"]}, on gateway id {recved["session_id"]}.")
+          if recved["op"] is int:
+            self.logger.fatal(f"Failed to connect to discord gateway with opcode 9. payload: {recved}")
         
         
       
