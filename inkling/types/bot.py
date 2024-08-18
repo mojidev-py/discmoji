@@ -20,13 +20,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
 
-import websockets
+import aiohttp
 from typing import *
 import asyncio
 import json
 import logging
 from colorama import Fore
 from random import uniform
+if TYPE_CHECKING:
+  from ._member import InternalMember
 
 # very unefficient code, might refine later
 class Bot:
@@ -56,61 +58,10 @@ class Bot:
     
     
     
-    async def connect(self,token: str,intents: int | str) -> None:
-      # the str type is a place holder that the function needs to send to the api
-        """Connects to your Discord bot.
-        ## Args
-        - `token` - `str`
-          - The token that allows the library to authenticate to the API"""
-        ws = websockets.connect("wss://gateway.discord.gg/?v=10&encoding=json")
-        async with ws as ws:
-            recvd = json.loads(await ws.recv())
-            hb_int = recvd["d"]["heartbeat_interval"]
-            self.logger.info(msg=f"Successfully connected to gateway. Establishing shard heartbeat of {hb_int / 1000}s.")
-            # |
-            # V
-            # This code is a bit weird since this starts before the heart beat
-            if recvd["code"] is int:
-                if recvd["code"] == 4000:
-                    self.logger.fatal(msg=f"Encountered a unknown error when trying to connect to gateway socket. Payload recieved:{recvd}")
-                    await ws.close()
-                if recvd["code"] == 4014:
-                    self.logger.fatal(msg=f"The bot is running with intents that have not been approved through the Discord Developer Portal. Bot may not work as expected. Payload recieved:{recvd}")
-                    await ws.close()
-                if recvd["code"] == 4011:
-                    self.logger.fatal(msg=f"The gateway API is stopping you from running this. This instance would have covered too much guilds. When using Bot, set the sharding attribute to True. Payload: {recvd}")
-                    await ws.close()
-                if recvd["code"] == 4009:
-                    self.logger.fatal(msg=f"Connection was timed out. Payload: {recvd}")
-                    await ws.close()
-            # establishing heartbeat and ACKs, not sure if discord gateway provides jitter or not, and need to get seq. number of payload the api sends
-            await asyncio.sleep(delay=hb_int * uniform(0,1.00))
-            await ws.send(message={
-              "op": 1,
-              "d" : {}
-            })
-            recvd = json.loads(await ws.recv())
-            if recvd["op"] == 11:
-              # sending IDENTIFY event with the specified token and intents
-              ws.send(message={
-               {
-                "op": 2,
-                "d": {
-                "token": token,
-                "intents": intents,
-                }
-              }
-              })
-              # waiting for the READY event
-              recvd = json.loads(await ws.recv())
-              # error handling for Invalid Session
-              if recvd["op"] == 9:
-                self.logger.fatal(msg=f"The API failed to respond to the IDENTIFY event, which sends info about your bot. Payload:{recvd}")
-              # sending the discrim. and the username of the bot user upon the READY event
-              # need to get the data and use it usefully, and also make objects for the user, maybe make this return a User object
-              if recvd["v"] is int:
-                self.logger.info(msg=f"Successfully recieved READY event. Successfully logged in as {recvd["user"]["username"]}#{recvd["user"]["discriminator"]}")
-                
+    async def connect():
+      """Connects the bot to discord."""
+      
+      
                     
                     
             
