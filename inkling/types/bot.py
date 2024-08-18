@@ -41,12 +41,21 @@ class Bot:
     - config: `Formatter`
       - Internal Attribute
     """
-    def __init__(self,prefix: str):
+    def __init__(self,prefix: str,sharding: bool):
         # future me, make sure to add Intents later
         self.prefix = prefix
         self.logger = logging.getLogger(name="inkling")
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
         
+    
+    def command(name: str):
+      """A decorator that registers a command."""
+      ...
+    
+    
+    
+    
+    
     
     async def connect(self,token: str) -> None:
         """Connects to your Discord bot.
@@ -87,7 +96,7 @@ class Bot:
                 await ws.send(message={
                   "op": 1,
                   "d": {
-                    # place holder, add logic for getting the sequence number from the api call that the .command dec makes
+                    # placeholder, I need to make classes for members, api calls and such before doing this
                   }})
               
                     
