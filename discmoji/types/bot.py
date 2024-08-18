@@ -27,8 +27,6 @@ import json
 import logging
 from colorama import Fore
 from random import uniform
-if TYPE_CHECKING:
-  from ._member import InternalMember
 
 # very unefficient code, might refine later
 class Bot:
@@ -48,19 +46,7 @@ class Bot:
         self.logger = logging.getLogger(name="inkling")
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
         
-    
-    def command(name: str):
-      """A decorator that registers a command."""
-      ...
-    
-    
-    
-    
-    
-    
-    async def connect():
-      """Connects the bot to discord."""
-      
+          
       
                     
                     
