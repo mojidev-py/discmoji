@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "my_package"
+name = "discmoji"
 authors = [
     {name = "mojidev-py"},
 ]
@@ -20,7 +20,8 @@ classifiers = [
 
 ]
 dependencies = [
-    "requests"
+    "asyncio",
+    "aiohttp"
 ]
 version = "0.0.1pa"
 
@@ -29,6 +30,6 @@ github = "https://github.com/mojidev-py/inkling/tree/main"
 
 [tool.setuptools]
 packages = [
-    "inkling",
-    "inkling.types",
+    "discmoji"
 ]
+
