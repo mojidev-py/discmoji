@@ -28,7 +28,6 @@ import logging
 from colorama import Fore
 from random import uniform
 
-
 # very unefficient code, might refine later
 class Bot:
     """Represents the discord bot.
@@ -57,7 +56,8 @@ class Bot:
     
     
     
-    async def connect(self,token: str) -> None:
+    async def connect(self,token: str,intents: int | str) -> None:
+      # the str type is a place holder that the function needs to send to the api
         """Connects to your Discord bot.
         ## Args
         - `token` - `str`
@@ -83,7 +83,7 @@ class Bot:
                 if recvd["code"] == 4009:
                     self.logger.fatal(msg=f"Connection was timed out. Payload: {recvd}")
                     await ws.close()
-            # establishing heartbeat and ACKs, not sure if discord gateway provides jitter or not
+            # establishing heartbeat and ACKs, not sure if discord gateway provides jitter or not, and need to get seq. number of payload the api sends
             await asyncio.sleep(delay=hb_int * uniform(0,1.00))
             await ws.send(message={
               "op": 1,
@@ -91,14 +91,26 @@ class Bot:
             })
             recvd = json.loads(await ws.recv())
             if recvd["op"] == 11:
-              while True: # prob not the best way to do this ;(
-                await asyncio.sleep(delay=hb_int)
-                await ws.send(message={
-                  "op": 1,
-                  "d": {
-                    # placeholder, I need to make classes for members, api calls and such before doing this
-                  }})
-              
+              # sending IDENTIFY event with the specified token and intents
+              ws.send(message={
+               {
+                "op": 2,
+                "d": {
+                "token": token,
+                "intents": intents,
+                }
+              }
+              })
+              # waiting for the READY event
+              recvd = json.loads(await ws.recv())
+              # error handling for Invalid Session
+              if recvd["op"] == 9:
+                self.logger.fatal(msg=f"The API failed to respond to the IDENTIFY event, which sends info about your bot. Payload:{recvd}")
+              # sending the discrim. and the username of the bot user upon the READY event
+              # need to get the data and use it usefully, and also make objects for the user, maybe make this return a User object
+              if recvd["v"] is int:
+                self.logger.info(msg=f"Successfully recieved READY event. Successfully logged in as {recvd["user"]["username"]}#{recvd["user"]["discriminator"]}")
+                
                     
                     
             
