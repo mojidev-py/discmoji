@@ -49,6 +49,7 @@ class Bot:
         self.logger = logging.getLogger(name="inkling")
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
         self.cmds = []
+        super().__init__()
         
     def command(self,name: str,description: str):
       def real_decorator(function):
