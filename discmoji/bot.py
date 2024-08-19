@@ -31,6 +31,7 @@ import websockets
 import os
 
 # very unefficient code, might refine later
+# this code doesn't register any commands... yet
 class Bot:
     """Represents the discord bot.
     
@@ -98,9 +99,29 @@ class Bot:
           await ws.send(serlzed)
           recved = json.loads(await ws.recv())
           if recved["v"] is int:
-            self.logger.info(f"Logged in as {recved["user"]["username"]}{recved["user"]["discriminator"]}, on gateway id {recved["session_id"]}.")
+            self.logger.info(f"Logged in as {recved["user"]["username"]}{recved["user"]["discriminator"]}, on gateway session id {recved["session_id"]}.")
           if recved["op"] is int:
             self.logger.fatal(f"Failed to connect to discord gateway with opcode 9. payload: {recved}")
+          
+          # while True loop handles the heartbeats
+          # very basic way of doing this, I might handle this a diff way
+          while True:
+            asyncio.sleep(delay=HB_INT)
+            recved = json.loads(await ws.recv())
+            if recved["op"] == 0:
+              hb = {
+                "op": 1,
+                "d": recved["s"]
+              }
+              serlzed = json.dumps(hb)
+              await ws.send(serlzed)
+            else:
+              hb = {
+                "op": 1,
+                "d": ""
+              }
+              serlzed = json.dumps(hb)
+              await ws.send(serlzed)              
         
         
       
