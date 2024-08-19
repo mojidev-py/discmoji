@@ -34,8 +34,9 @@ class Original:
         self.base_url = "https://discord.com/api/v10"
         self.headers = {"Authorization":f"Bot {cached_token}"}
         self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
+        self.channel_id = 1234567
         # only this for now, might find some more stuff later
-        
+        # channel id will be filled out with _fill_attrs()
     
     def _fill_attrs(self):
         # _fill_attrs() runs internally in the command decorator to fill in data about the user, guild, and more.
@@ -43,6 +44,9 @@ class Original:
     
     async def send_message(self,content: str):
         """Sends a message in the channel the command was invoked from."""
-
-        ...
+        async with self.msgclient:
+            self.msgclient.post(url=self.base_url.join(f"/channels/{self.channel_id}/messages"),json={
+                "content": content,
+                "tts": False, # tts will always default to false
+            })
         
