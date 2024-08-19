@@ -22,8 +22,17 @@ SOFTWARE."""
 import aiohttp
 from typing import *
 import asyncio
+if TYPE_CHECKING:
+    from .message import Message
 
 class Original:
     """Represents the context the command is being invoked from."""
-    ...
-    # placeholder for now, need this for actually sending msgs
+    def init(self):
+        self.author = None # This equals None because this will be changed
+        self.guild = None 
+        # only this for now, might find some more stuff later
+        
+    
+    def _fill_attrs():
+        # _fill_attrs() runs internally in the command decorator to fill in data about the user, guild, and more.
+        ...

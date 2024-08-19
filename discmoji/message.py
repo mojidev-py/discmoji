@@ -22,25 +22,17 @@ SOFTWARE."""
 from typing import *
 class Message:
     """Represents a message."""
-    def __init__(self,
-            id: int,
-            channel: int,
-            author: None,
-            timestamp: int,
-            mentions: List[None],
-            reactions: List[None],
-            content: str | None):
-        # author is none as a placeholder,
-        # so is mentions, because I haven't made a Member object yet
-        # reactions is also None, since I have made no Reaction object yet
-        # code below this is to allow the initialization vars to become attributes of the original class
-        self.id = id
-        self.channel = channel
-        self.author = author
-        self.timestamp = timestamp
-        self.mentions = mentions
-        self.reactions = reactions
-        self.content = content
-        
+    def __init__(self):
+        # initializes the attributes as None, and this has internal funcs that are called through another class
+        self.id = None
+        self.channel = None
+        self.author = None
+        self.timestamp = None
+        self.mentions = None
+        self.reactions = None
+        self.content = None
+    
+    
+    def _fill_attrs():
+        # this function fills in the missing attributes/ all the attributes that are None.
         ...
-        # methods will be implemented after I get messages sending
