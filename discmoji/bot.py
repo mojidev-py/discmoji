@@ -124,8 +124,12 @@ class Bot:
               serlzed = json.dumps(hb)
               await ws.send(serlzed)              
         
-        
-      
+def _cache_token():
+  """Caches the token for later use."""
+  token = getattr(o=Bot,name="token")
+  return token      
+
+cached_token = _cache_token()
                     
                     
             

@@ -31,8 +31,8 @@ class Message:
         self.mentions = None
         self.reactions = None
         self.content = None
+        self.base_url = "https://discord.com/api/v10"
     
-    
-    def _fill_attrs():
+    def _fill_attrs(self):
         # this function fills in the missing attributes/ all the attributes that are None.
         ...

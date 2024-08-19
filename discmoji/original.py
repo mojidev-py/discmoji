@@ -22,6 +22,7 @@ SOFTWARE."""
 import aiohttp
 from typing import *
 import asyncio
+from .bot import cached_token
 if TYPE_CHECKING:
     from .message import Message
 
@@ -30,9 +31,18 @@ class Original:
     def init(self):
         self.author = None # This equals None because this will be changed
         self.guild = None 
+        self.base_url = "https://discord.com/api/v10"
+        self.headers = {"Authorization":f"Bot {cached_token}"}
+        self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
         # only this for now, might find some more stuff later
         
     
-    def _fill_attrs():
+    def _fill_attrs(self):
         # _fill_attrs() runs internally in the command decorator to fill in data about the user, guild, and more.
         ...
+    
+    async def send_message(self,content: str):
+        """Sends a message in the channel the command was invoked from."""
+
+        ...
+        
