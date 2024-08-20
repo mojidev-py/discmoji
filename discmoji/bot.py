@@ -43,28 +43,33 @@ class Bot:
     - config: `Formatter`
       - Internal Attribute
     """
-    def __init__(self,prefix: str,sharding: bool):
+    def __init__(self,prefix: str,sharding: bool,token: str):
         # future me, make sure to add Intents later
         self.prefix = prefix
         self.logger = logging.getLogger(name="inkling")
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
         self.cmds = []
+        self.token = token
         super().__init__()
         
     def command(self,name: str,description: str):
       def real_decorator(function):
         def wrapper(*args):
+            # this also stores the base classes' attributes, which the Original class can read from and fill in the context
             result = function(*args)
             return result
         return wrapper
       return real_decorator
       # base template code for now, need to focus on actually connecting to the Gateway API
+    
+    def _get_token(self):
+      return self.token
+    
       
-    async def connect(self,token: str,intents: int):
+    async def connect(self,intents: int):
       """Connects your bot with the discord Gateway.
 
       Args:
-          token (str): The token of the application you want the bot 
           intents (int): A number representing the intents you want the bot to enable. Check the discord dev portal to do the bit math.
       """
       # the intents arg might change later, once I add an Intents class
@@ -87,7 +92,7 @@ class Bot:
           IDENTIFY = {
           "op": 2,
           "d": {
-            "token": token,
+            "token": self.token,
             "properties": {
               "os": OS,
               "browser": "discmoji",
@@ -123,14 +128,7 @@ class Bot:
               }
               serlzed = json.dumps(hb)
               await ws.send(serlzed)              
-        
-def _cache_token():
-  """Caches the token for later use."""
-  token = getattr(o=Bot,name="token")
-  return token      
 
-cached_token = _cache_token()
-                    
                     
             
             

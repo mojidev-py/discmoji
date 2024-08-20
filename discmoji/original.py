@@ -22,19 +22,20 @@ SOFTWARE."""
 import aiohttp
 from typing import *
 import asyncio
-from .bot import cached_token
 if TYPE_CHECKING:
     from .message import Message
+    from .bot import Bot
 
-class Original:
+class Original():
     """Represents the context the command is being invoked from."""
-    def init(self):
+    def init(self,bot: Bot):
         self.author = None # This equals None because this will be changed
         self.guild = None 
         self.base_url = "https://discord.com/api/v10"
-        self.headers = {"Authorization":f"Bot {cached_token}"}
-        self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
         self.channel_id = 1234567
+        self.bot = bot
+        self.headers = {"Authorization":f"Bot {self.bot._get_token()}"}
+        self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
         # only this for now, might find some more stuff later
         # channel id will be filled out with _fill_attrs()
     
