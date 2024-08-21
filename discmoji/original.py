@@ -32,17 +32,16 @@ class Original():
         self.author = None # This equals None because this will be changed
         self.guild = None 
         self.base_url = "https://discord.com/api/v10"
-        self.channel_id = 1234567
         self.bot = bot
+        self.channel_id = bot.channelid
         self.headers = {"Authorization":f"Bot {self.bot._get_token()}"}
         self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
         # only this for now, might find some more stuff later
         # channel id will be filled out with _fill_attrs()
     
     def _fill_attrs(self):
-        # _fill_attrs() runs internally in the command decorator to fill in data about the user, guild, and more.
-        ...
-    
+        self
+        
     async def send_message(self,content: str):
         """Sends a message in the channel the command was invoked from."""
         async with self.msgclient:
@@ -50,4 +49,5 @@ class Original():
                 "content": content,
                 "tts": False, # tts will always default to false
             })
+    
         

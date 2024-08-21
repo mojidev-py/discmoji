@@ -50,14 +50,18 @@ class Bot:
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
         self.cmds = []
         self.token = token
+        self.ws = websockets.connect("wss://gateway.discord.gg/?v=10&encoding=json")
+        # attribute initialized with only one object in it, which is the channel id, and is overrided every single time, for the Original class 
+        self.channelid = None
+        
         super().__init__()
         
     def command(self,name: str,description: str):
       def real_decorator(function):
         def wrapper(*args):
-            # this also stores the base classes' attributes, which the Original class can read from and fill in the context
             result = function(*args)
             return result
+
         return wrapper
       return real_decorator
       # base template code for now, need to focus on actually connecting to the Gateway API
@@ -73,8 +77,7 @@ class Bot:
           intents (int): A number representing the intents you want the bot to enable. Check the discord dev portal to do the bit math.
       """
       # the intents arg might change later, once I add an Intents class
-      ws = websockets.connect("wss://gateway.discord.gg/?v=10&encoding=json")
-      async with ws as ws:
+      async with self.ws as ws:
         loaded = json.loads(await ws.recv())
         HB_INT = loaded["d"]["heartbeat_interval"]
         self.logger.info(f"Establishing heartbeat interval at {HB_INT / 1000} s.")
@@ -127,7 +130,10 @@ class Bot:
                 "d": ""
               }
               serlzed = json.dumps(hb)
-              await ws.send(serlzed)              
+              await ws.send(serlzed)
+              # the code below this will handle what to do with every event it recieves
+              if recved["t"] == "MESSAGE_CREATE":
+                self.channelid: int = recved["d"]["channel_id"]    
 
                     
             
