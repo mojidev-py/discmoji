@@ -26,13 +26,14 @@ if TYPE_CHECKING:
     from .message import Message
     from .bot import Bot
 
-class Original():
+class Original:
     """Represents the context the command is being invoked from."""
     def init(self,bot: Bot):
         self.author = None # This equals None because this will be changed
         self.guild = None 
         self.base_url = "https://discord.com/api/v10"
         self.bot = bot
+        self.reggedcmds = bot.cmds
         self.channel_id = bot.channelid
         self.headers = {"Authorization":f"Bot {self.bot._get_token()}"}
         self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
@@ -40,7 +41,8 @@ class Original():
         # channel id will be filled out with _fill_attrs()
     
     def _fill_attrs(self):
-        self
+        ...
+        # this will make the author attr. a member and the guild a guild
         
     async def send_message(self,content: str):
         """Sends a message in the channel the command was invoked from."""
@@ -50,4 +52,5 @@ class Original():
                 "tts": False, # tts will always default to false
             })
     
+
         

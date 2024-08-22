@@ -43,16 +43,18 @@ class Bot:
     - config: `Formatter`
       - Internal Attribute
     """
+    channelid = None
+    author = None
     def __init__(self,prefix: str,sharding: bool,token: str):
         # future me, make sure to add Intents later
         self.prefix = prefix
         self.logger = logging.getLogger(name="inkling")
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
-        self.cmds = []
+        self.cmds = {}
         self.token = token
         self.ws = websockets.connect("wss://gateway.discord.gg/?v=10&encoding=json")
         # attribute initialized with only one object in it, which is the channel id, and is overrided every single time, for the Original class 
-        self.channelid = None
+        
         
         super().__init__()
         
