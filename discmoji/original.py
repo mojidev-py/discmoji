@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 class Original:
     """Represents the context the command is being invoked from."""
     def init(self,bot: Bot):
-        self.author = None # This equals None because this will be changed
+        self.author = bot.author
         self.guild = None 
         self.base_url = "https://discord.com/api/v10"
         self.bot = bot
@@ -40,9 +40,6 @@ class Original:
         # only this for now, might find some more stuff later
         # channel id will be filled out with _fill_attrs()
     
-    def _fill_attrs(self):
-        ...
-        # this will make the author attr. a member and the guild a guild
         
     async def send_message(self,content: str):
         """Sends a message in the channel the command was invoked from."""

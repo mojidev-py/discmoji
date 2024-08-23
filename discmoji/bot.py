@@ -30,6 +30,9 @@ from random import uniform
 import websockets
 import os
 
+if TYPE_CHECKING:
+  from .member import Member
+
 # very unefficient code, might refine later
 # this code doesn't register any commands... yet
 class Bot:
@@ -42,9 +45,18 @@ class Bot:
       - Internal attribute.
     - config: `Formatter`
       - Internal Attribute
+    - cmds: `Dict[str,function]`
+      - stores the command name so when a certain command is located in a message, it activates the callback (the value)
+    - token: `str`
+      - stores the token
+    - ws: `connect`
+      - Internal
     """
+    # attributes passed to Original class
+    #---------------#
     channelid = None
     author = None
+    #--------------#
     def __init__(self,prefix: str,sharding: bool,token: str):
         # future me, make sure to add Intents later
         self.prefix = prefix
@@ -135,7 +147,21 @@ class Bot:
               await ws.send(serlzed)
               # the code below this will handle what to do with every event it recieves
               if recved["t"] == "MESSAGE_CREATE":
-                self.channelid: int = recved["d"]["channel_id"]    
+                self.channelid: int = recved["d"]["channel_id"]
+                # member object is initialized here for original to take in
+                self.author: Member = Member(id=recved["d"]["author"]["id"],
+                                             username=recved["d"]["author"]["username"],
+                                             discriminator=recved["d"]["author"]["discriminator"],
+                                             global_name=recved["d"]["author"]["global_name"],
+                                             avatar=recved["d"]["author"]["avatar"],
+                                             mfa_enabled=recved["d"]["author"]["mfa_enabled?"],
+                                             banner=recved["d"]["author"]["banner?"],
+                                             accent_color=recved["d"]["author"]["accent_color?"],
+                                             locale=recved["d"]["author"]["locale?"],
+                                             premium_type=recved["d"]["author"]["premium_type?"],
+                                             avatar_decoration_data=recved["d"]["author"]["avatar_decoration_data?"]
+                                             )
+              
 
                     
             
