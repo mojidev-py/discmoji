@@ -9,3 +9,6 @@ Open a issue with the label `enhancement`, and follow the template!
 
 ## Notes
 discmoji needs contributors! contact me (mojidev-py) at pycharmdudeig@gmail.com to become one!
+
+
+builds will be failing, not sure why
