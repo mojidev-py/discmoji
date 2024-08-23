@@ -31,7 +31,7 @@ import websockets
 import os
 
 if TYPE_CHECKING:
-  from .member import Member
+  from .member import GuildMember
 
 # very unefficient code, might refine later
 # this code doesn't register any commands... yet
@@ -149,18 +149,8 @@ class Bot:
               if recved["t"] == "MESSAGE_CREATE":
                 self.channelid: int = recved["d"]["channel_id"]
                 # member object is initialized here for original to take in
-                self.author: Member = Member(id=recved["d"]["author"]["id"],
-                                             username=recved["d"]["author"]["username"],
-                                             discriminator=recved["d"]["author"]["discriminator"],
-                                             global_name=recved["d"]["author"]["global_name"],
-                                             avatar=recved["d"]["author"]["avatar"],
-                                             mfa_enabled=recved["d"]["author"]["mfa_enabled?"],
-                                             banner=recved["d"]["author"]["banner?"],
-                                             accent_color=recved["d"]["author"]["accent_color?"],
-                                             locale=recved["d"]["author"]["locale?"],
-                                             premium_type=recved["d"]["author"]["premium_type?"],
-                                             avatar_decoration_data=recved["d"]["author"]["avatar_decoration_data?"]
-                                             )
+                self.author: GuildMember = GuildMember(user=recved["d"]["member?"]["user?"],
+                                                       nick=recved["d"]["member?"]["nick?"])
               
 
                     

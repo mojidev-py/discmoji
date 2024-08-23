@@ -1,33 +1,34 @@
 from typing import *
+from .user import User
 
 
 
 
-
-class Member:
-    """Represents a discord user."""
-    def __init__(self, id: int = 0,
-        username: str = "",
-        discriminator: str = "#----",
-        global_name: str = "anonymous",
-        avatar: str = "none",
-        mfa_enabled: bool = False,
-        banner: str = "none",
-        accent_color: int = 000000,	
-        locale: str = 000000,	
-
-        premium_type: int = 0	,
-
-        avatar_decoration_data: dict = 0):
-        # class attributes
-        self.id = id
-        self.username= username
-        self.discriminator: str =  discriminator	
-        self.global_name: str = global_name
-        self.avatar: str = avatar
-        self.mfa_enabled: bool = mfa_enabled
-        self.banner: str = banner
-        self.accent_color: int = accent_color	
-        self.locale: str = locale
-        self.premium_type: int = premium_type	
-        self.avatar_decoration_data: dict = avatar_decoration_data
+class GuildMember:
+    """Represents a discord member in a guild.."""
+    def __init__(self,user: User,
+    nick: str	,
+    avatar: str	,
+    roles: List[int]	,
+    joined_at: int	,
+    premium_since: int	,
+    deaf: bool 	,
+    mute: bool 	,
+    flags: int	,
+    pending: bool	,
+    permissions: str	,
+    communication_disabled_until: int,	
+    avatar_decoration_data: None ): # for now
+        self.user = user
+        self.nick = nick
+        self.avatar = avatar
+        self.roles = roles
+        self.joined_at = joined_at
+        self.premium_since = premium_since
+        self.deaf = deaf
+        self.mute = mute
+        self.flags = flags
+        self.pending = pending
+        self.permissions = permissions
+        self.communication_disabled_until = communication_disabled_until
+        self.avatar_decoration_data = avatar_decoration_data
