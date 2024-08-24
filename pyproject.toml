@@ -26,7 +26,7 @@ dependencies = [
 version = "0.0.1pa"
 
 [project.urls]
-github = "https://github.com/mojidev-py/inkling/tree/main"
+github = "https://github.com/mojidev-py/discmoji/tree/main"
 
 [tool.setuptools]
 packages = [
