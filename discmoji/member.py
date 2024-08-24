@@ -1,12 +1,11 @@
 from typing import *
-from .user import User
 
 
 
 
 class GuildMember:
     """Represents a discord member in a guild.."""
-    def __init__(self,user: User,
+    def __init__(self,
     nick: str	,
     avatar: str	,
     roles: List[int]	,
@@ -19,7 +18,6 @@ class GuildMember:
     permissions: str	,
     communication_disabled_until: int,	
     avatar_decoration_data: None ): # for now
-        self.user = user
         self.nick = nick
         self.avatar = avatar
         self.roles = roles

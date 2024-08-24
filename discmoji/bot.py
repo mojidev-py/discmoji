@@ -52,7 +52,7 @@ class Bot:
     - ws: `connect`
       - Internal
     """
-    # attributes passed to Original class
+    # attributes passed to Original class (might make a gateway obj for connect())
     #---------------#
     channelid = None
     author = None
@@ -149,8 +149,15 @@ class Bot:
               if recved["t"] == "MESSAGE_CREATE":
                 self.channelid: int = recved["d"]["channel_id"]
                 # member object is initialized here for original to take in
-                self.author: GuildMember = GuildMember(user=recved["d"]["member?"]["user?"],
-                                                       nick=recved["d"]["member?"]["nick?"])
+                for key in self.cmds.keys():
+                  if key in recved["d"]["content"]:
+                    # going to be implementing prefix cmds here 
+                    self.author: GuildMember = GuildMember(nick=recved["d"]["member"]["nick"],
+                                                       avatar=recved["d"]["member"]["avatar"],
+                                                       roles=recved["d"]["member"]["roles"],
+                                                       joined_at=recved["d"]["member"]["joined_at"],
+                                                       premium_since=recved["d"]["member"]["premium_since"],)
+                  
               
 
                     
