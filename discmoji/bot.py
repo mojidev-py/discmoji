@@ -153,10 +153,18 @@ class Bot:
                   if key in recved["d"]["content"]:
                     # going to be implementing prefix cmds here 
                     self.author: GuildMember = GuildMember(nick=recved["d"]["member"]["nick"],
-                                                       avatar=recved["d"]["member"]["avatar"],
-                                                       roles=recved["d"]["member"]["roles"],
-                                                       joined_at=recved["d"]["member"]["joined_at"],
-                                                       premium_since=recved["d"]["member"]["premium_since"],)
+                                                          avatar=recved["d"]["member"]["avatar"],
+                                                          roles=recved["d"]["member"]["roles"],
+                                                          joined_at=recved["d"]["member"]["joined_at"],
+                                                          premium_since=recved["d"]["member"]["premium_since"],
+                                                          deaf=recved["d"]["member"]["deaf"],
+                                                          # flags will be changed once Intents object is made
+                                                          flags=recved["d"]["member"]["flags"],
+                                                          pending=recved["d"]["member"]["pending"],
+                                                          permissions=recved["d"]["member"]["permissions"],
+                                                          muted_until=recved["d"]["member"]["communication_disabled_until"],
+                                                          # this will be changed once I create a Avatar dec obj
+                                                          avatar_decoration_data=recved["d"]["member"]["avatar_decoration_data"])
                   
               
 

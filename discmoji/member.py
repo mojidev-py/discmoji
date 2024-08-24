@@ -16,7 +16,7 @@ class GuildMember:
     flags: int	,
     pending: bool	,
     permissions: str	,
-    communication_disabled_until: int,	
+    muted_until: int,	
     avatar_decoration_data: None ): # for now
         self.nick = nick
         self.avatar = avatar
@@ -28,5 +28,5 @@ class GuildMember:
         self.flags = flags
         self.pending = pending
         self.permissions = permissions
-        self.communication_disabled_until = communication_disabled_until
+        self.muted_until = muted_until
         self.avatar_decoration_data = avatar_decoration_data
