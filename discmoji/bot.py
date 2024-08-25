@@ -62,7 +62,6 @@ class Bot:
         self.prefix = prefix
         self.logger = logging.getLogger(name="inkling")
         self.config = logging.Formatter(Fore.MAGENTA+"[",Fore.RESET+"%(levelname)s-%(asctime)s",Fore.MAGENTA+"]"+Fore.RESET+": %(message)s")
-        self.cmds = {}
         self.token = token
         self.ws = websockets.connect("wss://gateway.discord.gg/?v=10&encoding=json")
         # attribute initialized with only one object in it, which is the channel id, and is overrided every single time, for the Original class 

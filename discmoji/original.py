@@ -27,14 +27,15 @@ if TYPE_CHECKING:
     from .bot import Bot
 
 class Original:
-    """Represents the context the command is being invoked from."""
+    """A class that represents the context the command was invoked in. Not for app commands.
+    """
     def init(self,bot: Bot):
         self.author = bot.author
         self.guild = None 
         self.base_url = "https://discord.com/api/v10"
         self.bot = bot
         self.reggedcmds = bot.cmds
-        self.channel_id = bot.channelid
+        self.channel = None 
         self.headers = {"Authorization":f"Bot {self.bot._get_token()}"}
         self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
         # only this for now, might find some more stuff later
@@ -43,8 +44,9 @@ class Original:
         
     async def send_message(self,content: str):
         """Sends a message in the channel the command was invoked from."""
+        channel_id = self.bot.channelid
         async with self.msgclient:
-            self.msgclient.post(url=self.base_url.join(f"/channels/{self.channel_id}/messages"),json={
+            self.msgclient.post(url=self.base_url.join(f"/channels/{channel_id}/messages"),json={
                 "content": content,
                 "tts": False, # tts will always default to false
             })
