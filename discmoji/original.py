@@ -35,21 +35,24 @@ class Original:
         self.base_url = "https://discord.com/api/v10"
         self.bot = bot
         self.reggedcmds = bot.cmds
-        self.channel = None 
+        self.channel = asyncio.run(self.__channel__()) 
         self.headers = {"Authorization":f"Bot {self.bot._get_token()}"}
         self.msgclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
         # only this for now, might find some more stuff later
-        # channel id will be filled out with _fill_attrs()
     
         
     async def send_message(self,content: str):
         """Sends a message in the channel the command was invoked from."""
         channel_id = self.bot.channelid
         async with self.msgclient:
-            self.msgclient.post(url=self.base_url.join(f"/channels/{channel_id}/messages"),json={
+            self.msgclient.post(url=self.base_url+f"/channels/{channel_id}/messages",json={
                 "content": content,
                 "tts": False, # tts will always default to false
             })
     
-
-        
+    async def __channel__(self):
+        async with self.msgclient as channelgetter:
+            async with channelgetter.get(self.base_url+f"/channels/{self.bot.channelid}") as response:
+                jsoned = await response.json()
+                # place holder
+                self.channel = None
