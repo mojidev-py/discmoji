@@ -30,8 +30,6 @@ from random import uniform
 import websockets
 import os
 
-if TYPE_CHECKING:
-  from .member import GuildMember
 
 # very unefficient code, might refine later
 # this code doesn't register any commands... yet
@@ -78,93 +76,7 @@ class Bot:
         return wrapper
       return real_decorator
       # base template code for now, need to focus on actually connecting to the Gateway API
-    
-    def _get_token(self):
-      return self.token
-    
-      
-    async def connect(self,intents: int):
-      """Connects your bot with the discord Gateway.
 
-      Args:
-          intents (int): A number representing the intents you want the bot to enable. Check the discord dev portal to do the bit math.
-      """
-      # the intents arg might change later, once I add an Intents class
-      async with self.ws as ws:
-        loaded = json.loads(await ws.recv())
-        HB_INT = loaded["d"]["heartbeat_interval"]
-        self.logger.info(f"Establishing heartbeat interval at {HB_INT / 1000} s.")
-        # very generalized for now, will elaborate on this later
-        await asyncio.sleep(delay=HB_INT + uniform(0,1.00))
-        HB_1 = {
-          "op": 1,
-          "d": ""
-        }
-        serlzed = json.dumps(HB_1)
-        await ws.send(serlzed)
-        loaded = json.loads(await ws.recv())
-        if loaded["op"] == 11:
-          OS = "windows" if os.name == "nt" else "linux"
-          IDENTIFY = {
-          "op": 2,
-          "d": {
-            "token": self.token,
-            "properties": {
-              "os": OS,
-              "browser": "discmoji",
-              "device": "discmoji"
-            },
-            "intents":intents
-          }
-        }
-          serlzed = json.dumps(IDENTIFY)
-          await ws.send(serlzed)
-          recved = json.loads(await ws.recv())
-          if recved["v"] is int:
-            self.logger.info(f"Logged in as {recved["user"]["username"]}{recved["user"]["discriminator"]}, on gateway session id {recved["session_id"]}.")
-          if recved["op"] is int:
-            self.logger.fatal(f"Failed to connect to discord gateway with opcode 9. payload: {recved}")
-          
-          # while True loop handles the heartbeats
-          # very basic way of doing this, I might handle this a diff way
-          while True:
-            asyncio.sleep(delay=HB_INT)
-            recved = json.loads(await ws.recv())
-            if recved["op"] == 0:
-              hb = {
-                "op": 1,
-                "d": recved["s"]
-              }
-              serlzed = json.dumps(hb)
-              await ws.send(serlzed)
-            else:
-              hb = {
-                "op": 1,
-                "d": ""
-              }
-              serlzed = json.dumps(hb)
-              await ws.send(serlzed)
-              # the code below this will handle what to do with every event it recieves
-              if recved["t"] == "MESSAGE_CREATE":
-                self.channelid: int = recved["d"]["channel_id"]
-                # member object is initialized here for original to take in
-                for key in self.cmds.keys():
-                  if key in recved["d"]["content"]:
-                    # going to be implementing prefix cmds here 
-                    self.author: GuildMember = GuildMember(nick=recved["d"]["member"]["nick"],
-                                                          avatar=recved["d"]["member"]["avatar"],
-                                                          roles=recved["d"]["member"]["roles"],
-                                                          joined_at=recved["d"]["member"]["joined_at"],
-                                                          premium_since=recved["d"]["member"]["premium_since"],
-                                                          deaf=recved["d"]["member"]["deaf"],
-                                                          # flags will be changed once Intents object is made
-                                                          flags=recved["d"]["member"]["flags"],
-                                                          pending=recved["d"]["member"]["pending"],
-                                                          permissions=recved["d"]["member"]["permissions"],
-                                                          muted_until=recved["d"]["member"]["communication_disabled_until"],
-                                                          # this will be changed once I create a Avatar dec obj
-                                                          avatar_decoration_data=recved["d"]["member"]["avatar_decoration_data"])
-                  
               
 
                     
