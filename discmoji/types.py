@@ -104,6 +104,7 @@ class GatewayManager:
     
     async def _hand_shake(self):
         # handles the initial connection process
+        # will manually send the first heartbeat, then the rest is up to the handler
         ...
 
             
