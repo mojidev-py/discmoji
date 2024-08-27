@@ -38,6 +38,7 @@ class OPCODES(Enum):
     RECONNECT = 7
     INVALID = 9
     EVENT = 0
+    ACK = 11
 
 
 
@@ -58,11 +59,9 @@ class Payload:
         
     def jsonize(self):
         # jsonizes the payload to be sent (websockets lib restrictions)
-        s = "s" if self.code == self.opcodes.HEARTBEAT else  ""
         jsoned = {
             "op": self.code,
             "d": self.data,
-            s: self.seq if self.code == self.opcodes.HEARTBEAT else ""
         }
         return json.dumps(jsoned)
 
@@ -88,10 +87,15 @@ class GatewayManager:
     
     async def _handle_heartbeats(self):
         # as the func title says, handles the heartbeats of the gateway
+        # captures the event before starting the heartbeat so it can send the corresponding sequence num
         event = await self._abstractor()
         jsonized = None
         if event.code == event.opcodes.EVENT:
             payload = Payload(code=1,d=event.seq)
+            jsonized = payload.jsonize()
+        else:
+            # if it didn't recieve any event from the abstractor func, it sends no data, just opcode 1.
+            payload = Payload(code=1,d=None)
             jsonized = payload.jsonize()
         async with self.ws as ws:
             await ws.send_str(data=jsonized)
