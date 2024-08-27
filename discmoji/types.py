@@ -75,14 +75,14 @@ class GatewayManager:
         self.url = "wss://gateway.discord.gg/?v=10&encoding=json"
         self.client = aiohttp.ClientSession()
         self.ws = self.client.ws_connect(self.url)
+        self.HB_INT = None
     
     
     async def _abstractor(self) -> Payload:  
         # "abstracts" the recieved str payload into a Payload object it can use to do some extra logic without having to listen for a specific opcode or event name through ugly
         # dict keys ;_;
         async with self.ws as ws:
-            received = ws._response
-            serialized = json.loads(received.content)
+            serialized = await ws.receive_json()
             payloaded = Payload(serialized["op"],serialized["d"],serialized["t"],serialized["s"] if serialized["s"] is not None else None)
             return payloaded
     
