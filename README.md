@@ -11,4 +11,6 @@ Open a issue with the label `enhancement`, and follow the template!
 discmoji needs contributors! contact me (mojidev-py) at pycharmdudeig@gmail.com to become one!
 
 
-builds will be failing, not sure why
+### Release Date???
+**The release date is still very broad, since this project has just started.**
+Expect a release date of December 2024 to April 2025, depending on how much features and how much setbacks this project has.
