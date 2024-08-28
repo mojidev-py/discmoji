@@ -24,6 +24,9 @@ from enum import Enum
 from typing import *
 import json
 import aiohttp
+import os
+import asyncio
+from random import uniform
 
 
 class OPCODES(Enum):
@@ -55,7 +58,6 @@ class Payload:
         self.event_name = event_name
         self.data = d
         self.seq = s
-        self.opcodes = OPCODES
         
     def jsonize(self):
         # jsonizes the payload to be sent (websockets lib restrictions)
@@ -67,11 +69,11 @@ class Payload:
 
 
 class GatewayManager:
-    def __init__(self,token: str,intents: int):
+    def __init__(self,token: str,intents: int,url: str):
         # handles the gateway connections/events and turns recieved payloads into the Payload object for easier use
         self.token = token
         self.intents = intents
-        self.url = "wss://gateway.discord.gg/?v=10&encoding=json"
+        self.url = url
         self.client = aiohttp.ClientSession()
         self.ws = self.client.ws_connect(self.url)
         self.HB_INT = None
@@ -82,7 +84,8 @@ class GatewayManager:
         # dict keys ;_;
         async with self.ws as ws:
             serialized = await ws.receive_json()
-            payloaded = Payload(serialized["op"],serialized["d"],serialized["t"],serialized["s"] if serialized["s"] is not None else None)
+            # 
+            payloaded = Payload(serialized["op"],serialized["d"],serialized["t"],serialized["s"])
             return payloaded
     
     async def _handle_heartbeats(self):
@@ -90,21 +93,39 @@ class GatewayManager:
         # captures the event before starting the heartbeat so it can send the corresponding sequence num
         event = await self._abstractor()
         jsonized = None
-        if event.code == event.opcodes.EVENT:
-            payload = Payload(code=1,d=event.seq)
+        if event.code == OPCODES.EVENT:
+            payload = Payload(code=OPCODES.HEARTBEAT,d=event.seq)
             jsonized = payload.jsonize()
         else:
             # if it didn't recieve any event from the abstractor func, it sends no data, just opcode 1.
             payload = Payload(code=1,d=None)
             jsonized = payload.jsonize()
         async with self.ws as ws:
+          if event.code == OPCODES.HELLO:  
+            # handles the heartbeat if it's the first one
+            asyncio.sleep(float(self.HB_INT)*uniform(float(0),float(1)))
+          else:
+            asyncio.sleep(float(self.HB_INT))   
             await ws.send_str(data=jsonized)
             # captures the next event 
             await self._abstractor()
     
     async def _hand_shake(self):
         # handles the initial connection process
-        # will manually send the first heartbeat, then the rest is up to the handler
-        ...
+        async with self.ws as ws:
+            hb_int = await self._abstractor()
+            self.HB_INT = hb_int.data
+            firstpayload = Payload(code=OPCODES.IDENTIFY,d={
+                "token":self.token,
+                "properties": {
+                    "os": "windows" if os.name == "nt" else "linux",
+                    "browser": "discmoji",
+                    "device": "discmoji"
+                },
+                # the sharding field will be handled in ShardedGatewayManager (presence isn't implemented yet)
+                "intents": self.intents
+            })
+            jsonized = firstpayload.jsonize()
+            await ws.send_str(jsonized)
 
             
