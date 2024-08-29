@@ -42,6 +42,7 @@ class OPCODES(Enum):
     INVALID = 9
     EVENT = 0
     ACK = 11
+    HTTP = None
 
 
 
@@ -68,12 +69,43 @@ class Payload:
         return json.dumps(jsoned)
 
 
+class EndpointManager:
+
+    def __init__(self,token: str):
+        self.token = token
+        self.base_url = "https://discord.com/api"
+        # persistent headers, will only use authorization header incase request needs authorization
+        self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr"}
+        self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)
+        self.ws_url = None #yet
+    
+    
+    
+    async def send_request(self,method: Literal['get','post','put','patch','delete'],route: str) -> Payload:
+        # sends a request and returns a payload with the content it recieved back
+        async with self.httpclient as client:
+            match method:
+                case "get":  
+                    sent = await client.get(self.url+route)
+                    parsed = await sent.read()
+                    decoded = await parsed.decode(encoding="utf-8")
+                    # return statement returns the decoded and deserialized content that StreamReader recieves
+                    return Payload(code=OPCODES.HTTP,d=json.loads(decoded),event_name="HTTP_REQUEST_RECIEVED")
+                case "post":
+                    pass
+                    
+                    
+        
+
+
+
+
 class GatewayManager:
-    def __init__(self,token: str,intents: int,url: str):
+    def __init__(self,token: str,intents: int,endpointclient: EndpointManager):
         # handles the gateway connections/events and turns recieved payloads into the Payload object for easier use
         self.token = token
         self.intents = intents
-        self.url = url
+        self.ws_url = endpointclient.send_request(method="get",route="/gateway")
         self.client = aiohttp.ClientSession()
         self.ws = self.client.ws_connect(self.url)
         self.HB_INT = None
@@ -109,6 +141,7 @@ class GatewayManager:
             await ws.send_str(data=jsonized)
             # captures the next event 
             await self._abstractor()
+            
     
     async def _hand_shake(self):
         # handles the initial connection process
@@ -127,5 +160,9 @@ class GatewayManager:
             })
             jsonized = firstpayload.jsonize()
             await ws.send_str(jsonized)
+            
 
+
+
+        
             
