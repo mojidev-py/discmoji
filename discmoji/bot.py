@@ -20,9 +20,39 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
 
+from typing import *
+import aiohttp
+from .types import (GatewayManager,EndpointManager)
 
 
-              
+class Bot:
+    """Represents the application."""
+    def __init__(self,token: str,intents: int):
+        self._http = EndpointManager(token=token)
+        self._gateway_client = GatewayManager(token=token,intents=intents,endpointclient=self._http)
+        self.token = token
+        self.intents = intents
+        self._all_cmds = []
+    
+    async def connect(self):
+        # this just inits the gateway connection
+        await self._gateway_client._hand_shake()
+        # self-explanatory, handles the heartbeats
+        await self._gateway_client._handle_heartbeats()
+    
+    def command(name: str):
+        """A decorator that registers a command with the specified name."""
+        def decorator(*args, **kwargs):
+            ...
+            return ...
+            # placeholder code before I start to make the command object
+        return decorator
+    
+             
+    
+    
+        
+    
 
                     
             
