@@ -92,14 +92,9 @@ class EndpointManager:
                     # return statement returns the decoded and deserialized content that StreamReader recieves
                     return Payload(code=OPCODES.HTTP,d=json.loads(decoded),event_name="HTTP_REQUEST_RECIEVED")
                 case "post":
-                    pass
+                    sent = await client.post(url=self.url+route)
                     
                     
-        
-
-
-
-
 class GatewayManager:
     def __init__(self,token: str,intents: int,endpointclient: EndpointManager):
         # handles the gateway connections/events and turns recieved payloads into the Payload object for easier use
