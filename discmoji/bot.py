@@ -21,9 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
 
 from typing import *
-import aiohttp
 from .types import (GatewayManager,EndpointManager)
-
+import functools
+import asyncio
+from .command import Command
 
 class Bot:
     """Represents the application."""
@@ -38,23 +39,20 @@ class Bot:
         # this just inits the gateway connection
         await self._gateway_client._hand_shake()
         # self-explanatory, handles the heartbeats
-        await self._gateway_client._handle_heartbeats()
+        loop = asyncio.new_event_loop()
+        # creates a loop that runs forever, and will stop if a Resume or Reconnect is called
+        loop.create_task(self._gateway_client._handle_heartbeats)
+        loop.run_forever()
     
-    def command(name: str):
+    def command(self,name: str) -> Command:
         """A decorator that registers a command with the specified name."""
-        def decorator(*args, **kwargs):
-            ...
-            return ...
-            # placeholder code before I start to make the command object
-        return decorator
-    
-             
-    
-    
         
+        def actual_deco(func: Coroutine):
+            @functools.wraps(func)
+            def decorator(*args, **kwargs):
+                cmd = Command(name,(args,kwargs),func)
+                self._all_cmds.append(cmd)
+                return cmd
+            return decorator
+        return actual_deco
     
-
-                    
-            
-            
-            
