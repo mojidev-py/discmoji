@@ -34,6 +34,7 @@ class Bot:
         self.token = token
         self.intents = intents
         self._all_cmds = []
+        self._intern_context = None
     
     async def connect(self):
         # this just inits the gateway connection
