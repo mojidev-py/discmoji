@@ -73,7 +73,7 @@ class EndpointManager:
 
     def __init__(self,token: str):
         self.token = token
-        self.base_url = "https://discord.com/api"
+        self.base_url = "https://discord.com/api/v10"
         # persistent headers, will only use authorization header incase request needs authorization
         self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr"}
         self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers) #yet
@@ -127,7 +127,6 @@ class GatewayManager:
         # dict keys ;_;
         async with self.ws as ws:
             serialized = await ws.receive_json()
-            # 
             payloaded = Payload(serialized["op"],serialized["d"],serialized["t"],serialized["s"])
             self.current_payload = payloaded
             return payloaded
@@ -147,9 +146,9 @@ class GatewayManager:
         async with self.ws as ws:
           if event.code == OPCODES.HELLO:  
             # handles the heartbeat if it's the first one
-            asyncio.sleep(float(self.HB_INT)*uniform(float(0),float(1)))
+            await asyncio.sleep(float(self.HB_INT)*uniform(float(0),float(1)))
           else:
-            asyncio.sleep(float(self.HB_INT))   
+            await asyncio.sleep(float(self.HB_INT))   
             await ws.send_str(data=jsonized)
             # captures the next event 
             await self._abstractor()

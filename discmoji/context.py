@@ -3,6 +3,7 @@ from .types import EndpointManager,GatewayManager
 import asyncio
 from .bot import Bot
 from .member import GuildMember
+from .guild import Guild
 
 
 
@@ -24,5 +25,6 @@ class Invoked:
     
     def _construct(self):
         # constructs itself so it can be used while running a command
-        self.member: GuildMember = GuildMember(self._gateway.current_payload["member"])
+        self.member: GuildMember = GuildMember(self._gateway.current_payload.data["member"])
+        self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._gateway.current_payload.data["guild_id"]}")).data)
             

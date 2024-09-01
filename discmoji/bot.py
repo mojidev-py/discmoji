@@ -26,6 +26,7 @@ import functools
 import asyncio
 from .command import Command
 
+
 class Bot:
     """Represents the application."""
     def __init__(self,token: str,intents: int):
