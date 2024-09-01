@@ -33,7 +33,7 @@ class Bot:
         self._gateway_client = GatewayManager(token=token,intents=intents,endpointclient=self._http)
         self.token = token
         self.intents = intents
-        self._all_cmds = []
+        self._all_cmds: List[Command] = []
         self._intern_context = None
     
     async def connect(self):
