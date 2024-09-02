@@ -4,9 +4,7 @@
    - Bugs may be present, make sure to report on Github!
 """
 
-import asyncio
-import aiohttp
-from enum import Enum
+
 
 from .bot import Bot 
 from .command import Command
