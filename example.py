@@ -1,5 +1,6 @@
 import discmoji
 from discmoji import *
+import asyncio
 
 Client = Bot(token="blah blah",intents=123213123) 
 
@@ -12,3 +13,4 @@ async def cool(ctx: Invoked):
     await Client.get_guild(id=1234567)
 
 
+asyncio.run(Client.connect)
