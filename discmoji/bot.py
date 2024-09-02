@@ -21,7 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
 
 from typing import *
-from .types import (GatewayManager,EndpointManager)
+from .http import EndpointManager
+from .gateway import GatewayManager
 import functools
 import asyncio
 from .command import Command

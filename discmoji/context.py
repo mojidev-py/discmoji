@@ -1,5 +1,6 @@
 from typing import *
-from .types import EndpointManager,GatewayManager
+from .http import EndpointManager
+from .gateway import GatewayManager
 import asyncio
 from .bot import Bot
 from .member import GuildMember
