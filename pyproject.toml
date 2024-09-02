@@ -21,7 +21,8 @@ classifiers = [
 ]
 dependencies = [
     "asyncio",
-    "aiohttp"
+    "aiohttp",
+    "functools"
 ]
 version = "0.0.1pa"
 

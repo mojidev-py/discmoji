@@ -8,7 +8,7 @@ class Command:
     """Represents a prefix command. Not for slash commands, those have a seperate class."""
     def __init__(self,/,name: str):
         # callback needs to be coroutine because of aiohttp
-        self.__error_handlers: List[function] = []
+        self.__error_handlers: List[Callable] = []
         
     # huge credit to AlmostDemoPy! TYSMMM
     

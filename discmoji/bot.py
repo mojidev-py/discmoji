@@ -43,6 +43,7 @@ class Bot:
         self._guild_cache: List[Guild] = []
         self.command = Command
         self.command.bot = self
+    
     async def connect(self):
         # this just inits the gateway connection
         await self._gateway_client._hand_shake()
