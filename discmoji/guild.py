@@ -1,11 +1,13 @@
 from typing import *
 from .member import GuildMember
 import aiohttp
-
+import asyncio
+from context import Invoked
 class Guild:
     """Represents a discord server.
     This class will be provided. Do not try to initalize this class."""
-    def __init__(self,_data: dict):
+    def __init__(self,_data: dict,invoked: Optional[Invoked]):
+        self.invoked = invoked
         self.id: int = _data["id"]
         self.name: int = _data["name"]
         self.icon: str = _data["icon"]
@@ -23,11 +25,22 @@ class Guild:
         self.features: List = _data["features"]
         self.mfa_level: int = _data["mfa_level"]
         self.app_id: int = _data["application_id"]
+        self._member_cache: List[GuildMember] = []
+        
         # rest will be included later
     
     
     
     
     
-    async def get_member(self,id: int):
-        """Gets the specified member from the guild, using their id."""
+    async def get_member(self,username):
+        """Gets the specified member from the guild, using their username."""
+        # only using username because in prefix commands, GuildMember's user property is left blank
+        check = None
+        for member in self._member_cache:
+            if member.nick == username:
+                check = True
+                return member
+        if check is None:
+            member = asyncio.run(self.invoked._bot._http.send_request('get',f"/guilds/{self.id}/search?query={username}"))    
+            return GuildMember(member.data)
