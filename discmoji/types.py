@@ -23,10 +23,6 @@ SOFTWARE."""
 from enum import Enum
 from typing import *
 import json
-import aiohttp
-import os
-import asyncio
-from random import uniform
 
 
 class OPCODES(Enum):
