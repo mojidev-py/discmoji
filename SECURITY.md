@@ -2,9 +2,7 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
+Since we are in pre-release, we support any version that starts with 0.0
 | Version | Supported          |
 | ------- | ------------------ |
 | 0.0.x   | :white_check_mark: |
@@ -12,8 +10,6 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+If you find a vulnerability, make sure to open an issue or a pull request to patch it or report the vulnerability to us as **SOON AS POSSIBLE.**
+You can expect updates on your issue/pull request every few hours or days, depending on whether I'm online or not.
+If it is **CRITICAL**, report it to us privately.
