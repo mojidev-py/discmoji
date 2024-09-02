@@ -25,6 +25,8 @@ from .types import (GatewayManager,EndpointManager)
 import functools
 import asyncio
 from .command import Command
+from .guild import Guild
+from .member import GuildMember
 
 
 class Bot:
@@ -36,7 +38,7 @@ class Bot:
         self.intents = intents
         self._all_cmds: List[Command] = []
         self._intern_context = None
-    
+        self._guild_cache: List[Guild] = []
     async def connect(self):
         # this just inits the gateway connection
         await self._gateway_client._hand_shake()
@@ -57,4 +59,18 @@ class Bot:
                 return cmd
             return decorator
         return actual_deco
+    
+    async def get_guild(self,id: int) -> Guild:
+        """Gets a guild from the bot's current joined guilds, through the id."""
+        check = None
+        for guild in self._guild_cache:
+            if guild.id == id:
+                check = True
+                return guild
+        if not check:
+            guild = Guild(asyncio.run(self._http.send_request('get',f"/guilds/{id}")).data)
+            self._guild_cache.append(guild)
+            return guild
+                
+                
     
