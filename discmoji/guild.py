@@ -1,5 +1,6 @@
 from typing import *
 from .member import GuildMember
+import aiohttp
 
 class Guild:
     """Represents a discord server.
@@ -23,3 +24,10 @@ class Guild:
         self.mfa_level: int = _data["mfa_level"]
         self.app_id: int = _data["application_id"]
         # rest will be included later
+    
+    
+    
+    
+    
+    async def get_member(self,id: int):
+        """Gets the specified member from the guild, using their id."""

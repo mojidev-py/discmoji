@@ -43,6 +43,7 @@ class Bot:
         self._guild_cache: List[Guild] = []
         self.command = Command
         self.command.bot = self
+        self.all_guilds = None
     
     async def connect(self):
         # this just inits the gateway connection
@@ -52,6 +53,7 @@ class Bot:
         # creates a loop that runs forever, and will stop if Reconnect is called
         loop.create_task(self._gateway_client._handle_heartbeats)
         loop.run_forever()
+        self._all_guilds_setter()
         if self._gateway_client.current_payload.code == OPCODES.RECONNECT:
             loop.stop()
             # I need to add handling for reconnect
@@ -72,4 +74,15 @@ class Bot:
     
     async def total_guilds(self) -> int:
         """Returns the total number of guilds the bot is in."""
-        return self._gateway_client.guild_count             
+        return self._gateway_client.guild_count 
+    
+    
+
+    def _all_guilds_setter(self):
+        # since the discord API lazily loads the guilds, this may not be an accurate count.
+        if self._gateway_client.current_payload.event_name == "GUILD_CREATE":
+            self.all_guilds: List[Guild] = []
+            self.all_guilds.append(Guild(self._gateway_client.current_payload.data))
+    
+            
+                    
