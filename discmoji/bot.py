@@ -28,6 +28,7 @@ import asyncio
 from .command import Command
 from .guild import Guild
 from .member import GuildMember
+from .types import OPCODES
 
 
 class Bot:
@@ -45,9 +46,14 @@ class Bot:
         await self._gateway_client._hand_shake()
         # self-explanatory, handles the heartbeats
         loop = asyncio.new_event_loop()
-        # creates a loop that runs forever, and will stop if a Resume or Reconnect is called
+        # creates a loop that runs forever, and will stop if Reconnect is called
         loop.create_task(self._gateway_client._handle_heartbeats)
         loop.run_forever()
+        if self._gateway_client.current_payload.code == OPCODES.RECONNECT:
+            loop.stop()
+            # I need to add handling for reconnect
+            ...
+        
     
     def command(self,name: str) -> Command:
         """A decorator that registers a command with the specified name."""
