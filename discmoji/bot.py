@@ -64,13 +64,13 @@ class Bot:
         """Gets a guild from the bot's current joined guilds, through the id."""
         check = None
         for guild in self._guild_cache:
-            if guild.id == id:
+            if guild in self._guild_cache:
                 check = True
                 return guild
-        if not check:
-            guild = Guild(asyncio.run(self._http.send_request('get',f"/guilds/{id}")).data)
-            self._guild_cache.append(guild)
+        if check is None:
+            guild = Guild(asyncio.run(self._http.send_request('get',f"/guilds/{id}")))
             return guild
-                
-                
     
+    async def total_guilds(self) -> int:
+        """Returns the total number of guilds the bot is in."""
+        return self._gateway_client.guild_count             

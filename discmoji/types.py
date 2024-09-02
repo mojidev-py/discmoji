@@ -76,7 +76,7 @@ class EndpointManager:
         self.base_url = "https://discord.com/api/v10"
         # persistent headers, will only use authorization header incase request needs authorization
         self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr"}
-        self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers) #yet
+        self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)#yet
     
     
     
@@ -120,6 +120,7 @@ class GatewayManager:
         self.ws = self.client.ws_connect(self.url)
         self.HB_INT = None
         self.current_payload = None
+        self.guild_count = None
     
     
     async def _abstractor(self) -> Payload:  
@@ -171,7 +172,9 @@ class GatewayManager:
             })
             jsonized = firstpayload.jsonize()
             await ws.send_str(jsonized)
-            
+            capture_guild_count = await self._abstractor() 
+            if capture_guild_count.code == None:
+                self.guild_count = len(capture_guild_count.data["guilds"])
 
 
 
