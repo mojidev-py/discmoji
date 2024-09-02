@@ -13,7 +13,8 @@ class EndpointManager:
         self.token = token
         self.base_url = "https://discord.com/api/v10"
         # persistent headers, will only use authorization header incase request needs authorization
-        self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr"}
+        self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr",
+                        "Authorization":f"Bot {token}"}
         self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)#yet
     
     
