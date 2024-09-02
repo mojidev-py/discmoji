@@ -41,6 +41,8 @@ class Bot:
         self._all_cmds: List[Command] = []
         self._intern_context = None
         self._guild_cache: List[Guild] = []
+        self.command = Command
+        self.command.bot = self
     async def connect(self):
         # this just inits the gateway connection
         await self._gateway_client._hand_shake()
@@ -55,17 +57,6 @@ class Bot:
             ...
         
     
-    def command(self,name: str) -> Command:
-        """A decorator that registers a command with the specified name."""
-        
-        def actual_deco(func: Coroutine):
-            @functools.wraps(func)
-            def decorator(*args, **kwargs):
-                cmd = Command(name,(args,kwargs),func)
-                self._all_cmds.append(cmd)
-                return cmd
-            return decorator
-        return actual_deco
     
     async def get_guild(self,id: int) -> Guild:
         """Gets a guild from the bot's current joined guilds, through the id."""
