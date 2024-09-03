@@ -20,4 +20,3 @@ class GuildMember:
         self.muted_until: Optional[int] = _data["communication_disabled_until"]
         self.decoration_data: Optional[Dict[str,Any]] = _data["avatar_decoration_data"]
         
-            

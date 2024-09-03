@@ -58,6 +58,12 @@ class Bot:
             loop.stop()
             # I need to add handling for reconnect
             ...
+    
+    def command(self,name: str):
+        """A decorator that registers a command with the specified name."""
+        def decor(func: Callable):
+            return Command(name=name)
+        return decor
         
     
     
