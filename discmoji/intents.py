@@ -40,7 +40,7 @@ class BotIntents:
         - Privileged Intents
         - Automod Intents
         - Direct Messages """
-        self.result_field = IntentsBits.GUILDS & IntentsBits.GUILD_MODERATION & IntentsBits.GUILD_EMOJIS_STICKERS & IntentsBits.GUILD_INTEGRATIONS & IntentsBits.GUILD_WEBHOOKS & IntentsBits.GUILD_INVITES & IntentsBits.GUILD_VOICE_STATES & IntentsBits.GUILD_MESSAGES & IntentsBits.GUILD_MESSAGE_REACTIONS & IntentsBits.GUILD_MESSAGE_TYPING & IntentsBits.GUILD_SCHEDULED_EVENTS & IntentsBits.GUILD_MESSAGE_POLLS
+        self.result_field = IntentsBits.GUILDS | IntentsBits.GUILD_MODERATION | IntentsBits.GUILD_EMOJIS_STICKERS | IntentsBits.GUILD_INTEGRATIONS | IntentsBits.GUILD_WEBHOOKS | IntentsBits.GUILD_INVITES | IntentsBits.GUILD_VOICE_STATES | IntentsBits.GUILD_MESSAGES | IntentsBits.GUILD_MESSAGE_REACTIONS | IntentsBits.GUILD_MESSAGE_TYPING | IntentsBits.GUILD_SCHEDULED_EVENTS | IntentsBits.GUILD_MESSAGE_POLLS
     
     
     
