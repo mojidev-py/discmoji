@@ -30,6 +30,17 @@ class IntentsBits(Enum):
 class BotIntents:
     """A abstraction layer over a bitfield containing the intents your bot needs. We also offer pre-made configurations."""
     def __init__(self):
-        self.bit_field = IntentsBits
+        self.result_field: int = 0
+        
+    
+    
+    @classmethod
+    def default(self):
+        """A method that creates an BotIntents object with every intent, except:
+        - Privileged Intents
+        - Automod Intents
+        - Direct Messages """
+        self.result_field = IntentsBits.GUILDS & IntentsBits.GUILD_MODERATION & IntentsBits.GUILD_EMOJIS_STICKERS & IntentsBits.GUILD_INTEGRATIONS & IntentsBits.GUILD_WEBHOOKS & IntentsBits.GUILD_INVITES & IntentsBits.GUILD_VOICE_STATES & IntentsBits.GUILD_MESSAGES & IntentsBits.GUILD_MESSAGE_REACTIONS & IntentsBits.GUILD_MESSAGE_TYPING & IntentsBits.GUILD_SCHEDULED_EVENTS & IntentsBits.GUILD_MESSAGE_POLLS
+    
     
     

@@ -26,5 +26,5 @@ class Command:
         self.bot._all_cmds += self
         return self # allows the function ( command object ) to still be used later on in the code
 
-    def error(self, function) -> None:
+    def error(self, function: Callable) -> None:
         self.__error_handlers += function

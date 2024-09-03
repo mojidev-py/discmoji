@@ -29,15 +29,15 @@ from .command import Command
 from .guild import Guild
 from .member import GuildMember
 from .types import OPCODES
-
+from .intents import BotIntents
 
 class Bot:
     """Represents the application."""
-    def __init__(self,token: str,intents: int):
+    def __init__(self,token: str,intents: BotIntents):
         self._http = EndpointManager(token=token)
-        self._gateway_client = GatewayManager(token=token,intents=intents,endpointclient=self._http)
+        self._gateway_client = GatewayManager(token=token,intents=intents.result_field,endpointclient=self._http)
         self.token = token
-        self.intents = intents
+        self.intents = intents.result_field
         self._all_cmds: List[Command] = []
         self._intern_context = None
         self._guild_cache: List[Guild] = []
