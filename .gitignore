@@ -1,2 +1,4 @@
 .venv/*
 inkling/*.json
+dist
+discmoji.egg-info

@@ -24,7 +24,7 @@ dependencies = [
     "aiohttp",
     "functools"
 ]
-version = "0.0.1pa"
+version = "0.0.1"
 
 [project.urls]
 github = "https://github.com/mojidev-py/discmoji/tree/main"
