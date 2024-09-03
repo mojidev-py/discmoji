@@ -28,19 +28,23 @@ class IntentsBits(Enum):
 
 
 class BotIntents:
-    """A abstraction layer over a bitfield containing the intents your bot needs. We also offer pre-made configurations."""
-    def __init__(self):
-        self.result_field: int = 0
+    """A abstraction layer over a bitfield containing the intents your bot needs. We also offer pre-made configurations.
+    - `set_manual` param
+      - an internal param used by the class methods to set the result_field
+    - `result_field` attribute
+      -  Used to send the bitfield converted to an int to the gateway."""
+    def __init__(self, _set_manual: Optional[int | Any]):
+        self.result_field: int = _set_manual
         
     
     
     @classmethod
-    def default(self):
+    def default(cls):
         """A method that creates an BotIntents object with every intent, except:
         - Privileged Intents
         - Automod Intents
         - Direct Messages """
-        self.result_field = IntentsBits.GUILDS | IntentsBits.GUILD_MODERATION | IntentsBits.GUILD_EMOJIS_STICKERS | IntentsBits.GUILD_INTEGRATIONS | IntentsBits.GUILD_WEBHOOKS | IntentsBits.GUILD_INVITES | IntentsBits.GUILD_VOICE_STATES | IntentsBits.GUILD_MESSAGES | IntentsBits.GUILD_MESSAGE_REACTIONS | IntentsBits.GUILD_MESSAGE_TYPING | IntentsBits.GUILD_SCHEDULED_EVENTS | IntentsBits.GUILD_MESSAGE_POLLS
-    
+        result_field = IntentsBits.GUILDS | IntentsBits.GUILD_MODERATION | IntentsBits.GUILD_EMOJIS_STICKERS | IntentsBits.GUILD_INTEGRATIONS | IntentsBits.GUILD_WEBHOOKS | IntentsBits.GUILD_INVITES | IntentsBits.GUILD_VOICE_STATES | IntentsBits.GUILD_MESSAGES | IntentsBits.GUILD_MESSAGE_REACTIONS | IntentsBits.GUILD_MESSAGE_TYPING | IntentsBits.GUILD_SCHEDULED_EVENTS | IntentsBits.GUILD_MESSAGE_POLLS
+        return cls(_set_manual=result_field)
     
     
