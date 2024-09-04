@@ -8,7 +8,7 @@ class Guild:
     This class will be provided. Do not try to initalize this class."""
     def __init__(self,_data: dict,invoked: Optional[Invoked]):
         self.invoked = invoked
-        self.id: int = _data["id"]
+        self.id: int = int(_data["id"])
         self.name: int = _data["name"]
         self.icon: str = _data["icon"]
         self.splash: str = _data["splash"]
