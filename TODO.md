@@ -9,5 +9,6 @@
 - make slash commands
 - add exceptions and ratelimit handling
 - make user object
+- rework any int instances for an id to a string (or create Snowflake type) :large_orange_diamond:
 
 |In progress = :large_orange_diamond: | Not done = :x: | Done = :white_check_mark:|
