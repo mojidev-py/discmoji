@@ -1,10 +1,11 @@
 from typing import *
 import aiohttp
 import asyncio
-from .types import Payload,OPCODES
+from .types import Payload,OPCODES,initiatelogging,formatter
 from random import uniform
 import os
 from .http import EndpointManager
+
 
 
 
@@ -58,6 +59,7 @@ class GatewayManager:
         async with self.ws as ws:
             hb_int = await self._abstractor()
             self.HB_INT = hb_int.data
+            initiatelogging.info(f"Recieved HELLO event. Initating heartbeat at {self.HB_INT / 1000.:2f} seconds.")
             firstpayload = Payload(code=OPCODES.IDENTIFY,d={
                 "token":self.token,
                 "properties": {
@@ -73,3 +75,4 @@ class GatewayManager:
             capture_guild_count = await self._abstractor() 
             if capture_guild_count.code == None:
                 self.guild_count = len(capture_guild_count.data["guilds"])
+                initiatelogging.info(f"Recieved READY event. Connected to gateway at session id: {capture_guild_count.data["session_id"]}, as {capture_guild_count.data["application"]["bot"]["username"]}#{capture_guild_count.data["application"]["bot"]["discriminator"]}")

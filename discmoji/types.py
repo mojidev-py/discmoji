@@ -23,7 +23,11 @@ SOFTWARE."""
 from enum import Enum
 from typing import *
 import json
+import logging
+from colorama import Fore, Style
 
+initiatelogging = logging.getLogger("discmoji")
+formatter = logging.Formatter(fmt=Style.BRIGHT+"[%(name)s-%(levelname)s-%(asctime)s]:%(message)s",datefmt="at %H:%M:%S")
 
 class OPCODES(Enum):
     # internal class that's used for getting opcodes easily without typing the code in manually
@@ -65,7 +69,12 @@ class Payload:
         return json.dumps(jsoned)
 
 
-
+class AppInfo:
+    """A class that represents the application itself.
+    Do not initialize this class. It will be initialized for you at bot connection."""
+    def __init__(self,_data: Optional[Dict]):
+        self.id = _data["id"]
+        ...
 
 
 
