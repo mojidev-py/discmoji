@@ -25,6 +25,7 @@ from typing import *
 import json
 import logging
 from colorama import Fore, Style
+from .guild import Guild
 
 initiatelogging = logging.getLogger("discmoji")
 formatter = logging.Formatter(fmt=Style.BRIGHT+"[%(name)s-%(levelname)s-%(asctime)s]:%(message)s",datefmt="at %H:%M:%S")
@@ -73,9 +74,29 @@ class AppInfo:
     """A class that represents the application itself.
     Do not initialize this class. It will be initialized for you at bot connection."""
     def __init__(self,_data: Optional[Dict]):
-        self.id = _data["id"]
-        ...
-
+        self.id = int(_data["id"])
+        self.name: str = _data["name"]
+        self.icon: str = _data["icon_hash"]
+        self.desc: str = _data["description"]
+        self.rpc_origins: Optional[List[str]] = _data["rpc_origins"]
+        self.public: bool = _data["bot_public"]
+        self.code_grant: bool = _data["bot_require_code_grant"]
+        # placeholder till i get User object done
+        self.bot: None = None
+        self.tos_url: str = _data["terms_of_service_url"]
+        self.privacy_policy_url: str = _data["privacy_policy_url"]
+        # user object!!!!!
+        self.owner: None = None
+        # TEAMMMMMMM
+        self.team: None = None
+        self.guild_id = int(_data["guild_id"])
+        self.guild: Guild = Guild(_data["guild"])
+        self.cover_image: str = _data["cover_image"]
+        self.flags: int = _data["flags"]
+        self.approx_guild_count: int = _data["approximate_guild_count"]
+        self.approx_user_installs: int = _data["approximate_user_install_count"]
+        self.redirects: List[str] = _data["redirect_uris"]
+        # more will be added
 
 
 
