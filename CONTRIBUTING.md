@@ -1,4 +1,4 @@
-# Contribuition Guidelines
+# Contribution Guidelines
 
 Thank you for trying to contribute to the project! We appreciate your enthusiasm!
 There are only two rules for contribuiting:
