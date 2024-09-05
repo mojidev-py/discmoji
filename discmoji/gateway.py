@@ -1,7 +1,7 @@
 from typing import *
 import aiohttp
 import asyncio
-from .types import Payload,OPCODES,initiatelogging,formatter
+from .types import Payload,OPCODES,initiatelogging,formatter,AppInfo
 from random import uniform
 import os
 from .http import EndpointManager
@@ -20,6 +20,7 @@ class GatewayManager:
         self.HB_INT = None
         self.current_payload = None
         self.guild_count = None
+        self.captured_app_info: None = None
     
     
     async def _abstractor(self) -> Payload:  
@@ -76,3 +77,4 @@ class GatewayManager:
             if capture_guild_count.code == None:
                 self.guild_count = len(capture_guild_count.data["guilds"])
                 initiatelogging.info(f"Recieved READY event. Connected to gateway at session id: {capture_guild_count.data["session_id"]}, as {capture_guild_count.data["application"]["bot"]["username"]}#{capture_guild_count.data["application"]["bot"]["discriminator"]}")
+                self.captured_app_info: AppInfo = AppInfo(capture_guild_count.data["application"])

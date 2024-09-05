@@ -44,6 +44,7 @@ class Bot:
         self.command = Command
         self.command.bot = self
         self.all_guilds = None
+        self.info = self._gateway_client.captured_app_info
     
     async def connect(self):
         # this just inits the gateway connection
