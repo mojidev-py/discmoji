@@ -1,7 +1,7 @@
 # TODO
 
 - capture application object from READY event, maybe call it AppInfo if going to make into an object :white_check_mark: (Need to make GatewayManager convert dict into AppInfo)
-- handle reconnect events :large_orange_diamond:
+- handle reconnect events :white_check_mark: (Made basic reconnection logic)
 - Work on making more intents and property configurations
 - make channel object
 - make asset object

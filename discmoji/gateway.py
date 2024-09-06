@@ -21,7 +21,9 @@ class GatewayManager:
         self.current_payload = None
         self.guild_count = None
         self.captured_app_info: None = None
-    
+        self.session_id: None = None
+        self.resume_url: None = None 
+        self.current_seq = None
     
     async def _abstractor(self) -> Payload:  
         # "abstracts" the recieved str payload into a Payload object it can use to do some extra logic without having to listen for a specific opcode or event name through ugly
@@ -40,6 +42,7 @@ class GatewayManager:
         if event.code == OPCODES.EVENT:
             payload = Payload(code=OPCODES.HEARTBEAT,d=event.seq)
             jsonized = payload.jsonize()
+            self.current_seq = event.seq
         else:
             # if it didn't recieve any event from the abstractor func, it sends no data, just opcode 1.
             payload = Payload(code=1,d=None)
@@ -53,6 +56,8 @@ class GatewayManager:
             await ws.send_str(data=jsonized)
             # captures the next event 
             await self._abstractor()
+
+
             
     
     async def _hand_shake(self):
@@ -74,7 +79,17 @@ class GatewayManager:
             jsonized = firstpayload.jsonize()
             await ws.send_str(jsonized)
             capture_guild_count = await self._abstractor() 
-            if capture_guild_count.code == None:
+            if capture_guild_count.code is None:
                 self.guild_count = len(capture_guild_count.data["guilds"])
                 initiatelogging.info(f"Recieved READY event. Connected to gateway at session id: {capture_guild_count.data["session_id"]}, as {capture_guild_count.data["application"]["bot"]["username"]}#{capture_guild_count.data["application"]["bot"]["discriminator"]}")
                 self.captured_app_info: AppInfo = AppInfo(capture_guild_count.data["application"])
+                self.session_id = capture_guild_count.data["session_id"]
+    
+    async def _reconnect_with_data(self):
+        if self.current_payload.code == OPCODES.RECONNECT:
+            async with self.ws as ws:
+                sending = Payload(code=6,d={
+                    "token": self.token,
+                    "session_id": self.session_id,
+                    "seq": self.current_seq
+                })

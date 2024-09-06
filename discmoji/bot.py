@@ -57,8 +57,7 @@ class Bot:
         self._all_guilds_setter()
         if self._gateway_client.current_payload.code == OPCODES.RECONNECT:
             loop.stop()
-            # I need to add handling for reconnect
-            ...
+            asyncio.run(self._gateway_client._reconnect_with_data)
     
     def command(self,name: str):
         """A decorator that registers a command with the specified name."""
