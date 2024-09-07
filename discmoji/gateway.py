@@ -17,13 +17,13 @@ class GatewayManager:
         self.ws_url = asyncio.run(endpointclient.send_request(method="get",route="/gateway")).data["url"]
         self.client = aiohttp.ClientSession()
         self.ws = self.client.ws_connect(self.url)
-        self.HB_INT = None
-        self.current_payload = None
-        self.guild_count = None
-        self.captured_app_info: None = None
-        self.session_id: None = None
-        self.resume_url: None = None 
-        self.current_seq = None
+        self.HB_INT: int | None = None
+        self.current_payload: Payload | None = None
+        self.guild_count: int | None = None
+        self.captured_app_info: None | AppInfo = None
+        self.session_id: None | str | int = None
+        self.resume_url: None | str = None 
+        self.current_seq: int | None = None
     
     async def _abstractor(self) -> Payload:  
         # "abstracts" the recieved str payload into a Payload object it can use to do some extra logic without having to listen for a specific opcode or event name through ugly
@@ -87,9 +87,21 @@ class GatewayManager:
     
     async def _reconnect_with_data(self):
         if self.current_payload.code == OPCODES.RECONNECT:
-            async with self.ws as ws:
+            initiatelogging.info("Gateway sent a RECONNECT event. Initiating reconnect process . . .")
+            self.client = aiohttp.ClientSession()
+            self.ws = self.client.ws_connect(self.resume_url)
+            async with self.ws as ws:    
+             try:   
                 sending = Payload(code=6,d={
                     "token": self.token,
                     "session_id": self.session_id,
                     "seq": self.current_seq
                 })
+                jsonized = sending.jsonize()
+                sent = await ws.send_str(jsonized)
+                response = await ws.receive_json()
+                if response == OPCODES.RESUME:
+                    initiatelogging.info("Successfully reconnected to gateway using new url.")
+             except aiohttp.ClientError as e:
+                 initiatelogging.fatal(f"Unable to reestablish connection with gateway. error: {e.args}")
+        
