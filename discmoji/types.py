@@ -98,6 +98,9 @@ class AppInfo:
         self.redirects: List[str] = _data["redirect_uris"]
         # more will be added
 
+class PermissionsBits(Enum):
+    ...
+    
 
 
         
