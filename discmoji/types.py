@@ -99,7 +99,8 @@ class AppInfo:
         # more will be added
 
 class PermissionsBits(Enum):
-    ...
+    CREATE_INSTANT_INVITE = 0x0000000000000001
+    
     
 
 

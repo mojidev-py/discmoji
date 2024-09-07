@@ -35,6 +35,7 @@ class BotIntents:
       -  Used to send the bitfield converted to an int to the gateway."""
     def __init__(self, _set_manual: Optional[int | Any]):
         self.result_field: int = _set_manual
+        self.guilds = IntentsBits.GUILDS
         
     
     
