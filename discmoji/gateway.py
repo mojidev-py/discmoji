@@ -4,7 +4,7 @@ import asyncio
 from .types import Payload,OPCODES,initiatelogging,formatter,AppInfo
 from random import uniform
 import os
-from .http import EndpointManager
+from ._http import EndpointManager
 
 
 

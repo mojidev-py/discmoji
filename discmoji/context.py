@@ -1,5 +1,5 @@
 from typing import *
-from .http import EndpointManager
+from ._http import EndpointManager
 from .gateway import GatewayManager
 import asyncio
 from .bot import Bot

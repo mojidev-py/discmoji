@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE."""
 
 from typing import *
-from .http import EndpointManager
+from ._http import EndpointManager
 from .gateway import GatewayManager
 import functools
 import asyncio
@@ -67,15 +67,13 @@ class Bot:
         
     
     
-    async def get_guild(self,id: int) -> Guild:
+    async def get_guild(self,id: int) -> Guild | None:
         """Gets a guild from the bot's current joined guilds, through the id."""
-        check = None
+ 
         for guild in self._guild_cache:
             if guild.id == id:
-                check = True
                 return guild
-        if check is None:
-            guild = Guild(asyncio.run(self._http.send_request('get',f"/guilds/{id}")).data)
+        return Guild(asyncio.run(self._http.send_request('get',f"/guilds/{id}")).data)
 
     
     async def total_guilds(self) -> int:
