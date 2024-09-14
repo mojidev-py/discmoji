@@ -1,5 +1,6 @@
 # discmoji
 
+### DEVELOPMENT SCHEDULE IS NOW LARGE SECTIONS OF CODE EVERY 2 WEEKS
 
 [![CodeFactor](https://www.codefactor.io/repository/github/mojidev-py/discmoji/badge)](https://www.codefactor.io/repository/github/mojidev-py/discmoji)  
 ## What is discmoji?
