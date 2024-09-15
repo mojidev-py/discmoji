@@ -12,3 +12,4 @@ from .context import Invoked
 from .guild import Guild
 from .member import GuildMember
 from .types import *
+from .errors import DiscmojiError
