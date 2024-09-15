@@ -1,5 +1,6 @@
 from typing import *
 import aiohttp
+from .overwrites import ChannelPermissionOverwrite
 
 
 
@@ -9,4 +10,6 @@ class GuildTextChannel:
         self.type = 0       
         self.position = _data["position"]
         # will be an object once Intents are made
-        self.overwrites = _data["permission_overwrites"] 
+        # goes through each entry in the _data's perm overwrites and makes a class for each overwrite
+        self.overwrites = [ChannelPermissionOverwrite(permissionoverwrite) for permissionoverwrite in _data["permission_overwrites"]]
+         
