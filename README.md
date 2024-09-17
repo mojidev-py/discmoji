@@ -13,7 +13,7 @@ Open a issue with the label `enhancement`, and follow the template!
 Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com` to become one!
 
 ### 🗓️ Release Date???
-I am depending on a release date of late November 2024, to early April 2025.
+I am estimating on a release date of late November 2024, to early April 2025.
 
 > ## ANNOUNCMENTS
 >### 🚀 Development Schedule???
