@@ -5,6 +5,7 @@ from .types import Payload,OPCODES,initiatelogging,formatter,AppInfo
 from random import uniform
 import os
 from ._http import EndpointManager
+from .errors import DiscmojiAPIError
 
 
 
@@ -103,5 +104,5 @@ class GatewayManager:
                 if response == OPCODES.RESUME:
                     initiatelogging.info("Successfully reconnected to gateway using new url.")
              except aiohttp.ClientError as e:
-                 initiatelogging.fatal(f"Unable to reestablish connection with gateway. error: {e.args}")
+                 raise DiscmojiAPIError(f"Discmoji couldn't reconnect to the gateway. {e.args}. raw payload:{self.current_payload.data}")
         

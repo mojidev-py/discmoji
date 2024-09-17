@@ -42,5 +42,5 @@ class Guild:
         for member in self._member_cache:
             if member.nick == username:
                 return member
-        return GuildMember(self.http.send_request('get',f'/guilds/{self.id}/members/search?query="{username}"'))
+        return GuildMember(asyncio.run(self.http.send_request('get',f'/guilds/{self.id}/members/search?query="{username}"')).data)
         
