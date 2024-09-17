@@ -13,8 +13,12 @@ Open a issue with the label `enhancement`, and follow the template!
 Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com` to become one!
 
 ### 🗓️ Release Date???
-I am estimating on a release date of late November 2024, to early April 2025.
+I am estimating on a release date (of a prerelease, or in the 0.x.x versions) of late November 2024, to early April 2025.
 
-> ## ANNOUNCMENTS
+> ## ANNOUNCEMENTS/FAQ
 >### 🚀 Development Schedule???
 >The development schedule will have fluctuations, but expect atleast 5 commits a week.
+>###  🤞 Final Release?
+> The final release (1.0.0) is estimated to be made around March 2025, all the way to late May 2025 all the way to July 2025 (not very optimistic date, ik)
+>### ❔ Will this _ever_ be finished?
+> Fingers Crossed!
