@@ -1,5 +1,5 @@
 # discmoji
->### 🚀 Development Schedule is now large changes every two weeks
+
 
 [![CodeFactor](https://www.codefactor.io/repository/github/mojidev-py/discmoji/badge)](https://www.codefactor.io/repository/github/mojidev-py/discmoji)  ![License](https://img.shields.io/badge/License-MIT-blue?labelColor=gray&style=flat)
 ## ❔ What is Discmoji?
@@ -15,3 +15,5 @@ Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com
 ### 🗓️ Release Date???
 I am depending on a release date of late November 2024, to early April 2025.
 
+>### 🚀 Development Schedule???
+>The development schedule will have fluctuations, but expect atleast 5 commits a week.
