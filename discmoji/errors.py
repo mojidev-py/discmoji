@@ -1,12 +1,10 @@
-import traceback
-from colorama import Fore
+
 class DiscmojiError(Exception):
     """ An error relating to the inner workings of Discmoji. """
     def __init__(self,msg: str):
         self.msg = msg
     def __str__(self):
-        return Fore.RED+f"Discmoji encountered an internal error, most likely due to another error that was encountered. 
-    Error:{traceback.print_exception(exc=self.__cause__)}"
+        return "Discmoji encountered an internal error."
    
    # format to call: DiscmojiError('error text')
    # how this is called: DiscmojiError("blueblahhhh")
