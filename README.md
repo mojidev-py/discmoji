@@ -1,20 +1,19 @@
 # discmoji
+>### 🚀 Development Schedule is now large changes every two weeks
 
-### DEVELOPMENT SCHEDULE IS NOW LARGE SECTIONS OF CODE EVERY 2 WEEKS
+[![CodeFactor](https://www.codefactor.io/repository/github/mojidev-py/discmoji/badge)](https://www.codefactor.io/repository/github/mojidev-py/discmoji)  ![License](https://img.shields.io/badge/License-MIT-blue?labelColor=gray&style=flat)
+## What is Discmoji?
+Discmoji is an API wrapper for Discord, made for fun!
+This isn't meant for production use, and if it does get used a lot, the library will get a redesign.
 
-[![CodeFactor](https://www.codefactor.io/repository/github/mojidev-py/discmoji/badge)](https://www.codefactor.io/repository/github/mojidev-py/discmoji)  
-## What is discmoji?
-discmoji is an api wrapper for discord, made for fun!
-This isn't meant for wide use, and if it does get used a lot, the library will get a redesign.
-
-## Suggestions? 
+## 💡 Suggestions? 
 Open a issue with the label `enhancement`, and follow the template!
 
-## Notes
-discmoji needs contributors! contact me (mojidev-py) at pycharmdudeig@gmail.com to become one!
+## ⭐️ Contribuiting
+Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com` to become one!
 
-
-### Release Date???
+### 🗓️ Release Date???
 **The release date is still very broad, since this project has just started.**
-Expect a release date of December 2024 to April 2025, depending on how much features and how much setbacks this project has.
+
+Expect a release date of December 2024 to April 2025, depending on how many features and how many setbacks this project has.
 
