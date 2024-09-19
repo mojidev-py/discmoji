@@ -14,8 +14,7 @@ Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com
 
 ### 🗓️ Release Date???
 I am estimating on a release date (of a prerelease, or in the 0.x.x versions) of late November 2024, to early April 2025.
-
-> ## ANNOUNCEMENTS/FAQ
+## 📣 ANNOUNCEMENTS/FAQ
 >### 🚀 Development Schedule???
 >The development schedule will have fluctuations, but expect atleast 5 commits a week.
 >###  🤞 Final Release?
