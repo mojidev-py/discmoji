@@ -17,4 +17,9 @@ class GuildTextChannel:
         self.topic: str | None = _data["topic"]
         self.rate_limit: int = _data["rate_limit_per_user"]
         self.category_id: int = _data["parent_id"]
+        self.last_pin: int = _data["last_pin_timestamp"]
+        self.invoked_permissions: int | None = _data["permissions"]
+        self.flags: int = _data["flags"]
+        self.messages_sent: int = _data["total_message_sent"]
+        
         

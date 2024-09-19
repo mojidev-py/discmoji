@@ -1,7 +1,7 @@
 # TODO
 
-- make channel object :large_orange_diamond: `Due Date = 10/14` (increased date because of break taken)
-- Permission Overwrites Object :large_orange_diamond: `Do this before channels`
+- make channel object :white_check_mark:
+- Permission Overwrites Object :white_check_mark: - :large_orange_diamond: (finished, but need finishing touches)
 - make asset object
 - make prefix commands work properly
 - make slash commands
