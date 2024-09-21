@@ -148,6 +148,15 @@ class PermissionsBits(Enum):
     SEND_VOICE_MESSAGES = 1 << 46
     SEND_POLLS = 1 << 49
     EXTERNAL_APPS = 1 << 50
+    
+class RoleTags:
+    """Contains extra metadata about the role."""
+    def __init__(self,_data: dict | None):
+        self.bot_id: int = int(_data["bot_id"])
+        self.integration_id: int = int(_data["integration_id"])
+        self.premium: bool = True if _data["premium_subscriber"] is None else False
+        self.available_for_purchase: bool = True if _data["available_for_purchase"] is None else False
+        self.guild_connection: bool = True if _data["guild_connections"] is None else False
 
         
             
