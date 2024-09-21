@@ -12,6 +12,24 @@ Open a issue with the label `enhancement`, and follow the template!
 ## ⭐️ Contributing
 Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com` to become one!
 
+## 📖 Example
+```python
+from discmoji import *
+import asyncio
+
+Client = Bot(token="discord bot token",intents=123213123) 
+
+@Client.command(name="example command")
+def commd(ctx: Invoked):
+    asyncio.run(Client.get_guild(1234567))
+
+@commd.error()
+def example_error(ctx: Invoked,error: Exception):
+    print("Something bad happened!")
+
+asyncio.run(Client.connect)
+```
+
 ### 🗓️ Release Date???
 I am estimating on a release date (of a prerelease, or in the 0.x.x versions) of late November 2024, to early April 2025.
 ## 📣 ANNOUNCEMENTS/FAQ
