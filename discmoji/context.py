@@ -9,9 +9,8 @@ from .channel import GuildTextChannel
 
 
 
-
 class Invoked:
-    """A class that hosts the data of where a prefix command was used."""
+    """A class that hosts the data of where a prefix/slash command was used."""
     # A class that hosts the data of where a command was used
     def __init__(self,endpoint: EndpointManager,gateway: GatewayManager,bot: Bot):
         self._endpoint = endpoint
@@ -20,7 +19,6 @@ class Invoked:
         # rest will be constructed by internal funcs
         self.member = ...
         self.message = ...
-        self.messagerefs = ...
         self.channel = ...
         self.guild = ...
     
