@@ -5,6 +5,7 @@ import asyncio
 from .bot import Bot
 from .member import GuildMember
 from .guild import Guild
+from .channel import GuildTextChannel
 
 
 
@@ -28,4 +29,4 @@ class Invoked:
         # constructs itself so it can be used while running a command
         self.member: GuildMember = GuildMember(self._gateway.current_payload.data["member"])
         self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._gateway.current_payload.data["guild_id"]}")).data)
-            
+        self.channel: GuildTextChannel = GuildTextChannel(asyncio.run(self._endpoint.send_request('get',f'/channels/{self._gateway.current_payload.data["channel_id"]}')).data)    
