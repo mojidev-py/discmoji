@@ -13,3 +13,8 @@ from .guild import Guild
 from .member import GuildMember
 from .types import *
 from .errors import DiscmojiError
+from .message import Message
+from .channel import GuildTextChannel
+from .overwrites import ChannelPermissionOverwrite
+from .intents import BotIntents
+from .roles import Role
