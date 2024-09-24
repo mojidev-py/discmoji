@@ -23,11 +23,9 @@ SOFTWARE."""
 from typing import *
 from ._http import EndpointManager
 from .gateway import GatewayManager
-import functools
 import asyncio
 from .command import Command
 from .guild import Guild
-from .member import GuildMember
 from .types import OPCODES
 from .intents import BotIntents
 
