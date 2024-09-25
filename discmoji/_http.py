@@ -4,7 +4,7 @@ import asyncio
 from .types import Payload,OPCODES
 import json
 from .errors import DiscmojiRatelimit
-
+import warnings
 
 
 
@@ -40,7 +40,7 @@ class EndpointManager:
                     # return statement returns the decoded and deserialized content that StreamReader recieves
                     check = await self.ratelimited(sent)
                     if check[0] == True:
-                        raise DiscmojiRatelimit(f"{check[1]}")
+                        warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
                     return Payload(code=OPCODES.HTTP,d=json.loads(decoded),event_name="HTTP_REQUEST_RECIEVED")
                 case "post":
                     sent = await client.post(url=self.base_url+route)
@@ -48,7 +48,7 @@ class EndpointManager:
                     decoded = await parsed.decode(encoding="utf-8")
                     check = await self.ratelimited(sent)
                     if check[0] == True:
-                        raise DiscmojiRatelimit(f"{check[1]}")
+                        warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
                     return Payload(OPCODES.HTTP,d=json.loads(decoded),event_name="HTTP_REQUEST_RECIEVED")
                 case "put":
                     sent = await client.put(url=self.base_url+route)
@@ -56,7 +56,7 @@ class EndpointManager:
                     decoded = await parsed.decode()
                     check = await self.ratelimited(sent)
                     if check[0] == True:
-                        raise DiscmojiRatelimit(f"{check[1]}")
+                        warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
                     return Payload(OPCODES.HTTP,d=json.loads(decoded),event_name="HTTP_REQUEST_RECIEVED")
                 case "patch":
                     sent = await client.patch(url=self.base_url+route)
@@ -64,7 +64,7 @@ class EndpointManager:
                     decoded = await parsed.decode()
                     check = await self.ratelimited(sent)
                     if check[0] == True:
-                        raise DiscmojiRatelimit(f"{check[1]}")
+                        warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
                     return Payload(OPCODES.HTTP,json.loads(decoded),event_name="HTTP_REQUEST_RECIEVED")
                 case "delete":
                     sent = await client.delete(self.base_url+route)
@@ -72,7 +72,7 @@ class EndpointManager:
                     decoded = parsed.decode()
                     check = await self.ratelimited(sent)
                     if check[0] == True:
-                        raise DiscmojiRatelimit(f"{check[1]}")
+                        warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
                     return Payload(OPCODES.HTTP,d=json.loads(decoded),s="HTTP_REQUEST_RECIEVED")
 
     
