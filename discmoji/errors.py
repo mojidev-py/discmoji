@@ -13,10 +13,12 @@ class DiscmojiCommandError(DiscmojiError):
     """ An error related to bot commands using Discmoji. """
     def __str__(self):
         return f"An error ocurred when executing/creating a bot command: {self.msg}"
+class DiscmojiRatelimit(Warning):
+    def __init__(self,msg: str):
+        def __str__(self):
+            return f"Discmoji is currently being ratelimited. Rerun the bot in: {self.msg}s."
+
    
    # For unknown/unspecified errors: `raise DiscmojiError("Error Message")`
    # For Discord API errors: `raise DiscmojiAPIError("Error Message")`
    # For command errors: `raise DiscmojiCommandError("Error Message")`
-   # -- sample output --
-   # DiscmojiError: Discmoji encountered an internal error while trying to initiate a connection or another error occured that raised this exception. error with message:
-   # (Exception,(the default/builtin exception that it failed with's args)) blueblahhh
