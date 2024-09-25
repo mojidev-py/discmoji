@@ -5,6 +5,6 @@
 - make prefix commands work properly :large_orange_diamond:
 - make slash commands
 - Add new functions/functionality to classes
-- Message related objects :large_orange_diamond:
+- Message related objects :white_check_mark:
 
 |In progress = :large_orange_diamond: | Not done = :x: | Done = :white_check_mark:|

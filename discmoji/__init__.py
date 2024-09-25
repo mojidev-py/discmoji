@@ -19,3 +19,6 @@ from .overwrites import ChannelPermissionOverwrite
 from .intents import BotIntents
 from .roles import Role
 from .user import User
+from .messagesubtypes import *
+from .message import Message
+
