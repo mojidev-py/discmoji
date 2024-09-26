@@ -3,7 +3,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/mojidev-py/discmoji/badge)](https://www.codefactor.io/repository/github/mojidev-py/discmoji)  ![License](https://img.shields.io/badge/License-MIT-blue?labelColor=gray&style=flat)
 
-                         [discmoji on PyPI](https://pypi.org/project/discmoji/)
+[discmoji on PyPI](https://pypi.org/project/discmoji/)
 
 ## ❔ What is Discmoji?
 Discmoji is an API wrapper for Discord, made for fun!
