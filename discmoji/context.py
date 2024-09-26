@@ -7,7 +7,9 @@ from .member import GuildMember
 from .guild import Guild
 from .channel import GuildTextChannel
 from .message import Message
-
+from .messagesubtypes import *
+from .types import Payload
+import json
 
 class Invoked:
     """A class that hosts the data of where a prefix/slash command was used."""
@@ -29,5 +31,17 @@ class Invoked:
         self.member: GuildMember = GuildMember(self._gateway.current_payload.data["member"])
         self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._gateway.current_payload.data["guild_id"]}")).data)
         self.channel: GuildTextChannel = GuildTextChannel(asyncio.run(self._endpoint.send_request('get',f'/channels/{self._gateway.current_payload.data["channel_id"]}')).data)
-        self.message: Message = Message(asyncio.run(self._bot._http.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
+        self.message: Message = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
+    
+    
+    async def send_message(self,text: str,embed: Embed | List[Embed] | None) -> NoReturn | Message:
+        if embed is not None:
+            raise NotImplementedError("Not implemented yet, will be soon")
         
+        msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
+            "content": text
+        })
+        read = await msg.read()
+        recved = read.decode()
+        tobepayloaded = json.loads(recved)
+        return Message(Payload(None,tobepayloaded,None,None).data)
