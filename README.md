@@ -34,11 +34,11 @@ asyncio.run(Client.connect)
 ```
 
 ### 🗓️ Release Date???
-I am estimating on a release date (of a prerelease, or in the 0.x.x versions) of late November 2024, to early April 2025.
+> Around October 17th or September 30th (0.3.0 is going to be a full release)
 ## 📣 ANNOUNCEMENTS/FAQ
 >### 🚀 Development Schedule???
 >The development schedule will have fluctuations, but expect atleast 5 commits a week.
->###  🤞 Final Release?
-> The final release (1.0.0) is estimated to be made around March 2025, all the way to late May 2025 all the way to July 2025 (not very optimistic date, ik)
+>###  🤞  1.0.0?
+> 1.0.0 is estimated to be made around March 2025, all the way to late May 2025 all the way to July 2025 (not very optimistic date, ik)
 >### ❔ Will this _ever_ be finished?
 > Fingers Crossed!
