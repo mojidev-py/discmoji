@@ -1,5 +1,4 @@
 from typing import *
-from .message import Message
 import asyncio
 from .channel import GuildTextChannel
 from .bot import Bot
@@ -7,10 +6,8 @@ from .bot import Bot
 class MessageReference:
     def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: int):
         self.type = _data["type"]
-        self.originated_message = Message(asyncio.run(bindedbot._http.send_request('get',f'/channels/{binded_channel.id}/messages/{_data["message_reference"]["message_id"]}')).data)
         self.channel = self.originated_message.channel
         self.guild = self.channel.guild
-        self.resolved = Message(asyncio.run(bindedbot._http.send_request('get',f'/channels/{binded_channel.id}/{id}')))
 
 class Attachment:
     def __init__(self,_data: dict):
