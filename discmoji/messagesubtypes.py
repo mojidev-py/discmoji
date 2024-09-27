@@ -38,6 +38,17 @@ class Embed:
         self.timestamp: int = _data["timestamp"]
         self.color: int = _data["color"]
     
+    def _dictize(self) -> Dict[str,str | int]:
+        # turns self into a dict for msg func to send
+        return {
+            "title": self.title,
+            "type": self.type,
+            "description": self.description,
+            "url": self.url,
+            "timestamp": self.timestamp,
+            "color": self.color
+        }
+    
     # rest are going to be implemented as their own funcs
 
 class Reaction:

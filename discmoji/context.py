@@ -34,14 +34,57 @@ class Invoked:
         self.message: Message = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
     
     
-    async def send_message(self,text: str,embed: Embed | List[Embed] | None) -> NoReturn | Message:
-        if embed is not None:
-            raise NotImplementedError("Not implemented yet, will be soon")
-        
-        msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
+    async def send_message(self,text: Optional[str],embeds: Embed | List[Embed] | None) -> Message:
+        embed: Embed | None = None
+        if embeds is not None:
+            if len(embeds) == 1:
+                embed = embeds._dictize()
+                if text is None:
+                    msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
+                        "embeds": [embed]
+                    })
+                    read = await msg.read()
+                    decode = read.decode()
+                    returned = json.loads(decode)
+                    return Message(Payload(None,returned,None,None).data)
+                else:
+                    msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
+                        "content": text,
+                        "embeds": [embed]
+                    })
+                    read = await msg.read()
+                    decode = read.decode()
+                    returned = json.loads(decode)
+                    return Message(Payload(None,returned,None,None).data)
+            if len(embeds) > 1:
+                listembeds: list[Embed] = [_._dictize() for _ in embeds]
+                if text is None:
+                        msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
+                        "embeds": listembeds
+                    })
+                        read = await msg.read()
+                        decode = read.decode()
+                        returned = json.loads(decode)
+                        return Message(Payload(None,returned,None,None).data)
+                else:
+                            msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
+                        "content": text,
+                        "embeds": listembeds
+                        })
+                            read = await msg.read()
+                            decode = read.decode()
+                            returned = json.loads(decode)
+                            return Message(Payload(None,returned,None,None).data)
+                
+                
+                    
+                        
+                
+        else:
+            msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
             "content": text
         })
-        read = await msg.read()
-        recved = read.decode()
-        tobepayloaded = json.loads(recved)
-        return Message(Payload(None,tobepayloaded,None,None).data)
+            read = await msg.read()
+            recved = read.decode()
+            tobepayloaded = json.loads(recved)
+            return Message(Payload(None,tobepayloaded,None,None).data)
