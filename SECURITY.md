@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Since we are in pre-release, we support any version that starts with 0.0
+Since we are in pre-release, we support any version that starts with 0.
 | Version | Supported          |
 | ------- | ------------------ |
 | 0.x.x   | :white_check_mark: |
