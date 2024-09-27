@@ -79,7 +79,6 @@ class Invoked:
                 
                     
                         
-                
         else:
             msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
             "content": text
@@ -88,3 +87,29 @@ class Invoked:
             recved = read.decode()
             tobepayloaded = json.loads(recved)
             return Message(Payload(None,tobepayloaded,None,None).data)
+    
+
+
+    
+    
+    async def is_cmd_invoked(self):
+        n = 0
+        if self._gateway.current_payload.event_name == "MESSAGE_CREATE":
+            self._construct()
+            for cmd in self._bot._all_cmds:
+                if cmd.name in self._gateway.current_payload.data["content"]:
+                    args: str = self._gateway.current_payload.data["content"]
+                    argsfilter = args.removeprefix(f"{self._bot.prefix}{cmd.name} ")
+                    final1 = args.split(maxsplit=cmd.callback.__code__.co_argcount)
+                    for arg in enumerate(final1):
+                        if arg[1].isnumeric():
+                            final1[arg[0]] = int(arg)
+                            
+                    await cmd.callback(self,*final1)
+                    return True
+        return False
+    # reminder future mojidev-py: this function ALREADY sets up the 
+                    
+                    
+                        
+                            

@@ -25,6 +25,7 @@ class GatewayManager:
         self.session_id: None | str | int = None
         self.resume_url: None | str = None 
         self.current_seq: int | None = None
+        
     
     async def _abstractor(self) -> Payload:  
         # "abstracts" the recieved str payload into a Payload object it can use to do some extra logic without having to listen for a specific opcode or event name through ugly
@@ -105,4 +106,5 @@ class GatewayManager:
                     initiatelogging.info("Successfully reconnected to gateway using new url.")
              except aiohttp.ClientError as e:
                  raise DiscmojiAPIError(f"Discmoji couldn't reconnect to the gateway. {e.args}. raw payload:{self.current_payload.data}")
+        
         

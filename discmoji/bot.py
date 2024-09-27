@@ -31,7 +31,7 @@ from .intents import BotIntents
 
 class Bot:
     """Represents the application."""
-    def __init__(self,token: str,intents: BotIntents):
+    def __init__(self,token: str,intents: BotIntents,prefix: str):
         self._http = EndpointManager(token=token)
         self._gateway_client = GatewayManager(token=token,intents=intents.result_field,endpointclient=self._http)
         self.token = token
@@ -43,6 +43,7 @@ class Bot:
         self.command.bot = self
         self.all_guilds = None
         self.info = self._gateway_client.captured_app_info
+        self.prefix = prefix
     
     async def connect(self):
         # this just inits the gateway connection
@@ -86,5 +87,9 @@ class Bot:
             self.all_guilds: List[Guild] = []
             self.all_guilds.append(Guild(self._gateway_client.current_payload.data))
     
+    
+    
             
                     
+class ScalableBot(Bot):
+    pass
