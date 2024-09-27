@@ -63,6 +63,7 @@ class Bot:
     def command(self,name: str):
         """A decorator that registers a command with the specified name."""
         def decor(func: Callable):
+            self._all_cmds.append(Command(name=name))
             return Command(name=name)
         return decor
         

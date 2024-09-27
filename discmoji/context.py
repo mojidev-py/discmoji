@@ -93,11 +93,13 @@ class Invoked:
     
     
     async def invoked_cmd_handler(self):
+        asyncio.sleep(5.5)
+        # checks every 5.5 seconds for new commands
         n = 0
         if self._gateway.current_payload.event_name == "MESSAGE_CREATE":
-            self._construct()
             for cmd in self._bot._all_cmds:
                 if cmd.name in self._gateway.current_payload.data["content"]:
+                    self._construct()
                     args: str = self._gateway.current_payload.data["content"]
                     argsfilter = args.removeprefix(f"{self._bot.prefix}{cmd.name} ")
                     final1 = args.split(maxsplit=cmd.callback.__code__.co_argcount)
