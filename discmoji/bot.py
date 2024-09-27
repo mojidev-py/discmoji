@@ -28,7 +28,7 @@ from .command import Command
 from .guild import Guild
 from .types import OPCODES
 from .intents import BotIntents
-
+from .context import Invoked
 class Bot:
     """Represents the application."""
     def __init__(self,token: str,intents: BotIntents,prefix: str):
@@ -57,6 +57,8 @@ class Bot:
         if self._gateway_client.current_payload.code == OPCODES.RECONNECT:
             loop.stop()
             asyncio.run(self._gateway_client._reconnect_with_data)
+        invokedsetup: Invoked = Invoked(self._http,self._gateway_client,self,self._gateway_client.current_payload.data["id"] if self._gateway_client.current_payload.data["id"] is not None else None)
+        loop.create_task(invokedsetup.invoked_cmd_handler)
     
     def command(self,name: str):
         """A decorator that registers a command with the specified name."""

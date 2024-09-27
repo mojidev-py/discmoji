@@ -14,7 +14,7 @@ import json
 class Invoked:
     """A class that hosts the data of where a prefix/slash command was used."""
     # A class that hosts the data of where a command was used
-    def __init__(self,endpoint: EndpointManager,gateway: GatewayManager,bot: Bot,msgid: int):
+    def __init__(self,endpoint: EndpointManager,gateway: GatewayManager,bot: Bot,msgid: int | None):
         self._endpoint = endpoint
         self._gateway = gateway
         self._bot = bot
@@ -31,7 +31,7 @@ class Invoked:
         self.member: GuildMember = GuildMember(self._gateway.current_payload.data["member"])
         self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._gateway.current_payload.data["guild_id"]}")).data)
         self.channel: GuildTextChannel = GuildTextChannel(asyncio.run(self._endpoint.send_request('get',f'/channels/{self._gateway.current_payload.data["channel_id"]}')).data)
-        self.message: Message = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
+        self.message: Message | None = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
     
     
     async def send_message(self,text: Optional[str],embeds: Embed | List[Embed] | None) -> Message:
@@ -92,7 +92,7 @@ class Invoked:
 
     
     
-    async def is_cmd_invoked(self):
+    async def invoked_cmd_handler(self):
         n = 0
         if self._gateway.current_payload.event_name == "MESSAGE_CREATE":
             self._construct()
@@ -106,9 +106,7 @@ class Invoked:
                             final1[arg[0]] = int(arg)
                             
                     await cmd.callback(self,*final1)
-                    return True
-        return False
-    # reminder future mojidev-py: this function ALREADY sets up the 
+ 
                     
                     
                         
