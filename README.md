@@ -39,11 +39,10 @@ asyncio.run(Client.connect)
 > Around October 17th or September 30th (0.3.0 is going to be a full release)
 ## 📣 ANNOUNCEMENTS/FAQ
 
-> September 25th: We now have a solid release date for the library. The library has progressed from prealpha to alpha, and will be progressing into beta soon. Watch out!
 
 >### 🚀 Development Schedule???
 >The development schedule will have fluctuations, but expect atleast 5 commits a week.
 >###  🤞  1.0.0?
-> 1.0.0 is estimated to be made around March 2025, all the way to late May 2025 all the way to July 2025 (not very optimistic date, ik)
+> 1.0.0 is going to come out in 2025. No solid dates yet!
 >### ❔ Will this _ever_ be finished?
 > Fingers Crossed!
