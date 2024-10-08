@@ -2,7 +2,7 @@ from typing import *
 import asyncio
 from .channel import GuildTextChannel
 from .bot import Bot
-
+from .types import File
 class MessageReference:
     def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: int):
         self.type = _data["type"]
@@ -10,7 +10,8 @@ class MessageReference:
         self.guild = self.channel.guild
 
 class Attachment:
-    def __init__(self,_data: dict):
+    def __init__(self,_data: dict,file: File):
+        self.file = file
         self.id: int = int(_data["id"])
         self.filename: str = _data["filename"]
         self.title: str = _data["title"]
@@ -25,6 +26,10 @@ class Attachment:
         self.duration_secs: float = _data["duration_secs"]
         self.waveform: bytearray = _data["waveform"]
         self.flags: int = _data["flags"]
+    
+    def _construct(self):
+        with open(self.file.location,"r"):
+            ...
 
 class Embed:
     def __init__(self,_data: dict):

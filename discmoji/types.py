@@ -159,4 +159,9 @@ class RoleTags:
         self.guild_connection: bool = True if _data["guild_connections"] is None else False
 
         
-            
+
+class File:
+    def __init__(self,location: str):
+        self.location = location
+    
+    
