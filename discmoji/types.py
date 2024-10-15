@@ -161,7 +161,15 @@ class RoleTags:
         
 
 class File:
-    def __init__(self,location: str):
-        self.location = location
+    def __init__(self,filename: str,filenames: list[str],__fileindex: int):
+        self.filename = filename
+        self.filenames = filenames
+        self.__fileindex = __fileindex
+    
+    def header_format(self):
+        if self.filename.endswith(".png"):
+            formatted = f'--boundary \n Content-Disposition: form-data; name="files[{self.__fileindex}]"; filename={self.filename} \n Content-Type: image\png'
+    
+    
     
     

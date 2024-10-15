@@ -10,8 +10,7 @@ class MessageReference:
         self.guild = self.channel.guild
 
 class Attachment:
-    def __init__(self,_data: dict,file: File):
-        self.file = file
+    def __init__(self,_data: dict):
         self.id: int = int(_data["id"])
         self.filename: str = _data["filename"]
         self.title: str = _data["title"]
@@ -25,11 +24,8 @@ class Attachment:
         self.ephemeral: bool = _data["ephemeral"]
         self.duration_secs: float = _data["duration_secs"]
         self.waveform: bytearray = _data["waveform"]
-        self.flags: int = _data["flags"]
-    
-    def _construct(self):
-        with open(self.file.location,"r"):
-            ...
+        self.flags: int = _data["flags"]     
+            
 
 class Embed:
     def __init__(self,_data: dict):
