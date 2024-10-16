@@ -3,6 +3,7 @@ import asyncio
 from .channel import GuildTextChannel
 from .bot import Bot
 from .types import File
+import aiohttp
 class MessageReference:
     def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: int):
         self.type = _data["type"]
@@ -10,9 +11,9 @@ class MessageReference:
         self.guild = self.channel.guild
 
 class Attachment:
-    def __init__(self,_data: dict):
+    def __init__(self,_data: dict,file: File):
         self.id: int = int(_data["id"])
-        self.filename: str = _data["filename"]
+        self.filename: str  = _data["filename"]
         self.title: str = _data["title"]
         self.description: str = _data["description"]
         self.content_type: str = _data["content_type"]
@@ -24,7 +25,33 @@ class Attachment:
         self.ephemeral: bool = _data["ephemeral"]
         self.duration_secs: float = _data["duration_secs"]
         self.waveform: bytearray = _data["waveform"]
-        self.flags: int = _data["flags"]     
+        self.flags: int = _data["flags"]
+        self.__formdata: aiohttp.FormData = aiohttp.FormData
+        self.file = file
+    def find_content_type(self):
+        # only image types are supported
+        name = self.file.filename
+        if name.endswith(".gif"):
+            return "image/gif"
+        if name.endswith(".png"):
+            return "image/png"
+        else:
+            pass
+        
+    
+    
+    
+    
+    def _convert(self):
+       #converts the file that that was provided into formdata
+       
+       
+       self.__formdata.add_field(
+           name=f"file[{self.file.__fileindex}]",
+           value={self.file.filename},
+           
+           
+       )
             
 
 class Embed:

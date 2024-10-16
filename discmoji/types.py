@@ -165,10 +165,8 @@ class File:
         self.filename = filename
         self.filenames = filenames
         self.__fileindex = __fileindex
-    
-    def header_format(self):
-        if self.filename.endswith(".png"):
-            formatted = f'--boundary \n Content-Disposition: form-data; name="files[{self.__fileindex}]"; filename={self.filename} \n Content-Type: image\png'
+
+            
     
     
     
