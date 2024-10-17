@@ -29,14 +29,13 @@ class Attachment:
         self.__formdata: aiohttp.FormData = aiohttp.FormData
         self.file = file
     def find_content_type(self):
-        # only image types are supported
+        # only image types gif and png are supported (will add more support)
         name = self.file.filename
         if name.endswith(".gif"):
             return "image/gif"
         if name.endswith(".png"):
             return "image/png"
-        else:
-            pass
+    
         
     
     
@@ -49,9 +48,9 @@ class Attachment:
        self.__formdata.add_field(
            name=f"file[{self.file.__fileindex}]",
            value={self.file.filename},
-           
-           
-       )
+           content_type=self.find_content_type(),
+           )
+       # works on one file, will implement more soon
             
 
 class Embed:
