@@ -26,7 +26,7 @@ class Attachment:
         self.duration_secs: float = _data["duration_secs"]
         self.waveform: bytearray = _data["waveform"]
         self.flags: int = _data["flags"]
-        self.__formdata: aiohttp.FormData = aiohttp.FormData
+        self.__formdata: aiohttp.MultipartWriter = aiohttp.MultipartWriter(boundary="--")
         self.file = file
     def find_content_type(self):
         # only image types gif and png are supported (will add more support)
@@ -42,15 +42,11 @@ class Attachment:
     
     
     def _convert(self):
-       #converts the file that that was provided into formdata
-       
-       
-       self.__formdata.add_field(
-           name=f"file[{self.file.__fileindex}]",
-           value={self.file.filename},
-           content_type=self.find_content_type(),
-           )
-       # works on one file, will implement more soon
+        with self.__formdata as multipart:
+            multipart.append(self.file.filename,{"CONTENT_TYPE":self.find_content_type()})
+            multipart.set_content_disposition("form-data",name=f"files[{self.file.__fileindex}]",filename={self.filename})
+        # converts data into multipart, haven't implemented turning multiple into attachments, might do that seperately
+
             
 
 class Embed:
