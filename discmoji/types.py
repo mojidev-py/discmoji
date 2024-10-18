@@ -26,6 +26,7 @@ import json
 import logging
 from colorama import Fore, Style
 from .guild import Guild
+from .user import User
 
 initiatelogging = logging.getLogger("discmoji")
 formatter = logging.Formatter(fmt=Style.BRIGHT+"[%(name)s-%(levelname)s-%(asctime)s]:%(message)s",datefmt="at %H:%M:%S")
@@ -165,7 +166,6 @@ class File:
         self.filename = filename
         self.filenames = filenames
         self.__fileindex = __fileindex
-
             
     
     
