@@ -24,9 +24,10 @@ import asyncio
 
 Client = Bot(token="discord bot token",intents=123213123) 
 
-@Client.command(name="example command")
+@Client.command(name="example_command")
 async def commd(ctx: Invoked):
-    asyncio.run(Client.get_guild(1234567))
+    Client.get_guild(1234567)
+    Client.send_message("message")
 
 @commd.error()
 async def example_error(ctx: Invoked,error: Exception):
