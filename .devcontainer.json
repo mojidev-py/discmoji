@@ -1,0 +1,7 @@
+{
+  "tasks": {
+    "test": "pip install -r requirements.txt && pip install pytest && pytest",
+    "build": "pip install -r requirements.txt && python setup.py install",
+    "launch": "pip install -r requirements.txt && python example.py"
+  }
+}

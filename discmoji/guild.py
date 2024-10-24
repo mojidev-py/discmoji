@@ -10,30 +10,27 @@ class Guild:
         self.user = ...
         # not yet, since i need to implement the user object
         self.http = __httpmanager
-        self.id: int = int(_data["id"])
-        self.name: int = _data["name"]
-        self.icon: str = _data["icon"]
-        self.splash: str = _data["splash"]
-        self.owner_id: int = _data["owner_id"]
-        self.afk_channel_id: int = _data["afk_channel_id"]
-        self.afk_timeout: int = _data["afk_timeout"]
-        self.verification_level: int = _data["verification_level"]
-        self.message_notif_level: int = _data["default_message_notifications"]
-        self.explicit_content_filter_level: int = _data["explicit_content_filter"]
-        # for self.roles, once I make Role object, type hint will be more clarified
-        self.roles: List = _data["roles"] 
-        # same as self.roles notice
-        self.emojis: List = _data["emojis"]
-        self.features: List = _data["features"]
-        self.mfa_level: int = _data["mfa_level"]
-        self.app_id: int = _data["application_id"]
+        self.id: int = self._get_dict_value(_data, "id")
+        self.name: int = self._get_dict_value(_data, "name")
+        self.icon: str = self._get_dict_value(_data, "icon")
+        self.splash: str = self._get_dict_value(_data, "splash")
+        self.owner_id: int = self._get_dict_value(_data, "owner_id")
+        self.afk_channel_id: int = self._get_dict_value(_data, "afk_channel_id")
+        self.afk_timeout: int = self._get_dict_value(_data, "afk_timeout")
+        self.verification_level: int = self._get_dict_value(_data, "verification_level")
+        self.message_notif_level: int = self._get_dict_value(_data, "default_message_notifications")
+        self.explicit_content_filter_level: int = self._get_dict_value(_data, "explicit_content_filter")
+        self.roles: List = self._get_dict_value(_data, "roles", [])
+        self.emojis: List = self._get_dict_value(_data, "emojis", [])
+        self.features: List = self._get_dict_value(_data, "features", [])
+        self.mfa_level: int = self._get_dict_value(_data, "mfa_level")
+        self.app_id: int = self._get_dict_value(_data, "application_id")
         self._member_cache: List[GuildMember] = []
         
         # rest will be included later
-    
-    
-    
-    
+
+    def _get_dict_value(self, dictionary: dict, key: str, default=None):
+        return dictionary.get(key, default)
     
     async def get_member(self,username: str):
         """Gets the specified member from the guild, using their username."""

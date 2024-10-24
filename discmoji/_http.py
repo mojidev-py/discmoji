@@ -17,6 +17,9 @@ class EndpointManager:
         self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr",
                         "Authorization":f"Bot {token}"}
         self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)#yet
+
+    def _get_dict_value(self, dictionary: dict, key: str, default=None):
+        return dictionary.get(key, default)
     
 
     async def ratelimited(self,request: aiohttp.ClientResponse):

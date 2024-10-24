@@ -15,7 +15,10 @@ class GatewayManager:
         # handles the gateway connections/events and turns recieved payloads into the Payload object for easier use
         self.token = token
         self.intents = intents
-        self.ws_url = asyncio.run(endpointclient.send_request(method="get",route="/gateway")).data["url"]
+        try:
+            self.ws_url = asyncio.run(endpointclient.send_request(method="get",route="/gateway")).data["url"]
+        except KeyError:
+            self.ws_url = None
         self.client = aiohttp.ClientSession()
         self.ws = self.client.ws_connect(self.url)
         self.HB_INT: int | None = None
@@ -25,6 +28,9 @@ class GatewayManager:
         self.session_id: None | str | int = None
         self.resume_url: None | str = None 
         self.current_seq: int | None = None
+
+    def _get_dict_value(self, dictionary: dict, key: str, default=None):
+        return dictionary.get(key, default)
         
     
     async def _abstractor(self) -> Payload:  
@@ -82,10 +88,22 @@ class GatewayManager:
             await ws.send_str(jsonized)
             capture_guild_count = await self._abstractor() 
             if capture_guild_count.code is None:
-                self.guild_count = len(capture_guild_count.data["guilds"])
-                initiatelogging.info(f"Recieved READY event. Connected to gateway at session id: {capture_guild_count.data["session_id"]}, as {capture_guild_count.data["application"]["bot"]["username"]}#{capture_guild_count.data["application"]["bot"]["discriminator"]}")
-                self.captured_app_info: AppInfo = AppInfo(capture_guild_count.data["application"])
-                self.session_id = capture_guild_count.data["session_id"]
+                try:
+                    self.guild_count = len(self._get_dict_value(capture_guild_count.data, "guilds", []))
+                except KeyError:
+                    self.guild_count = None
+                try:
+                    initiatelogging.info(f"Recieved READY event. Connected to gateway at session id: {self._get_dict_value(capture_guild_count.data, 'session_id')}, as {self._get_dict_value(capture_guild_count.data, 'application')['bot']['username']}#{self._get_dict_value(capture_guild_count.data, 'application')['bot']['discriminator']}")
+                except KeyError:
+                    initiatelogging.info("Recieved READY event. Connected to gateway.")
+                try:
+                    self.captured_app_info: AppInfo = AppInfo(self._get_dict_value(capture_guild_count.data, "application"))
+                except KeyError:
+                    self.captured_app_info = None
+                try:
+                    self.session_id = self._get_dict_value(capture_guild_count.data, "session_id")
+                except KeyError:
+                    self.session_id = None
     
     async def _reconnect_with_data(self):
         if self.current_payload.code == OPCODES.RECONNECT:
@@ -106,5 +124,4 @@ class GatewayManager:
                     initiatelogging.info("Successfully reconnected to gateway using new url.")
              except aiohttp.ClientError as e:
                  raise DiscmojiAPIError(f"Discmoji couldn't reconnect to the gateway. {e.args}. raw payload:{self.current_payload.data}")
-        
         

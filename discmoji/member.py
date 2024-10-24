@@ -9,14 +9,16 @@ class GuildMember:
         # data is a dict because I didn't want all that clutter from having each field of member
         # in docs
         # all fields are optional because MESSAGE_CREATE provides a partial member obj
-        self.nick: Optional[str] = _data["nick"]
-        self.avatar: Optional[str] = _data["avatar"]
-        self.roles: Optional[List[int]] = _data["roles"]
-        self.joined_at: Optional[int] = _data["joined_at"]
-        self.premium_since: Optional[int] = _data["premium_since"]
-        self.deafened: Optional[bool] = _data["deaf"]
-        self.muted: Optional[bool] = _data["mute"]
-        self.flags: Optional[int] = _data["flags"]
-        self.muted_until: Optional[int] = _data["communication_disabled_until"]
-        self.decoration_data: Optional[Dict[str,Any]] = _data["avatar_decoration_data"]
-        
+        self.nick: Optional[str] = self._get_dict_value(_data, "nick")
+        self.avatar: Optional[str] = self._get_dict_value(_data, "avatar")
+        self.roles: Optional[List[int]] = self._get_dict_value(_data, "roles", [])
+        self.joined_at: Optional[int] = self._get_dict_value(_data, "joined_at")
+        self.premium_since: Optional[int] = self._get_dict_value(_data, "premium_since")
+        self.deafened: Optional[bool] = self._get_dict_value(_data, "deaf", False)
+        self.muted: Optional[bool] = self._get_dict_value(_data, "mute", False)
+        self.flags: Optional[int] = self._get_dict_value(_data, "flags")
+        self.muted_until: Optional[int] = self._get_dict_value(_data, "communication_disabled_until")
+        self.decoration_data: Optional[Dict[str,Any]] = self._get_dict_value(_data, "avatar_decoration_data")
+
+    def _get_dict_value(self, dictionary: dict, key: str, default=None):
+        return dictionary.get(key, default)

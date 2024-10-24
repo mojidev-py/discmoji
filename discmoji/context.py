@@ -24,13 +24,16 @@ class Invoked:
         self.channel = ...
         self.guild = ...
         self.__msgid = msgid
+
+    def _get_dict_value(self, dictionary: dict, key: str, default=None):
+        return dictionary.get(key, default)
     
 
     def _construct(self):
         # constructs itself so it can be used while running a command
-        self.member: GuildMember = GuildMember(self._gateway.current_payload.data["member"])
-        self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._gateway.current_payload.data["guild_id"]}")).data)
-        self.channel: GuildTextChannel = GuildTextChannel(asyncio.run(self._endpoint.send_request('get',f'/channels/{self._gateway.current_payload.data["channel_id"]}')).data)
+        self.member: GuildMember = GuildMember(self._get_dict_value(self._gateway.current_payload.data, "member"))
+        self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._get_dict_value(self._gateway.current_payload.data, 'guild_id')}")).data)
+        self.channel: GuildTextChannel = GuildTextChannel(asyncio.run(self._endpoint.send_request('get',f'/channels/{self._get_dict_value(self._gateway.current_payload.data, "channel_id")}')).data)
         self.message: Message | None = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
     
     
