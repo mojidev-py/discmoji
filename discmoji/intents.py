@@ -1,8 +1,6 @@
 from typing import *
 from enum import Enum
 
-
-
 class IntentsBits(Enum):
     GUILDS = 1 << 0
     GUILD_MEMBERS = 1 << 1
@@ -37,15 +35,33 @@ class BotIntents:
         self.result_field: int = _set_manual
         self.guilds = IntentsBits.GUILDS
         
-    
-    
     @classmethod
     def default(cls):
-        """A method that creates an BotIntents object with every intent, except:
-        - Privileged Intents
-        - Automod Intents
-        - Direct Messages """
-        result_field = IntentsBits.GUILDS | IntentsBits.GUILD_MODERATION | IntentsBits.GUILD_EMOJIS_STICKERS | IntentsBits.GUILD_INTEGRATIONS | IntentsBits.GUILD_WEBHOOKS | IntentsBits.GUILD_INVITES | IntentsBits.GUILD_VOICE_STATES | IntentsBits.GUILD_MESSAGES | IntentsBits.GUILD_MESSAGE_REACTIONS | IntentsBits.GUILD_MESSAGE_TYPING | IntentsBits.GUILD_SCHEDULED_EVENTS | IntentsBits.GUILD_MESSAGE_POLLS
+        """A method that creates an BotIntents object with every intent."""
+        result_field = (
+            IntentsBits.GUILDS
+            | IntentsBits.GUILD_MEMBERS
+            | IntentsBits.GUILD_MODERATION
+            | IntentsBits.GUILD_EMOJIS_STICKERS
+            | IntentsBits.GUILD_INTEGRATIONS
+            | IntentsBits.GUILD_WEBHOOKS
+            | IntentsBits.GUILD_INVITES
+            | IntentsBits.GUILD_VOICE_STATES
+            | IntentsBits.GUILD_PRESENCES
+            | IntentsBits.GUILD_MESSAGES
+            | IntentsBits.GUILD_MESSAGE_REACTIONS
+            | IntentsBits.GUILD_MESSAGE_TYPING
+            | IntentsBits.DIRECT_MESSAGES
+            | IntentsBits.DIRECT_MESSAGE_REACTIONS
+            | IntentsBits.DIRECT_MESSAGE_TYPING
+            | IntentsBits.MESSAGE_CONTENT
+            | IntentsBits.GUILD_SCHEDULED_EVENTS
+            | IntentsBits.AUTO_MODERATION_CONFIGURATION
+            | IntentsBits.AUTO_MODERATION_EXECUTION
+            | IntentsBits.GUILD_MESSAGE_POLLS
+            | IntentsBits.DIRECT_MESSAGE_POLLS
+        )
         return cls(_set_manual=result_field)
+
     
     
