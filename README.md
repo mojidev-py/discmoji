@@ -18,11 +18,14 @@ Open a issue with the label `enhancement`, and follow the template!
 Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com` to become one!
 
 ## 📖 Example
+Replace `DISCORD_BOT_TOKEN` with your actual bot token.
 ```python
 from discmoji import *
 import asyncio
 
-Client = Bot(token="discord bot token",intents=123213123) 
+DISCORD_BOT_TOKEN = "1234567890"
+
+Client = Bot(token=DISCORD_BOT_TOKEN,intents=123213123) 
 
 @Client.command(name="example_command")
 async def commd(ctx: Invoked):
