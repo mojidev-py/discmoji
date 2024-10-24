@@ -4,28 +4,29 @@ from .channel import GuildTextChannel
 from .bot import Bot
 from .types import File
 import aiohttp
+from .emoji import Emoji
 class MessageReference:
-    def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: int):
+    def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: Optional[int]):
         self.type = _data["type"]
         self.channel = self.originated_message.channel
         self.guild = self.channel.guild
 
 class Attachment:
     def __init__(self,_data: dict,file: File):
-        self.id: int = int(_data["id"])
-        self.filename: str  = _data["filename"]
-        self.title: str = _data["title"]
-        self.description: str = _data["description"]
-        self.content_type: str = _data["content_type"]
-        self.size: int = _data["size"]
-        self.url: str = _data["url"]
-        self.proxy_url: str = _data["proxy_url"]
-        self.height: int = _data["height"]
-        self.width: int = _data["width"]
-        self.ephemeral: bool = _data["ephemeral"]
-        self.duration_secs: float = _data["duration_secs"]
-        self.waveform: bytearray = _data["waveform"]
-        self.flags: int = _data["flags"]
+        self.id: Optional[int] = int(_data["id"])
+        self.filename: Optional[str]  = _data.get("filename")
+        self.title: Optional[str] = _data.get("title")
+        self.description: Optional[str] = _data.get("description")
+        self.content_type: Optional[str] = _data.get("content_type")
+        self.size: Optional[int] = _data.get("size")
+        self.url: Optional[str] = _data.get("url")
+        self.proxy_url: Optional[str] = _data.get("proxy_url")
+        self.height: Optional[int] = _data.get("height")
+        self.width: Optional[int] = _data.get("width")
+        self.ephemeral: Optional[bool] = _data.get("ephemeral")
+        self.duration_secs: Optional[float] = _data.get("duration_secs")
+        self.waveform: Optional[bytearray] = _data.get("waveform")
+        self.flags: Optional[int] = _data["flags"]
         self.__formdata: aiohttp.MultipartWriter = aiohttp.MultipartWriter(boundary="--")
         self.file = file
     def find_content_type(self):
@@ -51,14 +52,14 @@ class Attachment:
 
 class Embed:
     def __init__(self,_data: dict):
-        self.title: str = _data["title"]
-        self.type: str = _data["type"]
-        self.description: str = _data["description"]
-        self.url: str = _data["url"]
-        self.timestamp: int = _data["timestamp"]
-        self.color: int = _data["color"]
+        self.title: Optional[str] = _data.get("title")
+        self.type: Optional[str] = _data.get("type")
+        self.description: Optional[str] = _data.get("description")
+        self.url: Optional[str] = _data.get("url")
+        self.timestamp: Optional[int] = _data.get("timestamp")
+        self.color: Optional[int] = _data.get("color")
     
-    def _dictize(self) -> Dict[str,str | int]:
+    def _dictize(self) -> Dict[Optional[str],Optional[str] | Optional[int]]:
         # turns self into a dict for msg func to send
         return {
             "title": self.title,
@@ -72,15 +73,14 @@ class Embed:
     # rest are going to be implemented as their own funcs
 
 class Reaction:
-    def __init__(self,_data: dict):
-        self.count: int = _data["count"]
+    def __init__(self,_data: dict,bot: Bot):
+        self.count: Optional[int] = _data.get("count")
         self.count_details: dict = {
-            "bursts": _data["count_details"]["burst"],
-            "normal": _data["count_details"]["normal"]
+            "bursts": _data.get("count_details")["burst"],
+            "normal": _data.get("count_details")["normal"]
         }
-        self.did_self_react: bool = _data["me"]
-        self.did_self_react_burst: bool = _data["me_burst"]
-        # emoji is none because no obj for it yet
-        self.emoji: ... = ...
-        self.burst_colors: list[int] = _data["burst_colors"]
+        self.did_self_react: Optional[bool] = _data.get("me")
+        self.did_self_react_burst: Optional[bool] = _data.get("me_burst")
+        self.emoji: Emoji = Emoji(_data.get("emoji"),bot)
+        self.burst_colors: list[Optional[int]] = int(_data.get("afk_channel_id"))
         
