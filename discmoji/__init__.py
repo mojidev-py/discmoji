@@ -5,7 +5,8 @@
 """
 
 
-
+from ._http import EndpointManager
+from .gateway import GatewayManager
 from .bot import Bot 
 from .command import Command
 from .context import Invoked
@@ -19,6 +20,9 @@ from .overwrites import ChannelPermissionOverwrite
 from .intents import BotIntents
 from .roles import Role
 from .user import User
+from .emoji import Emoji
 from .messagesubtypes import *
 from .message import Message
+
+
 
