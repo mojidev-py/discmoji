@@ -34,63 +34,20 @@ class Invoked:
         self.message: Message | None = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
     
     
-    async def send_message(self,text: Optional[str],embeds: Embed | List[Embed] | None) -> Message:
-        embed: Embed | None = None
-        if embeds is not None:
-            if len(embeds) == 1:
-                embed = embeds._dictize()
-                if text is None:
-                    msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
-                        "embeds": [embed]
-                    })
-                    read = await msg.read()
-                    decode = read.decode()
-                    returned = json.loads(decode)
-                    return Message(Payload(None,returned,None,None).data)
-                else:
-                    msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
-                        "content": text,
-                        "embeds": [embed]
-                    })
-                    read = await msg.read()
-                    decode = read.decode()
-                    returned = json.loads(decode)
-                    return Message(Payload(None,returned,None,None).data)
-            if len(embeds) > 1:
-                listembeds: list[Embed] = [_._dictize() for _ in embeds]
-                if text is None:
-                        msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
-                        "embeds": listembeds
-                    })
-                        read = await msg.read()
-                        decode = read.decode()
-                        returned = json.loads(decode)
-                        return Message(Payload(None,returned,None,None).data)
-                else:
-                            msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
-                        "content": text,
-                        "embeds": listembeds
-                        })
-                            read = await msg.read()
-                            decode = read.decode()
-                            returned = json.loads(decode)
-                            return Message(Payload(None,returned,None,None).data)
-                
-                
-                    
-                        
-        else:
-            msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages',data={
-            "content": text
-        })
-            read = await msg.read()
-            recved = read.decode()
-            tobepayloaded = json.loads(recved)
-            return Message(Payload(None,tobepayloaded,None,None).data)
-    
-
-
-    
+    async def send_message(self, text: Optional[str] = None, embeds: Optional[Union[Embed, List[Embed]]] = None) -> Message:
+        data = {}
+        if text:
+            data["content"] = text
+        if embeds:
+            if isinstance(embeds, Embed):
+                data["embeds"] = [embeds._dictize()]
+            else:
+                data["embeds"] = [embed._dictize() for embed in embeds]
+        msg = await self._endpoint.httpclient.post(f'/channels/{self.channel.id}/messages', json=data)
+        read = await msg.read()
+        decode = read.decode()
+        returned = json.loads(decode)
+        return Message(Payload(None, returned, None, None).data)
     
     async def invoked_cmd_handler(self):
         asyncio.sleep(5.5)
@@ -108,8 +65,3 @@ class Invoked:
                             final1[arg[0]] = int(arg)
                             
                     await cmd.callback(self,*final1)
- 
-                    
-                    
-                        
-                            
