@@ -12,19 +12,19 @@ class Command:
         
     # huge credit to AlmostDemoPy! TYSMMM
     
-    def __call__(self, function : Callable | None = None) -> None:
+    async def __call__(self, function : Callable | None = None) -> None:
         if not function:
             try:
-                return self.callback()
-            except:
+                return await self.callback()
+            except Exception as e:
                 tasks = []
                 for handler in self.__error_handlers:
-                    tasks.append(handler())
-                asyncio.run(gather(*tasks))
+                    tasks.append(handler(e))
+                await gather(*tasks)
         self.callback : Callable = function
         if not self.name: self.name : str = function.__name__
         self.bot._all_cmds += self
         return self # allows the function ( command object ) to still be used later on in the code
 
     def error(self, function: Callable) -> None:
-        self.__error_handlers += function
+        self.__error_handlers.append(function)
