@@ -36,7 +36,7 @@ class BotIntents:
         self.guilds = IntentsBits.GUILDS
         
     @classmethod
-    def default(cls):
+    def all(cls):
         """A method that creates an BotIntents object with every intent."""
         result_field = (
             IntentsBits.GUILDS

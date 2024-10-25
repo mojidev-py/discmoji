@@ -1,7 +1,7 @@
 # TODO
 
 - Permission Overwrites Object :white_check_mark: ~ :large_orange_diamond: (finished, but need finishing touches)
-- make asset object :large_orange_diamond:
+- make asset object :large_orange_diamond: (actually starting work on it) 
 - make slash commands
 - Add new functions/functionality to classes :large_orange_diamond:
 - Team Object :large_orange_diamond:
