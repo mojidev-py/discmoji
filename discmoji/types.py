@@ -166,6 +166,27 @@ class File:
         self.filename = filename
         self.filenames = filenames
         self.__fileindex = __fileindex
+        
+class TEAMMEMBERSHIPSTATE(Enum):
+    INVITED = 1
+    ACCEPTED = 2
+class TeamRole(Enum):
+    OWNER = None
+    ADMIN = "admin"
+    DEV = "developer"
+    VIEWER = "read_only"
+class TeamMember:
+    def __init__(self,_data: dict):
+        self.membership_state: TEAMMEMBERSHIPSTATE.ACCEPTED | TEAMMEMBERSHIPSTATE.INVITED = _data.get("membership_state")
+        self.team_id: int = _data.get("team_id")
+        self.user: User = User(_data.get("user"))
+        self.role: TeamRole.ADMIN | TeamRole.DEV | TeamRole.VIEWER = _data.get("role")
+        
+
+
+
+
+
             
     
     
