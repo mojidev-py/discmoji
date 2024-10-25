@@ -26,12 +26,15 @@ class Invoked:
         self.__msgid = msgid
     
 
-    def _construct(self):
+    async def _construct(self):
         # constructs itself so it can be used while running a command
         self.member: GuildMember = GuildMember(self._gateway.current_payload.data["member"])
-        self.guild: Guild = Guild(asyncio.run(self._endpoint.send_request(method="get",route=f"/guilds/{self._gateway.current_payload.data["guild_id"]}")).data)
-        self.channel: GuildTextChannel = GuildTextChannel(asyncio.run(self._endpoint.send_request('get',f'/channels/{self._gateway.current_payload.data["channel_id"]}')).data)
-        self.message: Message | None = Message(asyncio.run(self._endpoint.send_request('get',f'/channels/{self.channel.id}/messages/{self.__msgid}')).data)
+        guild_data = await self._endpoint.send_request(method="get", route=f"/guilds/{self._gateway.current_payload.data['guild_id']}")
+        self.guild: Guild = Guild(guild_data.data)
+        channel_data = await self._endpoint.send_request('get', f'/channels/{self._gateway.current_payload.data["channel_id"]}')
+        self.channel: GuildTextChannel = GuildTextChannel(channel_data.data)
+        message_data = await self._endpoint.send_request('get', f'/channels/{self.channel.id}/messages/{self.__msgid}')
+        self.message: Message | None = Message(message_data.data)
     
     
     async def send_message(self, text: Optional[str] = None, embeds: Optional[Union[Embed, List[Embed]]] = None) -> Message:
@@ -50,13 +53,13 @@ class Invoked:
         return Message(Payload(None, returned, None, None).data)
     
     async def invoked_cmd_handler(self):
-        asyncio.sleep(5.5)
+        await asyncio.sleep(5.5)
         # checks every 5.5 seconds for new commands
         n = 0
         if self._gateway.current_payload.event_name == "MESSAGE_CREATE":
             for cmd in self._bot._all_cmds:
                 if cmd.name in self._gateway.current_payload.data["content"]:
-                    self._construct()
+                    await self._construct()
                     args: str = self._gateway.current_payload.data["content"]
                     argsfilter = args.removeprefix(f"{self._bot.prefix}{cmd.name} ")
                     final1 = args.split(maxsplit=cmd.callback.__code__.co_argcount)

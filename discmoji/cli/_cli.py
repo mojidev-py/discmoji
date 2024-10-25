@@ -1,20 +1,20 @@
 import sys
-from typing import Callable
+from typing import Callable, Dict, List, Union
 
-class __CLI__:
+class CLI:
     def __init__(self):
-        self.__args = sys.argv
-        self.__attached_func_to_arg: dict[str,Callable] = {}
-    
-    def _cli_cmd(self, name: str) -> Callable:
-        def decor(func: Callable) -> Callable:
-            self.__attached_func_to_arg[name] = func
+        self.args = sys.argv
+        self.attached_func_to_arg: Dict[str, Callable] = {}
+
+    def cli_cmd(self, name: str) -> Callable:
+        def decorator(func: Callable) -> Callable:
+            self.attached_func_to_arg[name] = func
             return func
-        return decor
-    
-    def is_cmd_invoked(self) -> list[bool, Callable] | bool:
-        for arg in self.__args:
-            if arg in self.__attached_func_to_arg:
-                self.__attached_func_to_arg[arg]()
-                return [True, self.__attached_func_to_arg[arg]]
+        return decorator
+
+    def is_cmd_invoked(self) -> Union[List[Union[bool, Callable]], bool]:
+        for arg in self.args:
+            if arg in self.attached_func_to_arg:
+                self.attached_func_to_arg[arg]()
+                return [True, self.attached_func_to_arg[arg]]
         return False

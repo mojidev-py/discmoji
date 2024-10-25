@@ -17,19 +17,20 @@ class EndpointManager:
         }
         self.httpclient = aiohttp.ClientSession(base_url=self.base_url, headers=self.headers)
 
-    async def ratelimited(self, request: aiohttp.ClientResponse):
-        if request.headers.get(key="Retry-After") is int and request.headers.get(key="Retry-After") > 0:
-            return (True, request.headers.get(key="Retry-After"))
-        return False
+    def ratelimited(self, request: aiohttp.ClientResponse):
+        retry_after = request.headers.get("Retry-After")
+        if retry_after and retry_after.isdigit() and int(retry_after) > 0:
+            return (True, int(retry_after))
+        return (False, 0)
 
     async def _send(self, method: str, route: str) -> Payload:
         async with self.httpclient as client:
             sent = await client.request(method, self.base_url + route)
             parsed = await sent.read()
-            decoded = await parsed.decode(encoding="utf-8")
-            check = await self.ratelimited(sent)
-            if check[0] == True:
-                warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
+            decoded = parsed.decode(encoding="utf-8")
+            check, retry_after = self.ratelimited(sent)
+            if check:
+                warnings.warn(DiscmojiRatelimit(f"{retry_after}"))
             return Payload(code=OPCODES.HTTP, d=json.loads(decoded), event_name="HTTP_REQUEST_RECEIVED")
 
     async def send_request(self, method: Literal['get', 'post', 'put', 'patch', 'delete'], route: str) -> Payload:

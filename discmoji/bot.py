@@ -52,7 +52,8 @@ class GuildManager:
         for guild in self._guild_cache:
             if guild.id == id:
                 return guild
-        return Guild(asyncio.run(self.bot._http.send_request('get', f"/guilds/{id}")).data)
+        response = await self.bot._http.send_request('get', f"/guilds/{id}")
+        return Guild(response.data)
 
     async def total_guilds(self) -> int:
         """Returns the total number of guilds the bot is in."""
@@ -80,16 +81,12 @@ class Bot:
         # this just inits the gateway connection
         await self._gateway_client._hand_shake()
         # self-explanatory, handles the heartbeats
-        loop = asyncio.new_event_loop()
-        # creates a loop that runs forever, and will stop if Reconnect is called
-        loop.create_task(self._gateway_client._handle_heartbeats)
-        loop.run_forever()
+        await self._gateway_client._handle_heartbeats()
         self.guild_manager._all_guilds_setter()
         if self._gateway_client.current_payload.code == OPCODES.RECONNECT:
-            loop.stop()
-            asyncio.run(self._gateway_client._reconnect_with_data)
+            await self._gateway_client._reconnect_with_data()
         invokedsetup: Invoked = Invoked(self._http, self._gateway_client, self, self._gateway_client.current_payload.data["id"] if self._gateway_client.current_payload.data["id"] is not None else None)
-        loop.create_task(invokedsetup.invoked_cmd_handler)
+        await invokedsetup.invoked_cmd_handler()
 
 class ScalableBot(Bot):
     pass
