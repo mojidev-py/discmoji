@@ -88,10 +88,71 @@ class Invoked:
             tobepayloaded = json.loads(recved)
             return Message(Payload(None,tobepayloaded,None,None).data)
     
+    async def send_slash_message(self, text: Optional[str], embeds: Embed | List[Embed] | None) -> Message:
+        embed: Embed | None = None
+        if embeds is not None:
+            if len(embeds) == 1:
+                embed = embeds._dictize()
+                if text is None:
+                    msg = await self._endpoint.httpclient.post(f'/interactions/{self.__msgid}/callback', data={
+                        "type": 4,
+                        "data": {
+                            "embeds": [embed]
+                        }
+                    })
+                    read = await msg.read()
+                    decode = read.decode()
+                    returned = json.loads(decode)
+                    return Message(Payload(None, returned, None, None).data)
+                else:
+                    msg = await self._endpoint.httpclient.post(f'/interactions/{self.__msgid}/callback', data={
+                        "type": 4,
+                        "data": {
+                            "content": text,
+                            "embeds": [embed]
+                        }
+                    })
+                    read = await msg.read()
+                    decode = read.decode()
+                    returned = json.loads(decode)
+                    return Message(Payload(None, returned, None, None).data)
+            if len(embeds) > 1:
+                listembeds: list[Embed] = [_._dictize() for _ in embeds]
+                if text is None:
+                    msg = await self._endpoint.httpclient.post(f'/interactions/{self.__msgid}/callback', data={
+                        "type": 4,
+                        "data": {
+                            "embeds": listembeds
+                        }
+                    })
+                    read = await msg.read()
+                    decode = read.decode()
+                    returned = json.loads(decode)
+                    return Message(Payload(None, returned, None, None).data)
+                else:
+                    msg = await self._endpoint.httpclient.post(f'/interactions/{self.__msgid}/callback', data={
+                        "type": 4,
+                        "data": {
+                            "content": text,
+                            "embeds": listembeds
+                        }
+                    })
+                    read = await msg.read()
+                    decode = read.decode()
+                    returned = json.loads(decode)
+                    return Message(Payload(None, returned, None, None).data)
+        else:
+            msg = await self._endpoint.httpclient.post(f'/interactions/{self.__msgid}/callback', data={
+                "type": 4,
+                "data": {
+                    "content": text
+                }
+            })
+            read = await msg.read()
+            recved = read.decode()
+            tobepayloaded = json.loads(recved)
+            return Message(Payload(None, tobepayloaded, None, None).data)
 
-
-    
-    
     async def invoked_cmd_handler(self):
         asyncio.sleep(5.5)
         # checks every 5.5 seconds for new commands

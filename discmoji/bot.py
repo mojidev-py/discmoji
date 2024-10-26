@@ -37,6 +37,7 @@ class Bot:
         self.token = token
         self.intents = intents.result_field
         self._all_cmds: List[Command] = []
+        self._all_slash_cmds: List[SlashCommand] = []
         self._intern_context = None
         self._guild_cache: List[Guild] = []
         self.command = Command
@@ -59,6 +60,7 @@ class Bot:
             asyncio.run(self._gateway_client._reconnect_with_data)
         invokedsetup: Invoked = Invoked(self._http,self._gateway_client,self,self._gateway_client.current_payload.data["id"] if self._gateway_client.current_payload.data["id"] is not None else None)
         loop.create_task(invokedsetup.invoked_cmd_handler)
+        await self.register_slash_commands()
     
     def command(self,name: str):
         """A decorator that registers a command with the specified name."""
@@ -66,6 +68,18 @@ class Bot:
             self._all_cmds.append(Command(name=name))
             return Command(name=name)
         return decor
+
+    def slash_command(self, name: str):
+        """A decorator that registers a slash command with the specified name."""
+        def decor(func: Callable):
+            self._all_slash_cmds.append(SlashCommand(name=name))
+            return SlashCommand(name=name)
+        return decor
+
+    async def register_slash_commands(self):
+        """Registers all slash commands with Discord."""
+        for cmd in self._all_slash_cmds:
+            await self._http.send_request('post', f'/applications/{self.info.id}/commands', data=cmd.to_dict())
         
     
     

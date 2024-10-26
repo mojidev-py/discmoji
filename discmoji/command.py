@@ -28,3 +28,29 @@ class Command:
 
     def error(self, function: Callable) -> None:
         self.__error_handlers += function
+
+
+class SlashCommand:
+    """Represents a slash command."""
+    def __init__(self, name: str):
+        self.name = name
+        self.callback: Optional[Callable] = None
+        self.__error_handlers: List[Callable] = []
+
+    def __call__(self, function: Callable | None = None) -> None:
+        if not function:
+            try:
+                return self.callback()
+            except:
+                tasks = []
+                for handler in self.__error_handlers:
+                    tasks.append(handler())
+                asyncio.run(gather(*tasks))
+        self.callback: Callable = function
+        if not self.name:
+            self.name: str = function.__name__
+        self.bot._all_slash_cmds += self
+        return self
+
+    def error(self, function: Callable) -> None:
+        self.__error_handlers += function
