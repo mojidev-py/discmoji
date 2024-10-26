@@ -88,9 +88,32 @@ class Invoked:
             tobepayloaded = json.loads(recved)
             return Message(Payload(None,tobepayloaded,None,None).data)
     
+    async def edit_message(self, message_id: int, new_content: Optional[str] = None, new_embeds: Optional[List[Embed]] = None) -> Message:
+        data = {}
+        if new_content is not None:
+            data["content"] = new_content
+        if new_embeds is not None:
+            data["embeds"] = [embed._dictize() for embed in new_embeds]
+        msg = await self._endpoint.httpclient.patch(f'/channels/{self.channel.id}/messages/{message_id}', json=data)
+        read = await msg.read()
+        recved = read.decode()
+        tobepayloaded = json.loads(recved)
+        return Message(Payload(None, tobepayloaded, None, None).data)
 
+    async def delete_message(self, message_id: int):
+        await self._endpoint.httpclient.delete(f'/channels/{self.channel.id}/messages/{message_id}')
 
-    
+    async def add_reaction(self, message_id: int, emoji: str):
+        await self._endpoint.httpclient.put(f'/channels/{self.channel.id}/messages/{message_id}/reactions/{emoji}/@me')
+
+    async def remove_reaction(self, message_id: int, emoji: str):
+        await self._endpoint.httpclient.delete(f'/channels/{self.channel.id}/messages/{message_id}/reactions/{emoji}/@me')
+
+    async def pin_message(self, message_id: int):
+        await self._endpoint.httpclient.put(f'/channels/{self.channel.id}/pins/{message_id}')
+
+    async def unpin_message(self, message_id: int):
+        await self._endpoint.httpclient.delete(f'/channels/{self.channel.id}/pins/{message_id}')
     
     async def invoked_cmd_handler(self):
         asyncio.sleep(5.5)

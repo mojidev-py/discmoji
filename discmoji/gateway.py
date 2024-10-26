@@ -107,4 +107,13 @@ class GatewayManager:
              except aiohttp.ClientError as e:
                  raise DiscmojiAPIError(f"Discmoji couldn't reconnect to the gateway. {e.args}. raw payload:{self.current_payload.data}")
         
-        
+    async def handle_gateway_event(self, event_name: str, callback: Callable[[Payload], Awaitable[None]]):
+        while True:
+            event = await self._abstractor()
+            if event.event_name == event_name:
+                await callback(event)
+
+    async def handle_all_gateway_events(self, callback: Callable[[Payload], Awaitable[None]]):
+        while True:
+            event = await self._abstractor()
+            await callback(event)

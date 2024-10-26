@@ -2,29 +2,36 @@ from typing import *
 import functools
 import asyncio
 from asyncio import gather
-
+from .errors import DiscmojiCommandError
 
 class Command:
-    """Represents a prefix command. Not for slash commands, those have a seperate class."""
-    def __init__(self,/,name: str):
-        # callback needs to be coroutine because of aiohttp
+    """Represents a prefix command. Not for slash commands, those have a separate class."""
+    def __init__(self, name: str):
+        self.name = name
+        self.callback: Optional[Callable] = None
         self.__error_handlers: List[Callable] = []
-        
-    # huge credit to AlmostDemoPy! TYSMMM
-    
-    def __call__(self, function : Callable | None = None) -> None:
-        if not function:
-            try:
-                return self.callback()
-            except:
-                tasks = []
-                for handler in self.__error_handlers:
-                    tasks.append(handler())
-                asyncio.run(gather(*tasks))
-        self.callback : Callable = function
-        if not self.name: self.name : str = function.__name__
-        self.bot._all_cmds += self
-        return self # allows the function ( command object ) to still be used later on in the code
 
-    def error(self, function: Callable) -> None:
-        self.__error_handlers += function
+    def __call__(self, function: Callable) -> 'Command':
+        self.callback = function
+        return self
+
+    async def invoke(self, *args, **kwargs):
+        if self.callback is None:
+            raise DiscmojiCommandError(f"Command '{self.name}' has no callback function.")
+        try:
+            await self.callback(*args, **kwargs)
+        except Exception as e:
+            tasks = [handler(e) for handler in self.__error_handlers]
+            await gather(*tasks)
+
+    def error(self, function: Callable) -> Callable:
+        self.__error_handlers.append(function)
+        return function
+
+def command(name: str) -> Callable:
+    """A decorator that registers a command with the specified name."""
+    def decorator(func: Callable) -> Command:
+        cmd = Command(name)
+        cmd.callback = func
+        return cmd
+    return decorator

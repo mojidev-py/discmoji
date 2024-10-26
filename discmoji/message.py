@@ -30,3 +30,26 @@ class Message:
         self.type: Optional[int] = _data.get("type")
         self.reply_data: Optional[MessageReference] = MessageReference(_data.get("message_reference")) if _data.get("message_reference") is None else None
 
+    async def edit_message(self, new_content: Optional[str] = None, new_embeds: Optional[List[Embed]] = None) -> 'Message':
+        data = {}
+        if new_content is not None:
+            data["content"] = new_content
+        if new_embeds is not None:
+            data["embeds"] = [embed._dictize() for embed in new_embeds]
+        response = await self.bot._http.send_request('patch', f'/channels/{self.channel.id}/messages/{self.id}', data=data)
+        return Message(response.data, self.bot, self.channel.guild)
+
+    async def delete_message(self):
+        await self.bot._http.send_request('delete', f'/channels/{self.channel.id}/messages/{self.id}')
+
+    async def add_reaction(self, emoji: str):
+        await self.bot._http.send_request('put', f'/channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}/@me')
+
+    async def remove_reaction(self, emoji: str):
+        await self.bot._http.send_request('delete', f'/channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}/@me')
+
+    async def pin_message(self):
+        await self.bot._http.send_request('put', f'/channels/{self.channel.id}/pins/{self.id}')
+
+    async def unpin_message(self):
+        await self.bot._http.send_request('delete', f'/channels/{self.channel.id}/pins/{self.id}')

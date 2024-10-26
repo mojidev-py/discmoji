@@ -29,11 +29,12 @@ from .guild import Guild
 from .types import OPCODES
 from .intents import BotIntents
 from .context import Invoked
+
 class Bot:
     """Represents the application."""
-    def __init__(self,token: str,intents: BotIntents,prefix: str):
+    def __init__(self, token: str, intents: BotIntents, prefix: str):
         self._http = EndpointManager(token=token)
-        self._gateway_client = GatewayManager(token=token,intents=intents.result_field,endpointclient=self._http)
+        self._gateway_client = GatewayManager(token=token, intents=intents.result_field, endpointclient=self._http)
         self.token = token
         self.intents = intents.result_field
         self._all_cmds: List[Command] = []
@@ -44,7 +45,7 @@ class Bot:
         self.all_guilds = None
         self.info = self._gateway_client.captured_app_info
         self.prefix = prefix
-    
+
     async def connect(self):
         # this just inits the gateway connection
         await self._gateway_client._hand_shake()
@@ -57,42 +58,52 @@ class Bot:
         if self._gateway_client.current_payload.code == OPCODES.RECONNECT:
             loop.stop()
             asyncio.run(self._gateway_client._reconnect_with_data)
-        invokedsetup: Invoked = Invoked(self._http,self._gateway_client,self,self._gateway_client.current_payload.data["id"] if self._gateway_client.current_payload.data["id"] is not None else None)
+        invokedsetup: Invoked = Invoked(self._http, self._gateway_client, self, self._gateway_client.current_payload.data["id"] if self._gateway_client.current_payload.data["id"] is not None else None)
         loop.create_task(invokedsetup.invoked_cmd_handler)
-    
-    def command(self,name: str):
+
+    def command(self, name: str):
         """A decorator that registers a command with the specified name."""
         def decor(func: Callable):
             self._all_cmds.append(Command(name=name))
             return Command(name=name)
         return decor
-        
-    
-    
-    async def get_guild(self,id: int) -> Guild | None:
+
+    async def get_guild(self, id: int) -> Guild | None:
         """Gets a guild from the bot's current joined guilds, through the id."""
- 
         for guild in self._guild_cache:
             if guild.id == id:
                 return guild
-        return Guild(asyncio.run(self._http.send_request('get',f"/guilds/{id}")).data)
+        return Guild(asyncio.run(self._http.send_request('get', f"/guilds/{id}")).data)
 
-    
     async def total_guilds(self) -> int:
         """Returns the total number of guilds the bot is in."""
-        return self._gateway_client.guild_count 
-    
-    
+        return self._gateway_client.guild_count
 
     def _all_guilds_setter(self):
         # since the discord API lazily loads the guilds, this may not be an accurate count.
         if self._gateway_client.current_payload.event_name == "GUILD_CREATE":
             self.all_guilds: List[Guild] = []
             self.all_guilds.append(Guild(self._gateway_client.current_payload.data))
-    
-    
-    
-            
-                    
+
+    async def send_message(self, channel_id: int, content: str):
+        """Sends a message to a specified channel."""
+        await self._http.send_request("post", f"/channels/{channel_id}/messages", data={"content": content})
+
+    async def edit_message(self, channel_id: int, message_id: int, new_content: str):
+        """Edits a message in a specified channel."""
+        await self._http.send_request("patch", f"/channels/{channel_id}/messages/{message_id}", data={"content": new_content})
+
+    async def delete_message(self, channel_id: int, message_id: int):
+        """Deletes a message in a specified channel."""
+        await self._http.send_request("delete", f"/channels/{channel_id}/messages/{message_id}")
+
+    async def add_reaction(self, channel_id: int, message_id: int, emoji: str):
+        """Adds a reaction to a message."""
+        await self._http.send_request("put", f"/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me")
+
+    async def remove_reaction(self, channel_id: int, message_id: int, emoji: str):
+        """Removes a reaction from a message."""
+        await self._http.send_request("delete", f"/channels/{channel_id}/messages/{message_id}/reactions/{emoji}/@me")
+
 class ScalableBot(Bot):
     pass

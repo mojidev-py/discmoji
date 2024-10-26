@@ -14,3 +14,22 @@ class Emoji:
         self.managed: Optional[bool] = dict.get("managed")
         self.animated: Optional[bool] = dict.get("animated")
         self.available: Optional[bool] = dict.get("available")
+
+    async def create_emoji(self, guild_id: int, name: str, image: str, roles: Optional[List[int]] = None) -> 'Emoji':
+        data = {
+            "name": name,
+            "image": image,
+            "roles": roles
+        }
+        response = await self.bot._http.send_request('post', f'/guilds/{guild_id}/emojis', data=data)
+        return Emoji(response.data, self.bot)
+
+    async def delete_emoji(self, guild_id: int, emoji_id: int):
+        await self.bot._http.send_request('delete', f'/guilds/{guild_id}/emojis/{emoji_id}')
+
+    async def edit_emoji(self, guild_id: int, emoji_id: int, name: Optional[str] = None, roles: Optional[List[int]] = None):
+        data = {
+            "name": name,
+            "roles": roles
+        }
+        await self.bot._http.send_request('patch', f'/guilds/{guild_id}/emojis/{emoji_id}', data=data)

@@ -23,6 +23,8 @@ class IntentsBits(Enum):
     AUTO_MODERATION_EXECUTION = 1 << 21
     GUILD_MESSAGE_POLLS = 1 << 24
     DIRECT_MESSAGE_POLLS = 1 << 25
+    GUILD_BANS = 1 << 26
+    GUILD_INVITES = 1 << 27
 
 
 class BotIntents:
@@ -60,8 +62,37 @@ class BotIntents:
             | IntentsBits.AUTO_MODERATION_EXECUTION
             | IntentsBits.GUILD_MESSAGE_POLLS
             | IntentsBits.DIRECT_MESSAGE_POLLS
+            | IntentsBits.GUILD_BANS
+            | IntentsBits.GUILD_INVITES
         )
         return cls(_set_manual=result_field)
 
-    
-    
+    @classmethod
+    def default(cls):
+        """A method that creates a BotIntents object with the default intents."""
+        result_field = (
+            IntentsBits.GUILDS
+            | IntentsBits.GUILD_MEMBERS
+            | IntentsBits.GUILD_MESSAGES
+            | IntentsBits.GUILD_MESSAGE_REACTIONS
+            | IntentsBits.DIRECT_MESSAGES
+            | IntentsBits.DIRECT_MESSAGE_REACTIONS
+        )
+        return cls(_set_manual=result_field)
+
+    @classmethod
+    def minimal(cls):
+        """A method that creates a BotIntents object with the minimal required intents."""
+        result_field = (
+            IntentsBits.GUILDS
+            | IntentsBits.GUILD_MESSAGES
+        )
+        return cls(_set_manual=result_field)
+
+    @classmethod
+    def custom(cls, *intents: IntentsBits):
+        """A method that creates a BotIntents object with custom intents."""
+        result_field = 0
+        for intent in intents:
+            result_field |= intent
+        return cls(_set_manual=result_field)

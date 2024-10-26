@@ -1,4 +1,5 @@
 from typing import *
+from ._http import EndpointManager
 
 class User:
     def __init__(self,_data: dict):
@@ -18,3 +19,19 @@ class User:
         self.premium_type: Optional[int] = _data.get("premium_type")
         self.public_flags: Optional[int] = _data.get("public_flags")
         self.avatar_dec: Optional[str] = _data.get("avatar_decoration_data")
+
+    async def edit_user(self, user_id: int, username: Optional[str] = None, avatar: Optional[str] = None, banner: Optional[str] = None, accent_color: Optional[int] = None):
+        data = {
+            "username": username,
+            "avatar": avatar,
+            "banner": banner,
+            "accent_color": accent_color
+        }
+        await self._http.send_request('patch', f'/users/{user_id}', data=data)
+
+    async def get_user(self, user_id: int) -> 'User':
+        response = await self._http.send_request('get', f'/users/{user_id}')
+        return User(response.data)
+
+    async def delete_user(self, user_id: int):
+        await self._http.send_request('delete', f'/users/{user_id}')

@@ -46,9 +46,6 @@ class OPCODES(Enum):
     ACK = 11
     HTTP = None
 
-
-
-
 class Payload:
     def __init__(self,
                  code: int | None,
@@ -69,7 +66,6 @@ class Payload:
             "d": self.data,
         }
         return json.dumps(jsoned)
-
 
 class AppInfo:
     """A class that represents the application itself.
@@ -149,7 +145,7 @@ class PermissionsBits(Enum):
     SEND_VOICE_MESSAGES = 1 << 46
     SEND_POLLS = 1 << 49
     EXTERNAL_APPS = 1 << 50
-    
+
 class RoleTags:
     """Contains extra metadata about the role."""
     def __init__(self,_data: dict | None):
@@ -159,36 +155,73 @@ class RoleTags:
         self.available_for_purchase: bool = True if _data["available_for_purchase"] is None else False
         self.guild_connection: bool = True if _data["guild_connections"] is None else False
 
-        
-
 class File:
     def __init__(self,filename: str,filenames: list[str],__fileindex: int):
         self.filename = filename
         self.filenames = filenames
         self.__fileindex = __fileindex
-        
+
 class TEAMMEMBERSHIPSTATE(Enum):
     INVITED = 1
     ACCEPTED = 2
+
 class TeamRole(Enum):
     OWNER = None
     ADMIN = "admin"
     DEV = "developer"
     VIEWER = "read_only"
+
 class TeamMember:
     def __init__(self,_data: dict):
         self.membership_state: TEAMMEMBERSHIPSTATE.ACCEPTED | TEAMMEMBERSHIPSTATE.INVITED = _data.get("membership_state")
         self.team_id: int = _data.get("team_id")
         self.user: User = User(_data.get("user"))
         self.role: TeamRole.ADMIN | TeamRole.DEV | TeamRole.VIEWER = _data.get("role")
-        
 
+class ChannelType(Enum):
+    GUILD_TEXT = 0
+    DM = 1
+    GUILD_VOICE = 2
+    GROUP_DM = 3
+    GUILD_CATEGORY = 4
+    GUILD_NEWS = 5
+    GUILD_STORE = 6
+    GUILD_NEWS_THREAD = 10
+    GUILD_PUBLIC_THREAD = 11
+    GUILD_PRIVATE_THREAD = 12
+    GUILD_STAGE_VOICE = 13
+    GUILD_DIRECTORY = 14
+    GUILD_FORUM = 15
 
-
-
-
-            
-    
-    
-    
-    
+class MessageType(Enum):
+    DEFAULT = 0
+    RECIPIENT_ADD = 1
+    RECIPIENT_REMOVE = 2
+    CALL = 3
+    CHANNEL_NAME_CHANGE = 4
+    CHANNEL_ICON_CHANGE = 5
+    CHANNEL_PINNED_MESSAGE = 6
+    GUILD_MEMBER_JOIN = 7
+    USER_PREMIUM_GUILD_SUBSCRIPTION = 8
+    USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1 = 9
+    USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2 = 10
+    USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3 = 11
+    CHANNEL_FOLLOW_ADD = 12
+    GUILD_DISCOVERY_DISQUALIFIED = 14
+    GUILD_DISCOVERY_REQUALIFIED = 15
+    GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16
+    GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17
+    THREAD_CREATED = 18
+    REPLY = 19
+    CHAT_INPUT_COMMAND = 20
+    THREAD_STARTER_MESSAGE = 21
+    GUILD_INVITE_REMINDER = 22
+    CONTEXT_MENU_COMMAND = 23
+    AUTO_MODERATION_ACTION = 24
+    ROLE_SUBSCRIPTION_PURCHASE = 25
+    INTERACTION_PREMIUM_UPSELL = 26
+    STAGE_START = 27
+    STAGE_END = 28
+    STAGE_SPEAKER = 29
+    STAGE_TOPIC = 30
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 31
