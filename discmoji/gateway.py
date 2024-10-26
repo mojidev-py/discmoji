@@ -107,4 +107,8 @@ class GatewayManager:
              except aiohttp.ClientError as e:
                  raise DiscmojiAPIError(f"Discmoji couldn't reconnect to the gateway. {e.args}. raw payload:{self.current_payload.data}")
         
-        
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self._abstractor()
+        self.__init__(self.token, self.intents, self.endpointclient)
+        self.current_payload = updated_data

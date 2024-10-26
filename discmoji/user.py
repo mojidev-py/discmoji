@@ -18,3 +18,8 @@ class User:
         self.premium_type: Optional[int] = _data.get("premium_type")
         self.public_flags: Optional[int] = _data.get("public_flags")
         self.avatar_dec: Optional[str] = _data.get("avatar_decoration_data")
+
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self._endpoint.send_request('get', f'/users/{self.id}')
+        self.__init__(updated_data)

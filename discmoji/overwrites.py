@@ -11,3 +11,8 @@ class ChannelPermissionOverwrite:
         # may return a empty object if roles is not a role id
         self.allowed_perms: Optional[int] = int(_data.get("allow")) if _data.get("allow") is not None else None
         self.disabled_perms: Optional[int] = int(_data.get("deny")) if _data.get("deny") is not None else None
+
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.__bindedbot._http.send_request('get', f'/guilds/{self.__bindedguild.id}/channels/{self.id}/permissions')
+        self.__init__(updated_data, self.__bindedbot, self.__bindedguild)

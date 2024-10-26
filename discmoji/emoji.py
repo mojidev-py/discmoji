@@ -14,3 +14,8 @@ class Emoji:
         self.managed: Optional[bool] = dict.get("managed")
         self.animated: Optional[bool] = dict.get("animated")
         self.available: Optional[bool] = dict.get("available")
+
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.bot._http.send_request('get', f'/emojis/{self.id}')
+        self.__init__(updated_data, self.bot)

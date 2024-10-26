@@ -17,3 +17,7 @@ class GuildMember:
         self.muted_until: Optional[int] = _data.get("communication_disabled_until")
         self.decoration_data: Optional[Dict[str,Any]] = _data.get("avatar_decoration_data")
         
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self._endpoint.send_request('get', f'/guilds/{self.guild.id}/members/{self.id}')
+        self.__init__(updated_data)

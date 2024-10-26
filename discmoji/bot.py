@@ -90,8 +90,15 @@ class Bot:
             self.all_guilds: List[Guild] = []
             self.all_guilds.append(Guild(self._gateway_client.current_payload.data))
     
-    
-    
+    async def update_all_objects(self):
+        """Updates all outdated objects."""
+        for guild in self._guild_cache:
+            await guild.update()
+        for cmd in self._all_cmds:
+            await cmd.update()
+        await self._gateway_client.update()
+        await self._http.update_object('get', '/users/@me', {})
+
             
                     
 class ScalableBot(Bot):

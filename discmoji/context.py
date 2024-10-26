@@ -108,8 +108,9 @@ class Invoked:
                             final1[arg[0]] = int(arg)
                             
                     await cmd.callback(self,*final1)
- 
-                    
-                    
-                        
-                            
+
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self._endpoint.send_request('get', f'/invoked/{self.__msgid}')
+        self.__init__(self._endpoint, self._gateway, self._bot, self.__msgid)
+        self._construct()

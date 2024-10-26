@@ -12,3 +12,8 @@ class Team:
         self.members: List[TeamMember] = [TeamMember(member) for member in _dict.get("members")]
         self.name: str = _dict.get("name")
         self.owner: User = User(asyncio.run(http.send_request("get",f"/users/{_dict.get("team_owner_id")}")).data) 
+
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.http.send_request('get', f'/teams/{self.id}')
+        self.__init__(updated_data, self.http)

@@ -28,3 +28,8 @@ class Command:
 
     def error(self, function: Callable) -> None:
         self.__error_handlers += function
+
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.bot._http.send_request('get', f'/commands/{self.name}')
+        self.__init__(updated_data)

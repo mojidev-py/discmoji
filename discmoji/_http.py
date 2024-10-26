@@ -75,4 +75,25 @@ class EndpointManager:
                         warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
                     return Payload(OPCODES.HTTP,d=json.loads(decoded),s="HTTP_REQUEST_RECIEVED")
 
-    
+    async def update_object(self, method: Literal['get', 'post', 'put', 'patch', 'delete'], route: str, data: dict) -> Payload:
+        async with self.httpclient as client:
+            match method:
+                case "get":
+                    sent = await client.get(self.base_url + route)
+                case "post":
+                    sent = await client.post(self.base_url + route, json=data)
+                case "put":
+                    sent = await client.put(self.base_url + route, json=data)
+                case "patch":
+                    sent = await client.patch(self.base_url + route, json=data)
+                case "delete":
+                    sent = await client.delete(self.base_url + route)
+                case _:
+                    raise ValueError("Invalid HTTP method")
+            
+            parsed = await sent.read()
+            decoded = await parsed.decode(encoding="utf-8")
+            check = await self.ratelimited(sent)
+            if check[0] == True:
+                warnings.warn(DiscmojiRatelimit(f"{check[1]}"))
+            return Payload(code=OPCODES.HTTP, d=json.loads(decoded), event_name="HTTP_REQUEST_RECIEVED")

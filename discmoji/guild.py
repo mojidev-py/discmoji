@@ -46,3 +46,7 @@ class Guild:
                 return member
         return GuildMember(asyncio.run(self.http.send_request('get',f'/guilds/{self.id}/members/search?query="{username}"')).data)
         
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.http.send_request('get', f'/guilds/{self.id}')
+        self.__init__(updated_data, self.http)

@@ -30,3 +30,7 @@ class Message:
         self.type: Optional[int] = _data.get("type")
         self.reply_data: Optional[MessageReference] = MessageReference(_data.get("message_reference")) if _data.get("message_reference") is None else None
 
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.bot._http.send_request('get', f'/channels/{self.channel.id}/messages/{self.id}')
+        self.__init__(updated_data, self.bot, self.binded_guild)

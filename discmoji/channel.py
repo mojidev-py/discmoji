@@ -22,4 +22,7 @@ class GuildTextChannel:
         self.flags: Optional[int] = _data["flags"]
         self.messages_sent: Optional[int] = _data.get("total_message_sent")
         
-        
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.__bindedhttp.send_request('get', f'/channels/{self.id}')
+        self.__init__(updated_data, self.__bindedhttp)

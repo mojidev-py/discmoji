@@ -19,3 +19,7 @@ class Role:
         self.tags: RoleTags = RoleTags(_data["tags"])
         self.flags: int = _data["flags"]
         
+    async def update(self):
+        """Updates the outdated objects."""
+        updated_data = await self.__bindedbot._http.send_request('get', f'/guilds/{self.__bindedguild.id}/roles/{self.id}')
+        self.__init__(updated_data)
