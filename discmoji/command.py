@@ -16,10 +16,10 @@ class Command:
         if not function:
             try:
                 return self.callback()
-            except:
+            except Exception as e:
                 tasks = []
                 for handler in self.__error_handlers:
-                    tasks.append(handler())
+                    tasks.append(handler(e))
                 asyncio.run(gather(*tasks))
         self.callback : Callable = function
         if not self.name: self.name : str = function.__name__
@@ -41,10 +41,10 @@ class SlashCommand:
         if not function:
             try:
                 return self.callback()
-            except:
+            except Exception as e:
                 tasks = []
                 for handler in self.__error_handlers:
-                    tasks.append(handler())
+                    tasks.append(handler(e))
                 asyncio.run(gather(*tasks))
         self.callback: Callable = function
         if not self.name:
