@@ -38,9 +38,6 @@ async def example_error(ctx: Invoked,error: Exception):
 
 asyncio.run(Client.connect)
 ```
-
-### 🗓️ Release Date???
-> Around October 17th or September 30th (0.3.0 is going to be a full release)
 ## 📣 ANNOUNCEMENTS/FAQ
 
 
@@ -50,5 +47,3 @@ asyncio.run(Client.connect)
 > 1.0.0 is going to come out in 2025. No solid dates yet!
 >### ❔ Will this _ever_ be finished?
 > Fingers Crossed!
->### Why do I keep getting errors?
-> If you are using the library right now (10/17/2024), error management for key errors has not been implemented. We will implement within next patch.

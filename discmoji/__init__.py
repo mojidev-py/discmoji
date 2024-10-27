@@ -1,7 +1,6 @@
-"""# DISCMOJI
+"""# DISCMOJI 0.2.3
 - an api wrapper made for fun :D
-- Pre-Alpha
-   - Bugs may be present, make sure to report on Github!
+- Bugs may be present, make sure to report on Github!
 """
 
 
