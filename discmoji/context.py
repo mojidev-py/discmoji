@@ -2,7 +2,6 @@ from typing import *
 from ._http import EndpointManager
 from .gateway import GatewayManager
 import asyncio
-from .bot import Bot
 from .member import GuildMember
 from .guild import Guild
 from .channel import GuildTextChannel
@@ -14,10 +13,9 @@ import json
 class Invoked:
     """A class that hosts the data of where a prefix/slash command was used."""
     # A class that hosts the data of where a command was used
-    def __init__(self,endpoint: EndpointManager,gateway: GatewayManager,bot: Bot,msgid: int | None):
+    def __init__(self,endpoint: EndpointManager,gateway: GatewayManager,msgid: int | None):
         self._endpoint = endpoint
         self._gateway = gateway
-        self._bot = bot
         # rest will be constructed by internal funcs
         self.member = ...
         self.message = ...

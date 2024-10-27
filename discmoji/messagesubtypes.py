@@ -8,7 +8,7 @@ from .emoji import Emoji
 class MessageReference:
     def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: Optional[int]):
         self.type = _data["type"]
-        self.channel = self.originated_message.channel
+        self.channel = binded_channel
         self.guild = self.channel.guild
 
 class Attachment:

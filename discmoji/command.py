@@ -1,5 +1,4 @@
 from typing import *
-import functools
 import asyncio
 from asyncio import gather
 

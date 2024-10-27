@@ -1,5 +1,4 @@
 from typing import *
-from .roles import Role
 from .user import User
 from .bot import Bot
 import asyncio

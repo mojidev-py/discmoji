@@ -25,7 +25,6 @@ from typing import *
 import json
 import logging
 from colorama import Fore, Style
-from .guild import Guild
 from .user import User
 
 initiatelogging = logging.getLogger("discmoji")
@@ -70,34 +69,6 @@ class Payload:
         }
         return json.dumps(jsoned)
 
-
-class AppInfo:
-    """A class that represents the application itself.
-    Do not initialize this class. It will be initialized for you at bot connection."""
-    def __init__(self,_data: Optional[Dict]):
-        self.id = int(_data["id"])
-        self.name: str = _data["name"]
-        self.icon: str = _data["icon_hash"]
-        self.desc: str = _data["description"]
-        self.rpc_origins: Optional[List[str]] = _data["rpc_origins"]
-        self.public: bool = _data["bot_public"]
-        self.code_grant: bool = _data["bot_require_code_grant"]
-        # placeholder till i get User object done
-        self.bot: None = None
-        self.tos_url: str = _data["terms_of_service_url"]
-        self.privacy_policy_url: str = _data["privacy_policy_url"]
-        # user object!!!!!
-        self.owner: None = None
-        # TEAMMMMMMM
-        self.team: None = None
-        self.guild_id = int(_data["guild_id"])
-        self.guild: Guild = Guild(_data["guild"])
-        self.cover_image: str = _data["cover_image"]
-        self.flags: int = _data["flags"]
-        self.approx_guild_count: int = _data["approximate_guild_count"]
-        self.approx_user_installs: int = _data["approximate_user_install_count"]
-        self.redirects: List[str] = _data["redirect_uris"]
-        # more will be added
 
 class PermissionsBits(Enum):
     CREATE_INSTANT_INVITE = 1 << 0 
@@ -155,9 +126,9 @@ class RoleTags:
     def __init__(self,_data: dict | None):
         self.bot_id: int = int(_data["bot_id"])
         self.integration_id: int = int(_data["integration_id"])
-        self.premium: bool = True if _data["premium_subscriber"] is None else False
-        self.available_for_purchase: bool = True if _data["available_for_purchase"] is None else False
-        self.guild_connection: bool = True if _data["guild_connections"] is None else False
+        self.premium: bool = True if _data.get("premium_subscriber") is None else False
+        self.available_for_purchase: bool = True if _data.get("available_for_purchase") is None else False
+        self.guild_connection: bool = True if _data.get("guild_connections") is None else False
 
         
 

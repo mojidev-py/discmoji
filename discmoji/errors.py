@@ -15,6 +15,7 @@ class DiscmojiCommandError(DiscmojiError):
         return f"An error ocurred when executing/creating a bot command: {self.msg}"
 class DiscmojiRatelimit(Warning):
     def __init__(self,msg: str):
+        self.msg = msg
         def __str__(self):
             return f"Discmoji is currently being ratelimited. Rerun the bot in: {self.msg}s."
 

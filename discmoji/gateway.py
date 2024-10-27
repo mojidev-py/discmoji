@@ -1,11 +1,12 @@
 from typing import *
 import aiohttp
 import asyncio
-from .types import Payload,OPCODES,initiatelogging,formatter,AppInfo
+from .types import Payload,OPCODES,initiatelogging,formatter
 from random import uniform
 import os
 from ._http import EndpointManager
 from .errors import DiscmojiAPIError
+from .app_info import AppInfo
 
 
 
@@ -15,6 +16,7 @@ class GatewayManager:
         # handles the gateway connections/events and turns recieved payloads into the Payload object for easier use
         self.token = token
         self.intents = intents
+        self.http = endpointclient
         self.ws_url = asyncio.run(endpointclient.send_request(method="get",route="/gateway")).data["url"]
         self.client = aiohttp.ClientSession()
         self.ws = self.client.ws_connect(self.url)
@@ -84,7 +86,7 @@ class GatewayManager:
             if capture_guild_count.code is None:
                 self.guild_count = len(capture_guild_count.data["guilds"])
                 initiatelogging.info(f"Recieved READY event. Connected to gateway at session id: {capture_guild_count.data["session_id"]}, as {capture_guild_count.data["application"]["bot"]["username"]}#{capture_guild_count.data["application"]["bot"]["discriminator"]}")
-                self.captured_app_info: AppInfo = AppInfo(capture_guild_count.data["application"])
+                self.captured_app_info: AppInfo = AppInfo(capture_guild_count.data["application"],self.http)
                 self.session_id = capture_guild_count.data["session_id"]
     
     async def _reconnect_with_data(self):
