@@ -24,6 +24,7 @@ SOFTWARE.
 import aiohttp
 import asyncio
 import json
+from typing import Optional
 
 class ResponseData:
     """Internal class that hosts data from HTTP requests."""
@@ -35,3 +36,10 @@ class ResponseData:
 
 class WebsocketPayload:
     """Internal class that hosts data from the Discord Gateway."""
+    def __init__(self,payload: Optional[aiohttp.WSMessage], opcode: int | None,data: dict | str, seq: int):
+        self.__serlized: dict = payload.json()
+        self.opcode = self.__serlized["op"] if opcode is None else opcode
+        self.data = self.__serlized["d"] if data is None else data
+        self.seq = self.__serlized.get("s") if seq is None else seq
+        self.event_name = self.__serlized.get("t")
+        
