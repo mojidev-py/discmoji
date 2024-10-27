@@ -1,5 +1,5 @@
 from typing import *
-from .bot import Bot
+from ._http import EndpointManager
 import asyncio
 from .user import User
 from .guild import Guild
@@ -9,7 +9,7 @@ from .messagesubtypes import MessageReference, Attachment, Embed, Reaction
 
 
 class Message:
-    def __init__(self,_data: dict, bot: Bot,binded_guild: Guild):
+    def __init__(self,_data: dict, http: EndpointManager,binded_guild: Guild):
         self.id: Optional[int] = _data["id"]
         self.channel: Optional[int] = _data.get("channel_id")
         self.author: Optional[User] = User(_data.get("author"))
@@ -19,7 +19,7 @@ class Message:
         self.tts: Optional[bool] = _data.get("tts")
         self.mentioned_everyone: Optional[bool] = _data.get("mention_everyone")
         self.mentions = [User(user) for user in _data.get("mentions") if _data.get("mentions") is not None]
-        self.mentioned_roles: Optional[list[Role]] = [User(asyncio.run(bot._http.send_request('get',f'/guilds/{binded_guild.id}/roles/{roleid["id"]}')).data) for roleid in _data.get("mention_roles")]
+        self.mentioned_roles: Optional[list[Role]] = [User(asyncio.run(http.send_request('get',f'/guilds/{binded_guild.id}/roles/{roleid["id"]}')).data) for roleid in _data.get("mention_roles")]
         # channel_mentions is deprecated because of circular imports
         self.attachments = [Attachment(attachment) for attachment in _data.get("attachments") if _data.get("attachments") is not None]
         self.embeds = [Embed(embed) for embed in _data.get("embeds") if _data.get("embeds") is not None]

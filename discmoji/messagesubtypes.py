@@ -1,12 +1,12 @@
 from typing import *
 import asyncio
 from .channel import GuildTextChannel
-from .bot import Bot
+from ._http import EndpointManager
 from .types import File
 import aiohttp
 from .emoji import Emoji
 class MessageReference:
-    def __init__(self,_data: dict,binded_channel: GuildTextChannel,bindedbot: Bot,id: Optional[int]):
+    def __init__(self,_data: dict,binded_channel: GuildTextChannel,id: Optional[int]):
         self.type = _data["type"]
         self.channel = binded_channel
         self.guild = self.channel.guild
@@ -73,7 +73,7 @@ class Embed:
     # rest are going to be implemented as their own funcs
 
 class Reaction:
-    def __init__(self,_data: dict,bot: Bot):
+    def __init__(self,_data: dict,http: EndpointManager):
         self.count: Optional[int] = _data.get("count")
         self.count_details: dict = {
             "bursts": _data.get("count_details")["burst"],
@@ -81,6 +81,6 @@ class Reaction:
         }
         self.did_self_react: Optional[bool] = _data.get("me")
         self.did_self_react_burst: Optional[bool] = _data.get("me_burst")
-        self.emoji: Emoji = Emoji(_data.get("emoji"),bot)
+        self.emoji: Emoji = Emoji(_data.get("emoji"),http)
         self.burst_colors: list[Optional[int]] = int(_data.get("afk_channel_id"))
         

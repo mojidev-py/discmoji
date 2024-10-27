@@ -12,11 +12,10 @@ class EndpointManager:
 
     def __init__(self,token: str):
         self.token = token
-        self.base_url = "https://discord.com/api/v10"
+        self.base_url = "https://discord.com/api/v10/"
         # persistent headers, will only use authorization header incase request needs authorization
         self.headers = {"User-Agent":"DiscordBot https://github.com/mojidev-py/discmoji, 0.0.1pr",
                         "Authorization":f"Bot {token}"}
-        self.httpclient = aiohttp.ClientSession(base_url=self.base_url,headers=self.headers)#yet
     
 
     async def ratelimited(self,request: aiohttp.ClientResponse):
@@ -31,7 +30,7 @@ class EndpointManager:
     
     async def send_request(self,method: Literal['get','post','put','patch','delete'],route: str) -> Payload:
         # sends a request and returns a payload with the content it recieved back
-        async with self.httpclient as client:
+        async with aiohttp.ClientSession(base_url=self.base_url,headers=self.headers) as client:
             match method:
                 case "get":  
                     sent = await client.get(self.base_url+route)

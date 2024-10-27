@@ -1,7 +1,7 @@
 from typing import *
 from enum import Enum
 
-class IntentsBits(Enum):
+class Bitfield(Enum):
     GUILDS = 1 << 0
     GUILD_MEMBERS = 1 << 1
     GUILD_MODERATION = 1 << 2
@@ -26,40 +26,39 @@ class IntentsBits(Enum):
 
 
 class BotIntents:
-    """A abstraction layer over a bitfield containing the intents your bot needs. We also offer pre-made configurations.
+    """A abstraction layer over a Bitfield containing the intents your bot needs. We also offer pre-made configurations.
     - `set_manual` param
       - an internal param used by the class methods to set the result_field
     - `result_field` attribute
-      -  Used to send the bitfield converted to an int to the gateway."""
+      -  Used to send the Bitfield converted to an int to the gateway."""
     def __init__(self, _set_manual: Optional[int | Any]):
         self.result_field: int = _set_manual
-        self.guilds = IntentsBits.GUILDS
         
     @classmethod
     def all(cls):
         """A method that creates an BotIntents object with every intent."""
         result_field = (
-            IntentsBits.GUILDS
-            | IntentsBits.GUILD_MEMBERS
-            | IntentsBits.GUILD_MODERATION
-            | IntentsBits.GUILD_EMOJIS_STICKERS
-            | IntentsBits.GUILD_INTEGRATIONS
-            | IntentsBits.GUILD_WEBHOOKS
-            | IntentsBits.GUILD_INVITES
-            | IntentsBits.GUILD_VOICE_STATES
-            | IntentsBits.GUILD_PRESENCES
-            | IntentsBits.GUILD_MESSAGES
-            | IntentsBits.GUILD_MESSAGE_REACTIONS
-            | IntentsBits.GUILD_MESSAGE_TYPING
-            | IntentsBits.DIRECT_MESSAGES
-            | IntentsBits.DIRECT_MESSAGE_REACTIONS
-            | IntentsBits.DIRECT_MESSAGE_TYPING
-            | IntentsBits.MESSAGE_CONTENT
-            | IntentsBits.GUILD_SCHEDULED_EVENTS
-            | IntentsBits.AUTO_MODERATION_CONFIGURATION
-            | IntentsBits.AUTO_MODERATION_EXECUTION
-            | IntentsBits.GUILD_MESSAGE_POLLS
-            | IntentsBits.DIRECT_MESSAGE_POLLS
+           Bitfield.GUILDS.value
+            | Bitfield.GUILD_MEMBERS.value
+            | Bitfield.GUILD_MODERATION.value
+            | Bitfield.GUILD_EMOJIS_STICKERS.value
+            | Bitfield.GUILD_INTEGRATIONS.value
+            | Bitfield.GUILD_WEBHOOKS.value
+            | Bitfield.GUILD_INVITES.value
+            | Bitfield.GUILD_VOICE_STATES.value
+            | Bitfield.GUILD_PRESENCES.value
+            | Bitfield.GUILD_MESSAGES.value
+            | Bitfield.GUILD_MESSAGE_REACTIONS.value
+            | Bitfield.GUILD_MESSAGE_TYPING.value
+            | Bitfield.DIRECT_MESSAGES.value
+            | Bitfield.DIRECT_MESSAGE_REACTIONS.value
+            | Bitfield.DIRECT_MESSAGE_TYPING.value
+            | Bitfield.MESSAGE_CONTENT.value
+            | Bitfield.GUILD_SCHEDULED_EVENTS.value
+            | Bitfield.AUTO_MODERATION_CONFIGURATION.value
+            | Bitfield.AUTO_MODERATION_EXECUTION.value
+            | Bitfield.GUILD_MESSAGE_POLLS.value
+            | Bitfield.DIRECT_MESSAGE_POLLS.value
         )
         return cls(_set_manual=result_field)
 

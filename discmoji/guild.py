@@ -2,7 +2,7 @@ from typing import *
 from .member import GuildMember
 import aiohttp
 import asyncio
-from _http import EndpointManager
+from ._http import EndpointManager
 from .user import User
 from .roles import Role
 from .emoji import Emoji
