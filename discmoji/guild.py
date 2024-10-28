@@ -20,26 +20,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
-import aiohttp
-import asyncio
-import json
-from typing import Optional
-
-class ResponseData:
-    """Internal class that hosts data from HTTP requests."""
-    def __init__(self,data: aiohttp.ClientResponse):
-        self.code = data.status
-        self.data: dict = json.loads(asyncio.run(data.content.read()).decode())
-        self.headers = data.headers
-
-
-class WebsocketPayload:
-    """Internal class that hosts data from the Discord Gateway."""
-    def __init__(self,payload: Optional[aiohttp.WSMessage], opcode: int | None,data: dict | str, seq: int):
-        self.__serlized: dict = payload.json()
-        self.opcode = self.__serlized["op"] if opcode is None else opcode
-        self.data = self.__serlized["d"] if data is None else data
-        self.seq = self.__serlized.get("s") if seq is None else seq
-        self.event_name = self.__serlized.get("t")
-        

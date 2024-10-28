@@ -21,7 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import aiohttp
-from .types import ResponseData
 
 
 class HttpManager:
@@ -41,18 +40,23 @@ class HttpManager:
             match method:
                 case "post":
                     async with client.post(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                        return ResponseData(response)
+                       if response.status == 201 or response.status == 200:
+                           ...
                 case "get":
                     async with client.get(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                        return ResponseData(response)
+                       if response.status == 201 or response.status == 200:
+                           ...                        
                 case "delete":
                     async with client.delete(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                        return ResponseData(response)
+                       if response.status == 201 or response.status == 200:
+                           ...                        
                 case "put":
                     async with client.put(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                        return ResponseData(response)
+                       if response.status == 201 or response.status == 200:
+                           ...                        
                 case "patch":
                     async with client.patch(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                        return ResponseData(response)
+                       if response.status == 201 or response.status == 200:
+                           ...                        
                 case _:
                     raise RuntimeError("Not a valid method.")
