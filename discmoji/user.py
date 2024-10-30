@@ -20,6 +20,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from .snowflake import Snowflake
 
 class User:
-    pass
+    """Class that represents a discord user.
+      ## Attributes
+        - id - `discmoji.Snowflake`
+          - The id of the User.
+        - username - `str`
+          - The username of the User.
+        - discriminator - `str`
+          - The discriminator of the User."""
+    def __init__(self,data: dict[str,dict | str | int]):
+        self.id: Snowflake = Snowflake(data["id"])
+        self.username: str = data["username"]
+        self.discriminator: str = data["discriminator"]
+        self.global_name: str | None = data.get("global_name")
+        self.avatar: str | None = f"https://cdn.discordapp.com/avatar/{self.id}/{data.get("avatar")}.{"gif" if data.get("avatar").startswith("a_") else "png"}" if data.get("avatar") is not None else None
+        # avatar is just formatted str for now, as the asset object is made
+        self.bot: bool | None = data.get("bot")
+        self.system: bool | None = data.get("system")
+        self.mfa: bool | None = data.get("mfa_enabled")
+        self.banner: str | None = f"https://cdn.discordapp.com/avatar/{self.id}/{data.get("banner")}.{"gif" if data.get("avatar").startswith("a_") else "png"}" if data.get("banner") is not None else None       

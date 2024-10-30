@@ -20,12 +20,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional
-# from ..user import User
+import datetime
 
-class GuildMember:
-    """Represents a member in a guild."""
-    def __init__(self,_dict: dict):
-        # self.user = User(_dict.get("user")) if _dict.get("user") is not None else None 
-        self.nick: Optional[str] = _dict.get("nick")
-        
+
+class Snowflake(int):
+    """Represents a discord resource id. It is recommended to use the builtin `int` object instead of this. \n
+    Inherits from `int`
+    ## Methods
+    `find_date()`
+      - Finds the date of a given snowflake."""
+    def find_date(self):
+        DISCORD_EPOCH = 1420070400000
+        """Finds when the provided snowflake was created.
+        ### Returns
+          - `datetime.datetime` - The converted date."""
+        binary = bytes(bin(self).strip("0b"))
+        unixdate = (binary >> 22) + DISCORD_EPOCH
+        return datetime.datetime.fromtimestamp(unixdate)
