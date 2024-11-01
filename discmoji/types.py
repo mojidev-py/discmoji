@@ -25,6 +25,7 @@ import asyncio
 import json
 from enum import Enum, IntEnum
 from typing import Any, Literal
+from typing import Optional
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
@@ -34,21 +35,15 @@ class RequestBody:
 
 
 class WebsocketPayload:
-    def __init__(self,response: aiohttp.WSMessage | None,opcode: int,data: str | dict):
-        self.__serialized: dict = response.json() if response is aiohttp.WSMessage else {}
+    def __init__(self,response: Optional[aiohttp.WSMessage],opcode: int,data: dict):
+        self.__serialized: dict = response.json() if response is not None else {}
         self.opcode = self.__serialized.get("op") if self.__serialized.get("op") else opcode
         self.data = self.__serialized.get("d") if self.__serialized.get("data") else data
         self.seq = self.__serialized.get("s")
         self.event = self.__serialized.get("t")
     
     def jsonize(self) -> str:
-        if self.data is str and self.opcode in range(0,31):
-            opcodeddata = json.dumps({"op":self.opcode}).removeprefix("{").removesuffix("}")
-            return f"{opcodeddata}, \n" + self.data
-        elif self.data is str and self.opcode not in range(0,31):
-            opcodeddata = json.dumps({"op": 0})
-            return opcodeddata + self.data
-        elif self.data is dict and self.opcode not in range(0,31):
+        if self.data is dict and self.opcode not in range(0,31):
             self.data['op'] = 0 # type: ignore
             return json.dumps(self.data)
         elif self.data is dict and self.opcode in range(0,31):
