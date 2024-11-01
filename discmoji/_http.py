@@ -27,7 +27,7 @@ class HttpManager:
    """Internal class that manages requests to endpoints."""
    def __init__(self,token: str):
         self.base_url = "https://discord.com/"
-        self.version = "api/v10"
+        self.version = "api/v10/"
         self.token = token
         self.normal = {"User-Agent":"DiscordBot (https://github.com/mojidev-py/discmoji,0.0.1)"}
         self.auth = {"Authorization":f"Bot {self.token}"}
@@ -39,7 +39,7 @@ class HttpManager:
         async with aiohttp.ClientSession(base_url=self.base_url,headers=headers) as client:
             match method:
                 case "post":
-                    async with client.post(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
+                    async with client.post(url=f"{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
                                return ...
