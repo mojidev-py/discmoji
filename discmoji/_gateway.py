@@ -23,10 +23,32 @@ SOFTWARE.
 from ._http import HttpManager
 import asyncio
 from .intents import BotIntents
+import websockets
+from .types import WebsocketPayload
+import contextlib
+from contextlib import asynccontextmanager
+from typing import Self
+
 class DiscordWebsocket:
     def __init__(self,http: HttpManager,intents: BotIntents):
-        self.url: str = asyncio.run(http.request('get','/gateway/bot',True)).data["url"]
+        self.ws = None
         self.token = http.token
         self.intents = intents
     
+    @asynccontextmanager
+    # huge credit to graingert on discord!
+    async def initiate_connection(cls,ws: websockets.WebSocketClientProtocol,http: HttpManager,intents: BotIntents):
+        async with websockets.connect(asyncio.run(http.request('get','/gateway/bot',True)).data["url"]) as ws:
+                cls.ws = ws
+                try:
+                    goingtobeyield: Self = cls(ws,http,intents)
+                    yield goingtobeyield
+                except websockets.ConnectionClosedError:
+                    raise RuntimeError("Gateway closed connection.")
+                    
     
+    async def _recieve_latest(self):
+        return WebsocketPayload(await self.ws.recv())
+
+    async def _hand_shake(self):
+        ...

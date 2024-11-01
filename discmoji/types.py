@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import aiohttp
+import websockets
 import asyncio
 import json
 from enum import Enum, IntEnum
@@ -35,8 +36,8 @@ class RequestBody:
 
 
 class WebsocketPayload:
-    def __init__(self,response: Optional[aiohttp.WSMessage],opcode: int,data: dict):
-        self.__serialized: dict = response.json() if response is not None else {}
+    def __init__(self,response: Optional[websockets.Data],opcode: int,data: dict):
+        self.__serialized: dict = json.loads(response)
         self.opcode = self.__serialized.get("op") if self.__serialized.get("op") else opcode
         self.data = self.__serialized.get("d") if self.__serialized.get("data") else data
         self.seq = self.__serialized.get("s")
