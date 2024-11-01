@@ -20,13 +20,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ._http import HttpManager
-import asyncio
-from .intents import BotIntents
-class DiscordWebsocket:
-    def __init__(self,http: HttpManager,intents: BotIntents):
-        self.url: str = asyncio.run(http.request('get','/gateway/bot',True)).data["url"]
-        self.token = http.token
-        self.intents = intents
-    
-    
+
+class AvatarDecoration:
+    """Represents an Avatar Decoration.
+    ## Attributes
+     - asset - `str`
+       - Contains the formatted cdn link of the decoration."""
+    def __init__(self,data: dict):
+        self.asset = f"https://cdn.discordapp.com/avatar-decoration-presets/{data.get("asset")}.png"

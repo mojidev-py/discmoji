@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import aiohttp
-
+from .types import RequestBody
 
 class HttpManager:
    """Internal class that manages requests to endpoints."""
@@ -41,22 +41,38 @@ class HttpManager:
                 case "post":
                     async with client.post(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
-                           ...
+                           if route.startswith("guilds"):
+                               return ...
+                           else: 
+                               return RequestBody(response)
+                             
                 case "get":
                     async with client.get(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
-                           ...                        
+                           if route.startswith("guilds"):
+                               return ...
+                           else: 
+                               return RequestBody(response)                    
                 case "delete":
                     async with client.delete(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
-                           ...                        
+                           if route.startswith("guilds"):
+                               return ...
+                           else: 
+                               return RequestBody(response)                 
                 case "put":
                     async with client.put(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
-                           ...                        
+                           if route.startswith("guilds"):
+                               return ...
+                           else: 
+                               return RequestBody(response)                      
                 case "patch":
                     async with client.patch(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
-                           ...                        
+                           if route.startswith("guilds"):
+                               return ...
+                           else: 
+                               return RequestBody(response)                       
                 case _:
                     raise RuntimeError("Not a valid method.")

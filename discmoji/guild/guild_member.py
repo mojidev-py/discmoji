@@ -21,11 +21,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from typing import Optional
-# from ..user import User
+from ..user import User
 
 class GuildMember:
-    """Represents a member in a guild."""
+    """Represents a member in a guild.
+    ## Attributes
+    - user - `discmoji.User | None`
+        - contains the user object of the guild member. Will not be present in prefix commands.
+    - nick - `Union[str,None]`
+        - contains the nickname of the guild member."""
     def __init__(self,_dict: dict):
-        # self.user = User(_dict.get("user")) if _dict.get("user") is not None else None 
+        self.user: User | None = User(_dict.get("user")) if _dict.get("user") is not None else None 
         self.nick: Optional[str] = _dict.get("nick")
         
