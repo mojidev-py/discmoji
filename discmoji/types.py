@@ -23,7 +23,7 @@ SOFTWARE.
 import aiohttp
 import asyncio
 import json
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Any, Literal
 
 class RequestBody:
@@ -90,7 +90,7 @@ class Locales(Enum):
     ZH_TW = "Chinese, Taiwan"
     KO = "Korean"
 
-class UserFlags(Enum):
+class UserFlags(IntEnum):
     STAFF = 1 << 0
     PARTNER = 1 << 1
     HYPESQUAD = 1 << 2 
