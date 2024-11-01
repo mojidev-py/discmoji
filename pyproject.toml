@@ -24,7 +24,7 @@ dependencies = [
     "asyncio",
     "aiohttp"
 ]
-version = "0.0.1"
+version = "0.1.0"
 
 [project.urls]
 github = "https://github.com/mojidev-py/discmoji/"
