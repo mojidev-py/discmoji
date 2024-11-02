@@ -44,10 +44,10 @@ class WebsocketPayload:
         self.event = self.__serialized.get("t")
     
     def jsonize(self) -> str:
-        if self.data is dict and self.opcode not in range(0,31):
+        if isinstance(self.data,dict) and self.opcode not in range(0,31):
             self.data['op'] = 0 # type: ignore
             return json.dumps(self.data)
-        elif self.data is dict and self.opcode in range(0,31):
+        elif isinstance(self.data, dict) and self.opcode in range(0,31):
             self.data['op'] = self.opcode # type: ignore
             # type ignore because on my vscode it keeps complaining about an undefined variable ;(
             return json.dumps(self.data)
