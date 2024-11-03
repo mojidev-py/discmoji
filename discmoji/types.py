@@ -123,3 +123,24 @@ def _return_nitro_type(data: int) -> Literal["Nitro Classic","Nitro","Nitro Basi
         return "Nitro"
     if data == 3:
         return "Nitro Basic"
+
+class VerificationLevels(IntEnum):
+    NONE = 0
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+    VERY_HIGH = 4
+    
+def _find_verification_level(enum: VerificationLevels,input: int):
+    for key,value in enum.__dict__.items():
+        if value == input:
+            return {key:value}
+
+class DefaultMessageNotifLevel(Enum):
+    ALL_MESSAGES = 0
+    ONLY_MENTIONS = 1
+
+def _find_notif_level(enum: DefaultMessageNotifLevel,input: int):
+    for key, value in enum.__dict__.items():
+        if value == input:
+            return {key:value}

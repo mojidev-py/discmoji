@@ -56,8 +56,8 @@ class GuildMember:
     def __init__(self,_dict: dict[str,str | int | dict | None],__binded_guild: Guild):
         self.user: User | None = User(_dict.get("user")) if _dict.get("user") is not None else None 
         self.nick: Optional[str] = _dict.get("nick")
-        self.avatar: Optional[str] = f"https://cdn.discordapp.com/guilds/{__binded_guild.id}/users/{self.user.id if self.user is User else None}/avatars/{_dict.get("avatar")}.{"gif" if _dict.get("avatar").startswith("a_") else "png"}"
-        self.banner: Optional[str] = f"https://cdn.discordapp.com/guilds/{__binded_guild.id}/users/{self.user.id if self.user is User else None}/banners/{_dict.get("avatar")}.{"gif" if _dict.get("avatar").startswith("a_") else "png"}"
+        self.avatar: Optional[str] = f"https://cdn.discordapp.com/guilds/{__binded_guild.id}/users/{self.user.id if isinstance(self.user,User) else None}/avatars/{_dict.get("avatar")}.{"gif" if _dict.get("avatar").startswith("a_") else "png"}"
+        self.banner: Optional[str] = f"https://cdn.discordapp.com/guilds/{__binded_guild.id}/users/{self.user.id if isinstance(self.user,User) else None}/banners/{_dict.get("avatar")}.{"gif" if _dict.get("avatar").startswith("a_") else "png"}"
         self.roles: list[Snowflake] = [Snowflake(roleid) for roleid in _dict["roles"]]
         self.joined_at: datetime.datetime = datetime.datetime.fromisoformat(_dict["joined_at"])
         self.premium_since: Optional[datetime.datetime] = datetime.datetime.fromisoformat(_dict.get("premium_since"))

@@ -29,11 +29,15 @@ class Snowflake(int):
     ## Methods
     `find_date()`
       - Finds the date of a given snowflake."""
+    
+          
+    
+    
     def find_date(self):
-        DISCORD_EPOCH = 1420070400000
         """Finds when the provided snowflake was created.
         ### Returns
           - `datetime.datetime` - The converted date."""
+        DISCORD_EPOCH = 1420070400000
         binary = bytes(bin(self).strip("0b"))
         unixdate = (binary >> 22) + DISCORD_EPOCH
         return datetime.datetime.fromtimestamp(unixdate)
