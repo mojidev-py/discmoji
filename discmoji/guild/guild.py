@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional
-from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level
+from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level
 class Guild:
     """Represents a Guild/Server on Discord.
     ## Attributes
@@ -52,6 +52,8 @@ class Guild:
        - Contains a dict with one key, which can be one of 5 string literals: `NONE`,`LOW`,`MEDIUM`,`HIGH`,`VERY_HIGH`, and whose value corresponds an int in the range of 0 to 4.
     - default_msg_notifs - `dict[str,int]`
        - Contains a dict with one key, which can be one of 2 string literals: `ALL_MESSAGES`,`ONLY_MENTIONS`, and whose value corresponds to an int in the range of 0 to 1.
+    - explicit_filter_lvl - `dict[str,int]`
+       - Contains a dict with one key, which can be one of 3 string literals: `DISABLED`,`MEMBERS_WITHOUT_ROLES`,`ALL_MEMBERS` and whose value corresponds an int in the range of 0 to 2.
        """
     def __init__(self,_data: dict[str, str | int | dict | None]):
         self.id = Snowflake(_data["id"])
@@ -67,7 +69,8 @@ class Guild:
         self.widget_enabled: Optional[bool] = _data.get("widget_enabled")
         self.widget_channel_id: Optional[Snowflake] = Snowflake(_data.get("widget_channel_id")) if _data.get("widget_channel_id") is not None else None
         self.verification_level: dict[str,int] = _find_verification_level(VerificationLevels,_data["verification_level"])
-        self.default_msg_notifs: dict[str,int]=  _find_notif_level(DefaultMessageNotifLevel,_data["default_message_notifications"])
+        self.default_msg_notifs: dict[str,int] = _find_notif_level(DefaultMessageNotifLevel,_data["default_message_notifications"])
+        self.explicit_filter_lvl: dict[str,int] = _find_expl_level(ExplicitContentFilter,_data["explicit_content_filter"])
         
         
         

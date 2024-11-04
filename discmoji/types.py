@@ -144,3 +144,13 @@ def _find_notif_level(enum: DefaultMessageNotifLevel,input: int):
     for key, value in enum.__dict__.items():
         if value == input:
             return {key:value}
+
+class ExplicitContentFilter(Enum):
+    DISABLED = 0
+    MEMBERS_WITHOUT_ROLES = 1
+    ALL_MEMBERS = 2
+
+def _find_expl_level(enum: ExplicitContentFilter,input: int):
+    for key, value in enum.__dict__.items():
+        if value == input:
+            return {key:value}
