@@ -23,6 +23,8 @@ SOFTWARE.
 from ..snowflake import Snowflake
 from typing import Optional
 from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level
+from .._http import HttpManager
+
 class Guild:
     """Represents a Guild/Server on Discord.
     ## Attributes
@@ -71,7 +73,22 @@ class Guild:
         self.verification_level: dict[str,int] = _find_verification_level(VerificationLevels,_data["verification_level"])
         self.default_msg_notifs: dict[str,int] = _find_notif_level(DefaultMessageNotifLevel,_data["default_message_notifications"])
         self.explicit_filter_lvl: dict[str,int] = _find_expl_level(ExplicitContentFilter,_data["explicit_content_filter"])
-        
-        
-        
-        
+
+    async def get_guild(self, http: HttpManager, guild_id: Snowflake):
+        """Fetches a guild by its ID."""
+        response = await http.request("get", f"guilds/{guild_id}", auth=True)
+        return Guild(response.data)
+
+    async def create_guild(self, http: HttpManager, name: str, region: Optional[str] = None, icon: Optional[str] = None):
+        """Creates a new guild."""
+        data = {"name": name}
+        if region:
+            data["region"] = region
+        if icon:
+            data["icon"] = icon
+        response = await http.request("post", "guilds", auth=True, data=data)
+        return Guild(response.data)
+
+    async def delete_guild(self, http: HttpManager, guild_id: Snowflake):
+        """Deletes a guild by its ID."""
+        await http.request("delete", f"guilds/{guild_id}", auth=True)

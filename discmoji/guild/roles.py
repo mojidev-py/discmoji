@@ -20,8 +20,56 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from ..snowflake import Snowflake
+from typing import Optional
+from .._http import HttpManager
 
 class Role:
-    """Represents a discord Role."""
+    """Represents a discord Role.
+    ## Attributes
+    - id - `discmoji.Snowflake`
+       - Contains the id of the role.
+    - name - `str`
+       - Contains the name of the role.
+    - color - `int`
+       - Contains the color of the role.
+    - hoist - `bool`
+       - Indicates whether the role is hoisted (displayed separately) in the member list.
+    - position - `int`
+       - Contains the position of the role in the guild's role hierarchy.
+    - permissions - `str`
+       - Contains the permissions of the role.
+    - managed - `bool`
+       - Indicates whether the role is managed by an integration.
+    - mentionable - `bool`
+       - Indicates whether the role is mentionable.
+    """
     def __init__(self,_data: dict[str,str | int | dict]):
-        ...
+        self.id = Snowflake(_data["id"])
+        self.name: str = _data["name"]
+        self.color: int = _data["color"]
+        self.hoist: bool = _data["hoist"]
+        self.position: int = _data["position"]
+        self.permissions: str = _data["permissions"]
+        self.managed: bool = _data["managed"]
+        self.mentionable: bool = _data["mentionable"]
+
+    async def create_role(self, http: HttpManager, guild_id: Snowflake, name: str, color: Optional[int] = None, hoist: Optional[bool] = None, position: Optional[int] = None, permissions: Optional[str] = None, mentionable: Optional[bool] = None):
+        """Creates a new role in the guild."""
+        data = {"name": name}
+        if color is not None:
+            data["color"] = color
+        if hoist is not None:
+            data["hoist"] = hoist
+        if position is not None:
+            data["position"] = position
+        if permissions is not None:
+            data["permissions"] = permissions
+        if mentionable is not None:
+            data["mentionable"] = mentionable
+        response = await http.request("post", f"guilds/{guild_id}/roles", auth=True, data=data)
+        return Role(response.data)
+
+    async def delete_role(self, http: HttpManager, guild_id: Snowflake, role_id: Snowflake):
+        """Deletes a role from the guild."""
+        await http.request("delete", f"guilds/{guild_id}/roles/{role_id}", auth=True)

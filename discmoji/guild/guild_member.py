@@ -26,6 +26,8 @@ from .guild import Guild
 from ..snowflake import Snowflake
 import datetime
 from ..decoration import AvatarDecoration
+from .._http import HttpManager
+
 class GuildMember:
     """Represents a member in a guild.
     ## Attributes
@@ -66,4 +68,21 @@ class GuildMember:
         self.pending: Optional[bool] = _dict.get("pending")
         self.timeout_until: Optional[datetime.datetime] = datetime.datetime.fromisoformat(_dict.get("communication_disabled_until")) if datetime.datetime.fromisoformat(_dict.get("communication_disabled_until")) > datetime.datetime.now() or _dict.get("communication_disabled_until") is not None else None
         self.avatar_decoration: Optional[AvatarDecoration] = AvatarDecoration(_dict.get("avatar_decoration_data")) if _dict.get("avatar_decoration_data") is not None else None
-        
+
+    async def add_member(self, http: HttpManager, guild_id: Snowflake, user_id: Snowflake, access_token: str, nick: Optional[str] = None, roles: Optional[list[Snowflake]] = None, mute: Optional[bool] = None, deaf: Optional[bool] = None):
+        """Adds a member to the guild."""
+        data = {"access_token": access_token}
+        if nick:
+            data["nick"] = nick
+        if roles:
+            data["roles"] = roles
+        if mute is not None:
+            data["mute"] = mute
+        if deaf is not None:
+            data["deaf"] = deaf
+        response = await http.request("put", f"guilds/{guild_id}/members/{user_id}", auth=True, data=data)
+        return GuildMember(response.data, self)
+
+    async def remove_member(self, http: HttpManager, guild_id: Snowflake, user_id: Snowflake):
+        """Removes a member from the guild."""
+        await http.request("delete", f"guilds/{guild_id}/members/{user_id}", auth=True)
