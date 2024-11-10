@@ -20,8 +20,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+from ..snowflake import Snowflake
+from typing import Optional
 class Role:
-    """Represents a discord Role."""
-    def __init__(self,_data: dict[str,str | int | dict]):
-        ...
+    """Represents a discord Role.
+    ## Attributes
+    - id - `discmoji.Snowflake`
+       - ID of the role
+    - name - `str`
+       - Name of the role
+    - color - `str`
+       - Hex code for color of the role.
+    - hoist - `bool`
+       - Whether this role is pinned in the server role listing.
+    - icon - `Optional[str]`
+       - Formatted cdn link leading to icon of role, if it exists."""
+    def __init__(self,_data: dict[str,str | int | dict | bool]):
+        self.id = Snowflake(_data["id"])
+        self.name: str = _data["name"]
+        self.color = _data["color"].to_bytes().hex()
+        self.hoist: bool = _data["hoist"]
+        self.icon: Optional[str] = f"https://cdn.discordapp.com/role_icons/{int(self.id)}/{_data.get("icon")}.png" if _data.get("icon") is not None else None
