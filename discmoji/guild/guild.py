@@ -23,6 +23,7 @@ SOFTWARE.
 from ..snowflake import Snowflake
 from typing import Optional
 from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level
+from .roles import Role
 class Guild:
     """Represents a Guild/Server on Discord.
     ## Attributes

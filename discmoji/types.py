@@ -27,6 +27,7 @@ import json
 from enum import Enum, IntEnum
 from typing import Any, Literal
 from typing import Optional
+from .snowflake import Snowflake
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
@@ -154,3 +155,27 @@ def _find_expl_level(enum: ExplicitContentFilter,input: int):
     for key, value in enum.__dict__.items():
         if value == input:
             return {key:value}
+
+class RoleTags:
+    """Role metadata object.
+    ## Attributes
+    - bot_id - `Optional[discmoji.Snowflake]`
+       - Snowflake representing the id of the bot associated with this role, can be None.
+    - integration_id - `Optional[discmoji.Snowlflake]`
+       - Snowflake representing the id of the integration associated with this role, can be None.
+    - premium_role - `Optional[bool]`
+       - Indicates whether this is a booster role or not. (role given when boosting)
+    - subscription_sku_listing - `Optional[discmoji.Snowflake]`
+       - The id of this role's subscription SKU and listing, may be None.
+    - available_for_purchase - `Optional[bool]`
+       - Whether this role is a purchaseable role e.g whether this role is a role awarded through guild membership.
+    - guild_connections - `Optional[bool]`
+       - Whether this role is a guild's linked role."""
+    def __init__(self,_data: dict):
+        self.bot_id: Optional[Snowflake] = Snowflake(_data["bot_id"]) if _data.get("bot_id") is not None else None
+        self.integration_id: Optional[Snowflake] = Snowflake(_data["integration_id"]) if _data.get("integration_id") is not None else None
+        self.premium_role: Optional[bool] = _data.get("premium_subscriber") 
+        self.subscription_sku_listing: Optional[Snowflake] = Snowflake(_data["subscription_listing_id"]) if _data.get("bot_id") is not None else None
+        self.available_for_purchase: Optional[bool] = _data.get("available_for_purchase")
+        self.guild_linked_role: Optional[bool] = _data.get("guild_linked_role")
+    
