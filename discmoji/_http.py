@@ -22,6 +22,7 @@ SOFTWARE.
 """
 import aiohttp
 from .types import RequestBody
+from guild.gpayload import _GuildPayloadConverter
 
 class HttpManager:
    """Internal class that manages requests to endpoints."""
@@ -42,7 +43,7 @@ class HttpManager:
                     async with client.post(url=f"{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
-                               return ...
+                               return _GuildPayloadConverter(RequestBody(response))
                            else: 
                                return RequestBody(response)
                              
@@ -50,28 +51,28 @@ class HttpManager:
                     async with client.get(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
-                               return ...
+                               return _GuildPayloadConverter(RequestBody(response))
                            else: 
                                return RequestBody(response)                    
                 case "delete":
                     async with client.delete(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
-                               return ...
+                               return _GuildPayloadConverter(RequestBody(response))
                            else: 
                                return RequestBody(response)                 
                 case "put":
                     async with client.put(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
-                               return ...
+                               return _GuildPayloadConverter(RequestBody(response))
                            else: 
                                return RequestBody(response)                      
                 case "patch":
                     async with client.patch(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
-                               return ...
+                               return _GuildPayloadConverter(RequestBody(response))
                            else: 
                                return RequestBody(response)                       
                 case _:

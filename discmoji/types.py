@@ -178,4 +178,24 @@ class RoleTags:
         self.subscription_sku_listing: Optional[Snowflake] = Snowflake(_data["subscription_listing_id"]) if _data.get("bot_id") is not None else None
         self.available_for_purchase: Optional[bool] = _data.get("available_for_purchase")
         self.guild_linked_role: Optional[bool] = _data.get("guild_linked_role")
+
+class Permissions:
+    """Internal enum used by permissions related functions to create or check permissions.
+    Use this permissions enum with bitwise operators, like such:
+    ```
+    permissions = Permissions.create_invites | Permissions.kick_members
+    ```"""
+    create_invites = 1 << 0
+    kick_members = 1 << 1
+    ban_members = 1 << 2
+    admin = 1 << 3
+    manage_channels = 1 << 4
+    manage_guild = 1 << 5
+    add_reactions = 1 << 6
+    view_audit_log = 1 << 7
+    priority_speaker = 1 << 8
+    stream = 1 << 9
+    view_channel = 1 << 10
+    send_messages = 1 << 11
     
+
