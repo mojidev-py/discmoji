@@ -24,6 +24,7 @@ from ..snowflake import Snowflake
 from typing import Optional
 from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level
 from .roles import Role
+from .emoji import Emoji
 class Guild:
     """Represents a Guild/Server on Discord.
     ## Attributes
@@ -55,6 +56,10 @@ class Guild:
        - Contains a dict with one key, which can be one of 2 string literals: `ALL_MESSAGES`,`ONLY_MENTIONS`, and whose value corresponds to an int in the range of 0 to 1.
     - explicit_filter_lvl - `dict[str,int]`
        - Contains a dict with one key, which can be one of 3 string literals: `DISABLED`,`MEMBERS_WITHOUT_ROLES`,`ALL_MEMBERS` and whose value corresponds an int in the range of 0 to 2.
+    - roles - `list[discmoji.Role]`
+       - Contains a list of all the guild's roles.
+    - emojis - `list[discmoji.Emoji]`
+       - Contains a list of all the guild's emojis.
        """
     def __init__(self,_data: dict[str, str | int | dict | None]):
         self.id = Snowflake(_data["id"])
@@ -72,6 +77,9 @@ class Guild:
         self.verification_level: dict[str,int] = _find_verification_level(VerificationLevels,_data["verification_level"])
         self.default_msg_notifs: dict[str,int] = _find_notif_level(DefaultMessageNotifLevel,_data["default_message_notifications"])
         self.explicit_filter_lvl: dict[str,int] = _find_expl_level(ExplicitContentFilter,_data["explicit_content_filter"])
+        self.roles: list[Role] = [Role(role) for role in _data["roles"]]
+        self.emojis: list[Emoji] = [Emoji(emoji) for emoji in _data["emoji"]]
+        
         
         
         

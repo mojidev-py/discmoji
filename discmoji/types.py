@@ -183,7 +183,7 @@ class Permissions:
     """Internal enum used by permissions related functions to create or check permissions.
     Use this permissions enum with bitwise operators, like such:
     ```
-    permissions = Permissions.create_invites | Permissions.kick_members
+    permissions = Permissions.create_invites | Permissions.kick_members | ...
     ```"""
     create_invites = 1 << 0
     kick_members = 1 << 1
