@@ -28,6 +28,7 @@ from enum import Enum, IntEnum
 from typing import Any, Literal
 from typing import Optional
 from .snowflake import Snowflake
+import enum
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
@@ -179,7 +180,7 @@ class RoleTags:
         self.available_for_purchase: Optional[bool] = _data.get("available_for_purchase")
         self.guild_linked_role: Optional[bool] = _data.get("guild_linked_role")
 
-class PermissionsBits(Enum):
+class PermissionsBits(enum.IntFlag):
     """Enum used by permissions related functions to create or check permissions.
     Use this permissions enum with bitwise operators, like such:
     ```
