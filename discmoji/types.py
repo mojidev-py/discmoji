@@ -179,12 +179,24 @@ class RoleTags:
         self.available_for_purchase: Optional[bool] = _data.get("available_for_purchase")
         self.guild_linked_role: Optional[bool] = _data.get("guild_linked_role")
 
-class Permissions:
-    """Internal enum used by permissions related functions to create or check permissions.
+class PermissionsBits(Enum):
+    """Enum used by permissions related functions to create or check permissions.
     Use this permissions enum with bitwise operators, like such:
     ```
     permissions = Permissions.create_invites | Permissions.kick_members | ...
-    ```"""
+    ```
+    These are different from intents, do not mix them up. \n
+    `|` - adds a permission \n
+    `&` - checks if object that is applicable has that permission \n
+    `~` -  checks if object that is applicable does NOT have that permission \n
+    use these operators as such:
+    ```python
+    (perms & Permissions.create_invites) == 1 # true
+    perms = Permissions.Example | Permissions.OtherExample # 2304 (example, not accurate)
+    (perms ~Permissions.LALALA) == 21030 # true (example, not accurate)
+    ```
+    It is advised to use permission check/creator functions to do this work for you, since this may not work as expected.
+    """
     create_invites = 1 << 0
     kick_members = 1 << 1
     ban_members = 1 << 2
@@ -197,5 +209,45 @@ class Permissions:
     stream = 1 << 9
     view_channel = 1 << 10
     send_messages = 1 << 11
+    send_tts_msgs = 1 << 12 
+    manage_messages = 1 << 13
+    embed_links = 1 << 14
+    attach_files = 1 << 15
+    read_message_history = 1 << 16 
+    mention_everyone = 1 << 17
+    external_emojis = 1 << 18
+    guild_insights = 1 << 19
+    connect = 1 << 20
+    speak = 1 << 21
+    mute_members = 1 << 22
+    deafen_members = 1 << 23
+    move_members = 1 << 24
+    use_vad = 1 << 25
+    change_nickname = 1 << 26
+    manage_nicknames = 1 << 27
+    manage_roles = 1 << 28
+    manage_webhooks = 1 << 29
+    guild_expressions = 1 << 30
+    use_app_cmds = 1 << 31
+    req_to_speak = 1 << 32
+    events = 1 << 33
+    threads = 1 << 34
+    public_threads = 1 << 35
+    private_threads = 1 << 36
+    use_external_stickers = 1 << 37
+    send_messages_threads = 1 << 38
     
 
+class Permissions:
+    """Contains the result of functions that return permissions. 
+    These classes can be used to create new permissions, through 'flipping' each one of the attributes. (e.g False to True)
+    This provides a more abstracted interface to creating and checking permissions, than `discmoji.Permissions`."""
+    def __init__(self,data):
+        self.create_invites = False
+        self.kick_members = False
+        ...
+
+def _convert_perms(input: int, enum: Permissions):
+    input_bytes = bytes(input)
+    for item,value in enum.__dict__.items():
+        ...
