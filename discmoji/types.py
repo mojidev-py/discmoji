@@ -236,18 +236,51 @@ class PermissionsBits(Enum):
     private_threads = 1 << 36
     use_external_stickers = 1 << 37
     send_messages_threads = 1 << 38
+    embedded_activities = 1 << 39
+    moderate_members = 1 << 40
+    creator_monetization_analytics = 1 << 41
+    soundboard = 1 << 42
+    create_guild_expressions = 1 << 43
+    create_events = 1 << 44
+    external_sounds = 1 << 45
+    voice_messages = 1 << 46
+    polls = 1 << 49
+    external_apps = 1 << 50
     
 
 class Permissions:
     """Contains the result of functions that return permissions. 
     These classes can be used to create new permissions, through 'flipping' each one of the attributes. (e.g False to True)
-    This provides a more abstracted interface to creating and checking permissions, than `discmoji.Permissions`."""
+    This provides a more abstracted interface to creating and checking permissions, than `discmoji.PermissionsBits`."""
     def __init__(self,data):
         self.create_invites = False
+        """Creating invites"""
         self.kick_members = False
-        ...
+        """kicking members"""
+        self.ban_members = False
+        """banning members"""
+        self.admin = False
+        """administrator perms"""
+        self.manage_channels = False
+        """managing channels e.g deleting them, moving them"""
+        self.manage_guilds = False
+        """managing guilds e.g changing guild banner etc."""
+        self.reactions = False
+        """reaction related permissions"""
+        self.audit_log = False
+        """Viewing audit log events"""
+        self.priority_speaker = False
+        """Priority speaker in voice chats"""
+        self.stream = False
+        """Stream in voice chats"""
+        self.view_channel = False
+        """Viewing specific channel"""
+        self.send_messages = False
+        """Pretty self explanatory"""
+        self.tts_messages = False
+        """TTS messages, TTS standing for **T**ext **T**o **S**peech"""
 
-def _convert_perms(input: int, enum: Permissions):
+def _convert_perms(input: int, enum: PermissionsBits):
     input_bytes = bytes(input)
     for item,value in enum.__dict__.items():
         ...
