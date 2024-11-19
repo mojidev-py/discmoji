@@ -348,8 +348,8 @@ class Permissions:
         self.external_apps = False
         """Allows user to use external apps."""
         
-        @classmethod
-        def _convert_perms(cls,input: int, enum: PermissionsBits):
+    @classmethod
+    def _convert_perms(cls,input: int, enum: PermissionsBits):
             """Internal method used to configure base permissions to liking."""
             return_class = cls()
             bytes_input = bytes(input)
