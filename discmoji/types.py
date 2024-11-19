@@ -26,9 +26,10 @@ import asyncio
 import json
 from enum import Enum, IntEnum
 from typing import Any, Literal
-from typing import Optional
+from typing import Optional,Type
 from .snowflake import Snowflake
 import enum
+from .exceptions import InternalDiscmojiException
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
@@ -241,8 +242,6 @@ class PermissionsBits(enum.IntFlag):
     moderate_members = 1 << 40
     creator_monetization_analytics = 1 << 41
     soundboard = 1 << 42
-    create_guild_expressions = 1 << 43
-    create_events = 1 << 44
     external_sounds = 1 << 45
     voice_messages = 1 << 46
     polls = 1 << 49
@@ -253,7 +252,7 @@ class Permissions:
     """Contains the result of functions that return permissions. 
     These classes can be used to create new permissions, through 'flipping' each one of the attributes. (e.g False to True)
     This provides a more abstracted interface to creating and checking permissions, than `discmoji.PermissionsBits`."""
-    def __init__(self,data):
+    def __init__(self):
         self.create_invites = False
         """Creating invites"""
         self.kick_members = False
@@ -280,8 +279,84 @@ class Permissions:
         """Pretty self explanatory"""
         self.tts_messages = False
         """TTS messages, TTS standing for **T**ext **T**o **S**peech"""
-
-def _convert_perms(input: int, enum: PermissionsBits):
-    input_bytes = bytes(input)
-    for item,value in enum.__dict__.items():
-        ...
+        self.manage_messages = False
+        """Allows you to delete messages"""
+        self.embed_links = False
+        """Allows links to automatically be embedded"""
+        self.attach_files = False
+        """Pretty self-explanatory here."""
+        self.message_history = False
+        """Message history"""
+        self.everyone = False
+        """Permission that allows you to mention everyone"""
+        self.external_emojis = False
+        """Allows you to use emojis from other servers that have been joined, if Nitro user."""
+        self.insights = False
+        """Allows you to view guild insights"""
+        self.connect = False
+        """Connecting in a VC (**V**oice **C**hannel)"""
+        self.speak = False
+        """Speaking in a VC"""
+        self.mute_members = False
+        """Muting members"""
+        self.deafen_members = False
+        """Deafening members in a VC"""
+        self.move_members = False
+        """Moving members to other channels"""
+        self.use_vad = False
+        """Allowing user in VC to use VAD. (**V**oice **A**ctivity **D**etection)"""
+        self.change_nickname = False
+        """Allows user to change own nickname"""
+        self.manage_nicknames = False
+        """Allows user to manage other user's nicknames"""
+        self.manage_roles = False
+        """Allows user to manage guild's roles."""
+        self.manage_webhooks = False
+        """Allows user to configure webhooks"""
+        self.guild_expressions = False
+        """Allows user to edit and delete guild stickers or emojis"""
+        self.use_app_cmds = False
+        """Allows user to use external application commands"""
+        self.req_to_speak = False
+        """Allows user to request to speak in a Stage channel"""
+        self.events = False
+        """Allows for deleting and scheduling events for discord servers."""
+        self.threads = False
+        """Allows for managing of threads"""
+        self.public_threads = False
+        """Allows user to create public threads"""
+        self.private_threads = False
+        """Allows user to create private threads"""
+        self.external_stickers = False
+        """Allows user to use stickers from other servers."""
+        self.messages_in_threads = False
+        """Allows user to send messages in threads"""
+        self.embedded_activities = False
+        """Allows for using activities"""
+        self.moderate_members = False
+        """Allows user to time out other users"""
+        self.creator_monetization_analytics = False
+        """Allows user to view role subscription insights."""
+        self.soundboard = False
+        """Usage of soundboard."""
+        self.external_sounds = False
+        """Usage of external sounds from other guilds."""
+        self.voice_messages = False
+        """Allowing of user to send voice messages."""
+        self.polls = False
+        """Allowing of user to create polls"""
+        self.external_apps = False
+        """Allows user to use external apps."""
+        
+        @classmethod
+        def _convert_perms(cls,input: int, enum: PermissionsBits):
+            """Internal method used to configure base permissions to liking."""
+            return_class = cls()
+            bytes_input = bytes(input)
+            for key,item in enum.__dict__.items():
+                if bytes(item) & bytes_input == True:
+                    try:    
+                        setattr(return_class,key,True)
+                    except AttributeError:
+                        raise InternalDiscmojiException(AttributeError.args)
+            return return_class

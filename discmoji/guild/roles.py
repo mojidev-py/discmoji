@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional
-from ..types import RoleTags
+from ..types import RoleTags, Permissions,PermissionsBits
 class Role:
     """Represents a discord Role.
     ## Attributes
@@ -40,16 +40,14 @@ class Role:
        - Unicode emoji for the role, if it exists.
     - position - `int`
        - Position of role in server role listing.
-    - permissions - `NotImplemented`
-       - Permissions HAVE NOT BEEN IMPLEMENTED, will change with implementation.
+    - permissions - `discmoji.Permissions`
+       - Represents the role's permissions.
     - managed - `bool`
        - Whether this role is managed by an integration.
     - mentionable - `bool`
        - Whether this role is mentionable.
     - role_tags - `Optional[discmoji.RoleTags]`
        - An object representing extra role metadata, may be none.
-    - flags - `NotImplemented`
-       - flags have NOT BEEN IMPLEMENTED.
    """
     def __init__(self,_data: dict[str,str | int | dict | bool]):
         self.id = Snowflake(_data["id"])
@@ -59,8 +57,7 @@ class Role:
         self.icon: Optional[str] = f"https://cdn.discordapp.com/role_icons/{int(self.id)}/{_data.get("icon")}.png" if _data.get("icon") is not None else None
         self.emoji: Optional[str] = _data.get("unicode_emoji")
         self.position: int = _data["position"]
-        self.permissions: str = ...  # Not yet
+        self.permissions: Permissions = Permissions._convert_perms(int(_data["permissions"]),PermissionsBits)
         self.managed: bool = _data["managed"]
         self.mentionable: bool = _data["mentionable"]
         self.role_tags = RoleTags(_data["tags"]) if _data.get("tags") is not None else None
-        self.flags = ...

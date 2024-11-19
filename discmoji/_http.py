@@ -23,7 +23,7 @@ SOFTWARE.
 import aiohttp
 from .types import RequestBody
 from guild.gpayload import _GuildPayloadConverter
-
+from typing import Callable,Any
 class HttpManager:
    """Internal class that manages requests to endpoints."""
    def __init__(self,token: str):
@@ -39,41 +39,19 @@ class HttpManager:
         headers = self.normal | self.auth if auth else self.normal
         async with aiohttp.ClientSession(base_url=self.base_url,headers=headers) as client:
             match method:
-                case "post":
-                    async with client.post(url=f"{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                       if response.status == 201 or response.status == 200:
-                           if route.startswith("guilds"):
-                               return _GuildPayloadConverter(RequestBody(response))
-                           else: 
-                               return RequestBody(response)
-                             
-                case "get":
-                    async with client.get(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
+                case "post" | "get" | "patch" | "delete" | "put":
+                    methods: dict[str,Callable[[Any],Any]] = {
+                        "get": client.get,
+                        "post": client.post,
+                        "patch": client.patch,
+                        "delete": client.delete,
+                        "put": client.put
+                    }
+                    async with methods[method](url=f"{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
                            if route.startswith("guilds"):
                                return _GuildPayloadConverter(RequestBody(response))
                            else: 
                                return RequestBody(response)                    
-                case "delete":
-                    async with client.delete(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                       if response.status == 201 or response.status == 200:
-                           if route.startswith("guilds"):
-                               return _GuildPayloadConverter(RequestBody(response))
-                           else: 
-                               return RequestBody(response)                 
-                case "put":
-                    async with client.put(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                       if response.status == 201 or response.status == 200:
-                           if route.startswith("guilds"):
-                               return _GuildPayloadConverter(RequestBody(response))
-                           else: 
-                               return RequestBody(response)                      
-                case "patch":
-                    async with client.patch(url=f"{self.base_url}{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                       if response.status == 201 or response.status == 200:
-                           if route.startswith("guilds"):
-                               return _GuildPayloadConverter(RequestBody(response))
-                           else: 
-                               return RequestBody(response)                       
                 case _:
-                    raise RuntimeError("Not a valid method.")
+                    raise RuntimeError("Not a valid method. Report this to devs! (might have been a mispelling tbh)")
