@@ -25,8 +25,7 @@ import websockets
 import asyncio
 import json
 from enum import Enum, IntEnum
-from typing import Any, Literal
-from typing import Optional,Type
+from typing import Any, Literal,Optional,Self,Type
 from .snowflake import Snowflake
 import enum
 from .exceptions import InternalDiscmojiException
@@ -106,7 +105,7 @@ class UserFlags(IntEnum):
     BOT_ONLY_HTTP = 1 << 19
     ACTIVE_DEV = 1 << 22
 
-def _flags_parse(enum: UserFlags,input: int) -> list[dict[str,int | Any]] | None:
+def _flags_parse(enum: Type[UserFlags],input: int) -> list[dict[str,int | Any]] | None:
     parsed = []
     bytesinput = bytes(input)
     for key,value in enum.__dict__.items():
@@ -134,7 +133,7 @@ class VerificationLevels(IntEnum):
     HIGH = 3
     VERY_HIGH = 4
     
-def _find_verification_level(enum: VerificationLevels,input: int):
+def _find_verification_level(enum: Type[VerificationLevels],input: int):
     for key,value in enum.__dict__.items():
         if value == input:
             return {key:value}
@@ -143,7 +142,7 @@ class DefaultMessageNotifLevel(Enum):
     ALL_MESSAGES = 0
     ONLY_MENTIONS = 1
 
-def _find_notif_level(enum: DefaultMessageNotifLevel,input: int):
+def _find_notif_level(enum: Type[DefaultMessageNotifLevel],input: int):
     for key, value in enum.__dict__.items():
         if value == input:
             return {key:value}
@@ -153,7 +152,7 @@ class ExplicitContentFilter(Enum):
     MEMBERS_WITHOUT_ROLES = 1
     ALL_MEMBERS = 2
 
-def _find_expl_level(enum: ExplicitContentFilter,input: int):
+def _find_expl_level(enum: Type[ExplicitContentFilter],input: int):
     for key, value in enum.__dict__.items():
         if value == input:
             return {key:value}
@@ -163,7 +162,7 @@ class RoleTags:
     ## Attributes
     - bot_id - `Optional[discmoji.Snowflake]`
        - Snowflake representing the id of the bot associated with this role, can be None.
-    - integration_id - `Optional[discmoji.Snowlflake]`
+    - integration_id - `Optional[discmoji.Snowflake]`
        - Snowflake representing the id of the integration associated with this role, can be None.
     - premium_role - `Optional[bool]`
        - Indicates whether this is a booster role or not. (role given when boosting)
@@ -205,13 +204,13 @@ class PermissionsBits(enum.IntFlag):
     admin = 1 << 3
     manage_channels = 1 << 4
     manage_guild = 1 << 5
-    add_reactions = 1 << 6
-    view_audit_log = 1 << 7
+    reactions = 1 << 6
+    audit_log = 1 << 7
     priority_speaker = 1 << 8
     stream = 1 << 9
     view_channel = 1 << 10
     send_messages = 1 << 11
-    send_tts_msgs = 1 << 12 
+    tts_messages = 1 << 12 
     manage_messages = 1 << 13
     embed_links = 1 << 14
     attach_files = 1 << 15
@@ -349,7 +348,7 @@ class Permissions:
         """Allows user to use external apps."""
         
     @classmethod
-    def _convert_perms(cls,input: int, enum: PermissionsBits):
+    def _convert_perms(cls,input: int, enum: Type[PermissionsBits]) -> Self:
             """Internal method used to configure base permissions to liking."""
             return_class = cls()
             bytes_input = bytes(input)
@@ -360,3 +359,31 @@ class Permissions:
                     except AttributeError:
                         raise InternalDiscmojiException(AttributeError.args)
             return return_class
+    
+    
+    def _deconv_perms(self,enum: Type[PermissionsBits]) -> int:
+        """An internal utility function that turns the Permissions object back into an integer. """
+        integer = 0
+        for item,value in self.__dict__.items():
+            if type(value) == function:
+                continue
+            else:
+                if value:
+                    integer += enum.__dict__[item]
+        return integer
+
+class SystemChannelFlags(Enum):
+    SUPPRESS_JOIN_NOTIFS = 1 << 0
+    SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1
+    SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2
+    SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3
+    SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 1 << 4
+    SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5
+
+def _get_system_flags(input: int,enum: Type[SystemChannelFlags]):
+    byte_input = bytes(input)
+    value_list = []
+    for key,value in enum.__dict__.items():
+        if bytes(value) & byte_input:
+            value_list.append({key:value})
+    return value_list

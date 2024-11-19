@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional
-from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level
+from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level,SystemChannelFlags,_get_system_flags
 from .roles import Role
 from .emoji import Emoji
 class Guild:
@@ -60,6 +60,19 @@ class Guild:
        - Contains a list of all the guild's roles.
     - emojis - `list[discmoji.Emoji]`
        - Contains a list of all the guild's emojis.
+    - features - `list[str]`
+       - List of strings listing enabled guild features. 
+    - mfa_level - `Literal["NONE","ELEVATED"]`
+      - String literal indicating **M**ulti **F**actor **A**uthentication level to enter guild.
+    - application_id - `Optional[discmoji.Snowflake]`
+      - Contains the application's id if the guild is bot creates, else None.
+    - system_channel_id - `Optional[discmoji.Snowflake]`
+      - Contains the system channel's id, if exists.
+    - system_channel_flags - `list[dict[str,int]]`
+      - A list of all enabled system channel flags.
+      - key is always capital ( [see ddev documentation](https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags) ), value is always an integer.
+    - rules_channel_id - `Optional[discmoji.Snowflake]`
+      - The rule channel's id, if exists.
        """
     def __init__(self,_data: dict[str, str | int | dict | None]):
         self.id = Snowflake(_data["id"])
@@ -79,8 +92,11 @@ class Guild:
         self.explicit_filter_lvl: dict[str,int] = _find_expl_level(ExplicitContentFilter,_data["explicit_content_filter"])
         self.roles: list[Role] = [Role(role) for role in _data["roles"]]
         self.emojis: list[Emoji] = [Emoji(emoji) for emoji in _data["emoji"]]
-        
-        
-        
-        
+        self.features: list[str] = _data["features"]
+        self.mfa_level = "NONE" if _data["mfa_level"] == 0 else "ELEVATED"
+        self.application_id: Optional[Snowflake] = Snowflake(_data["application_id"]) if _data.get("application_id") is not None else None
+        self.system_channel_id: Optional[Snowflake] = Snowflake(_data["system_channel_id"]) if _data.get("system_channel_id") is not None else None
+        self.system_channel_flags: list[dict[str,int]] = _get_system_flags(_data["system_channel_flags"],SystemChannelFlags)
+        self.rules_channel_id: Optional[Snowflake] = Snowflake(_data["rules_channel_id"]) if _data.get("rules_channel_id") is not None else None
+        ...
         
