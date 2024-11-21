@@ -29,6 +29,8 @@ from typing import Any, Literal,Optional,Self,Type
 from .snowflake import Snowflake
 import enum
 from .exceptions import InternalDiscmojiException
+import logging
+from colorama import Fore
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
@@ -387,3 +389,22 @@ def _get_system_flags(input: int,enum: Type[SystemChannelFlags]):
         if bytes(value) & byte_input:
             value_list.append({key:value})
     return value_list
+
+class NitroRanks(IntEnum):
+    NONE =  0	
+    TIER_1 = 1	
+    TIER_2 = 2	
+    TIER_3 = 3
+
+def _get_nitro_rank(input: int,enum: Type[NitroRanks]):
+    if input == 0:
+        return None
+    if input == 1:
+        return "Tier 1"
+    if input == 2:
+        return "Tier 2"
+    if input == 3:
+        return "Tier 3"
+
+logger = logging.getLogger("discmoji").addHandler(logging.NullHandler())
+formatter = logging.Formatter(f"%(name) %(levelname) at : %(message)",datefmt="%I:%M")

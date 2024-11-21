@@ -21,10 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from ..snowflake import Snowflake
-from typing import Optional
-from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level,SystemChannelFlags,_get_system_flags
+from typing import Optional,TypeAlias
+from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level,SystemChannelFlags,_get_system_flags,_get_nitro_rank,NitroRanks,Locales
 from .roles import Role
 from .emoji import Emoji
+from .welcomescreen import WelcomeScreen,WelcomeScreenChannel
 class Guild:
     """Represents a Guild/Server on Discord.
     ## Attributes
@@ -73,7 +74,35 @@ class Guild:
       - key is always capital ( [see ddev documentation](https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags) ), value is always an integer.
     - rules_channel_id - `Optional[discmoji.Snowflake]`
       - The rule channel's id, if exists.
-       """
+    - max_presences - `Optional[int]`
+      - Almost always None, unless guild has a very sizable amount of members.
+        - e.g Midjourney
+    - max_members - `Optional[int]`
+        - The maximum member threshold for the guild.
+    - vanity_url_code - `Optional[str]`
+        - The vanity url code for the guild.
+    - description - `Optional[str]`
+        - The description of the guild.
+    - banner - `Optional[str]`
+        - Contains a CDN link to the guild's banner. May be None.
+    - premium_tier - `Literal["Tier 1","Tier 2","Tier 3"] | None`
+        - The server boost rank of the guild.
+    - premium_subscription_count - `int`
+        - The amount of boosts this guild has.
+    - preferred_locale - `str`
+        - Returns the language for the locale this guild is in.
+    - public_upd_channel_id - `Optional[discmoji.Snowflake]`
+        - the public updates channel's id, if exists.
+    - max_video_channel_users - `Optional[int]`
+        - The maximum amount of users that can be inside a video channel.
+    - max_stage_video_channel_users - `Optional[int]`
+        - The maximum amount of users that can be inside a stage video channel.
+    - approximate_member_count - `Optional[int]`
+        - Only a non-None value if retrieved from the `Get Guild` endpoint with the `with_count` param.
+    - approximate_presence_count - `Optional[int]`
+        - Only a non-None value if retrieved from the `Get Guild` endpoint with the `with_count` param.
+    - welcome_screen - `Optional[WelcomeScreen]`
+        - The welcome screen for this guild, if exists."""
     def __init__(self,_data: dict[str, str | int | dict | None]):
         self.id = Snowflake(_data["id"])
         self.name: str = _data["name"]
@@ -98,5 +127,20 @@ class Guild:
         self.system_channel_id: Optional[Snowflake] = Snowflake(_data["system_channel_id"]) if _data.get("system_channel_id") is not None else None
         self.system_channel_flags: list[dict[str,int]] = _get_system_flags(_data["system_channel_flags"],SystemChannelFlags)
         self.rules_channel_id: Optional[Snowflake] = Snowflake(_data["rules_channel_id"]) if _data.get("rules_channel_id") is not None else None
-        ...
+        self.max_presences: Optional[int] = _data["max_presences"] if _data.get("max_presences") is not None else None
+        self.max_members: Optional[int] = _data["max_members"] if _data.get("max_members") is not None else None
+        self.vanity_url_code: Optional[str] = _data.get("vanity_url_code")
+        self.description: Optional[str] = _data.get("description")
+        self.banner: Optional[str] = f"https://cdn.discordapp.com/banners/{self.id}/{_data["banner"]}.{"gif" if _data["banner"].startswith("a_") else "png"}" if _data.get("banner") else None  
+        self.premium_tier: str = _get_nitro_rank(_data["premium_tier"],NitroRanks)
+        self.premium_subscription_count: int = _data["premium_subscription_count"]
+        self.preferred_locale: str = Locales.__dict__[_data["preferred_locale"].upper().replace("-","_")]
+        self.public_upd_channel_id: Optional[Snowflake] = Snowflake(_data["public_updates_channel_id"]) if _data.get("public_updates_channel_id") is not None else None
+        self.max_video_channel_users: Optional[int] = _data.get("max_video_channel_users")
+        self.max_stage_video_channel_users: Optional[int] = _data.get("max_stage_video_channel_users")
+        self.approximate_member_count: Optional[int] = _data.get("approximate_member_count")
+        self.approximate_presence_count: Optional[int] = _data.get("approximate_presence_count")
+        self.welcome_screen: Optional[WelcomeScreen] = WelcomeScreen(_data["welcome_screen"]) if _data["welcome_screen"] is not None else None
         
+        
+Server: TypeAlias = Guild
