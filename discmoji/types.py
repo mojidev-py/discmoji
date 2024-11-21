@@ -25,12 +25,11 @@ import websockets
 import asyncio
 import json
 from enum import Enum, IntEnum
-from typing import Any, Literal,Optional,Self,Type
+from typing import Any, Literal,Optional,Self
 from .snowflake import Snowflake
 import enum
 from .exceptions import InternalDiscmojiException
 import logging
-from colorama import Fore
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
@@ -107,10 +106,10 @@ class UserFlags(IntEnum):
     BOT_ONLY_HTTP = 1 << 19
     ACTIVE_DEV = 1 << 22
 
-def _flags_parse(enum: Type[UserFlags],input: int) -> list[dict[str,int | Any]] | None:
+def _flags_parse(input: int) -> list[dict[str,int | Any]] | None:
     parsed = []
     bytesinput = bytes(input)
-    for key,value in enum.__dict__.items():
+    for key,value in UserFlags.__members__.items():
         for num in bytesinput:
             if bytes(num) == value:
               parsed.append({key:value})
@@ -135,8 +134,8 @@ class VerificationLevels(IntEnum):
     HIGH = 3
     VERY_HIGH = 4
     
-def _find_verification_level(enum: Type[VerificationLevels],input: int):
-    for key,value in enum.__dict__.items():
+def _find_verification_level(input: int):
+    for key,value in VerificationLevels.__members__.items():
         if value == input:
             return {key:value}
 
@@ -144,8 +143,8 @@ class DefaultMessageNotifLevel(Enum):
     ALL_MESSAGES = 0
     ONLY_MENTIONS = 1
 
-def _find_notif_level(enum: Type[DefaultMessageNotifLevel],input: int):
-    for key, value in enum.__dict__.items():
+def _find_notif_level(input: int):
+    for key, value in DefaultMessageNotifLevel.__members__.items():
         if value == input:
             return {key:value}
 
@@ -154,8 +153,8 @@ class ExplicitContentFilter(Enum):
     MEMBERS_WITHOUT_ROLES = 1
     ALL_MEMBERS = 2
 
-def _find_expl_level(enum: Type[ExplicitContentFilter],input: int):
-    for key, value in enum.__dict__.items():
+def _find_expl_level(input: int):
+    for key, value in ExplicitContentFilter.__members__.items():
         if value == input:
             return {key:value}
 
@@ -350,11 +349,11 @@ class Permissions:
         """Allows user to use external apps."""
         
     @classmethod
-    def _convert_perms(cls,input: int, enum: Type[PermissionsBits]) -> Self:
+    def _convert_perms(cls,input: int) -> Self:
             """Internal method used to configure base permissions to liking."""
             return_class = cls()
             bytes_input = bytes(input)
-            for key,item in enum.__dict__.items():
+            for key,item in PermissionsBits.__members__.items():
                 if bytes(item) & bytes_input == True:
                     try:    
                         setattr(return_class,key,True)
@@ -363,7 +362,7 @@ class Permissions:
             return return_class
     
     
-    def _deconv_perms(self,enum: Type[PermissionsBits]) -> int:
+    def _deconv_perms(self) -> int:
         """An internal utility function that turns the Permissions object back into an integer. """
         integer = 0
         for item,value in self.__dict__.items():
@@ -371,9 +370,8 @@ class Permissions:
                 continue
             else:
                 if value:
-                    integer += enum.__dict__[item]
+                    integer += PermissionsBits.__members__[item]
         return integer
-
 class SystemChannelFlags(Enum):
     SUPPRESS_JOIN_NOTIFS = 1 << 0
     SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1
@@ -382,10 +380,10 @@ class SystemChannelFlags(Enum):
     SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 1 << 4
     SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5
 
-def _get_system_flags(input: int,enum: Type[SystemChannelFlags]):
+def _get_system_flags(input: int):
     byte_input = bytes(input)
     value_list = []
-    for key,value in enum.__dict__.items():
+    for key,value in SystemChannelFlags.__members__.items():
         if bytes(value) & byte_input:
             value_list.append({key:value})
     return value_list
@@ -396,7 +394,7 @@ class NitroRanks(IntEnum):
     TIER_2 = 2	
     TIER_3 = 3
 
-def _get_nitro_rank(input: int,enum: Type[NitroRanks]):
+def _get_nitro_rank(input: int):
     if input == 0:
         return None
     if input == 1:

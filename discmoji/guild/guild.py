@@ -22,10 +22,10 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional,TypeAlias
-from ..types import VerificationLevels,_find_verification_level,DefaultMessageNotifLevel,_find_notif_level,ExplicitContentFilter,_find_expl_level,SystemChannelFlags,_get_system_flags,_get_nitro_rank,NitroRanks,Locales
+from ..types import _find_verification_level,_find_notif_level,_find_expl_level,_get_system_flags,_get_nitro_rank,Locales
 from .roles import Role
 from .emoji import Emoji
-from .welcomescreen import WelcomeScreen,WelcomeScreenChannel
+from .welcomescreen import WelcomeScreen
 class Guild:
     """Represents a Guild/Server on Discord.
     ## Attributes
@@ -116,25 +116,25 @@ class Guild:
         self.afk_timeout: int = _data["afk_timeout"]
         self.widget_enabled: Optional[bool] = _data.get("widget_enabled")
         self.widget_channel_id: Optional[Snowflake] = Snowflake(_data.get("widget_channel_id")) if _data.get("widget_channel_id") is not None else None
-        self.verification_level: dict[str,int] = _find_verification_level(VerificationLevels,_data["verification_level"])
-        self.default_msg_notifs: dict[str,int] = _find_notif_level(DefaultMessageNotifLevel,_data["default_message_notifications"])
-        self.explicit_filter_lvl: dict[str,int] = _find_expl_level(ExplicitContentFilter,_data["explicit_content_filter"])
+        self.verification_level: dict[str,int] = _find_verification_level(_data["verification_level"])
+        self.default_msg_notifs: dict[str,int] = _find_notif_level(_data["default_message_notifications"])
+        self.explicit_filter_lvl: dict[str,int] = _find_expl_level(_data["explicit_content_filter"])
         self.roles: list[Role] = [Role(role) for role in _data["roles"]]
         self.emojis: list[Emoji] = [Emoji(emoji) for emoji in _data["emoji"]]
         self.features: list[str] = _data["features"]
         self.mfa_level = "NONE" if _data["mfa_level"] == 0 else "ELEVATED"
         self.application_id: Optional[Snowflake] = Snowflake(_data["application_id"]) if _data.get("application_id") is not None else None
         self.system_channel_id: Optional[Snowflake] = Snowflake(_data["system_channel_id"]) if _data.get("system_channel_id") is not None else None
-        self.system_channel_flags: list[dict[str,int]] = _get_system_flags(_data["system_channel_flags"],SystemChannelFlags)
+        self.system_channel_flags: list[dict[str,int]] = _get_system_flags(_data["system_channel_flags"])
         self.rules_channel_id: Optional[Snowflake] = Snowflake(_data["rules_channel_id"]) if _data.get("rules_channel_id") is not None else None
         self.max_presences: Optional[int] = _data["max_presences"] if _data.get("max_presences") is not None else None
         self.max_members: Optional[int] = _data["max_members"] if _data.get("max_members") is not None else None
         self.vanity_url_code: Optional[str] = _data.get("vanity_url_code")
         self.description: Optional[str] = _data.get("description")
         self.banner: Optional[str] = f"https://cdn.discordapp.com/banners/{self.id}/{_data["banner"]}.{"gif" if _data["banner"].startswith("a_") else "png"}" if _data.get("banner") else None  
-        self.premium_tier: str = _get_nitro_rank(_data["premium_tier"],NitroRanks)
+        self.premium_tier: str = _get_nitro_rank(_data["premium_tier"])
         self.premium_subscription_count: int = _data["premium_subscription_count"]
-        self.preferred_locale: str = Locales.__dict__[_data["preferred_locale"].upper().replace("-","_")]
+        self.preferred_locale: str = Locales.__members__[_data["preferred_locale"].upper().replace("-","_")]
         self.public_upd_channel_id: Optional[Snowflake] = Snowflake(_data["public_updates_channel_id"]) if _data.get("public_updates_channel_id") is not None else None
         self.max_video_channel_users: Optional[int] = _data.get("max_video_channel_users")
         self.max_stage_video_channel_users: Optional[int] = _data.get("max_stage_video_channel_users")
