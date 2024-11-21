@@ -388,11 +388,6 @@ def _get_system_flags(input: int):
             value_list.append({key:value})
     return value_list
 
-class NitroRanks(IntEnum):
-    NONE =  0	
-    TIER_1 = 1	
-    TIER_2 = 2	
-    TIER_3 = 3
 
 def _get_nitro_rank(input: int):
     if input == 0:
@@ -406,3 +401,13 @@ def _get_nitro_rank(input: int):
 
 logger = logging.getLogger("discmoji").addHandler(logging.NullHandler())
 formatter = logging.Formatter(f"%(name) %(levelname) at : %(message)",datefmt="%I:%M")
+
+def find_sticker_format_type(inp: int):
+    if inp == 1:
+        return "PNG"
+    if inp == 2:
+        return "APNG"
+    if inp == 3:
+        return "LOTTIE"
+    if inp == 4:
+        return "GIF"

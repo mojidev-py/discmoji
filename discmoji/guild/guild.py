@@ -26,8 +26,10 @@ from ..types import _find_verification_level,_find_notif_level,_find_expl_level,
 from .roles import Role
 from .emoji import Emoji
 from .welcomescreen import WelcomeScreen
+from .sticker import Sticker
 class Guild:
-    """Represents a Guild/Server on Discord.
+    """Represents a Guild/Server on Discord. 
+    There is an alias for this called Server.
     ## Attributes
     - id - `discmoji.Snowflake`
        - Contains the id of the guild.
@@ -102,8 +104,14 @@ class Guild:
     - approximate_presence_count - `Optional[int]`
         - Only a non-None value if retrieved from the `Get Guild` endpoint with the `with_count` param.
     - welcome_screen - `Optional[WelcomeScreen]`
-        - The welcome screen for this guild, if exists."""
-    def __init__(self,_data: dict[str, str | int | dict | None]):
+        - The welcome screen for this guild, if exists.
+    - stickers - `Optional[list[discmoji.Sticker]]`
+        - A list of stickers for this guild.
+    - progress_bar_enabled - `bool`
+        - Whether the guild's boost progress bar is enabled.
+    - safety_alerts_channel_id - `Optional[discmoji.Snowflake]`
+        - The id of the safety alerts channel for this guild."""
+    def __init__(self,_data: dict[str, str | int | dict | None | bool]):
         self.id = Snowflake(_data["id"])
         self.name: str = _data["name"]
         self.icon: str = f"https://cdn.discordapp.com/icons/{self.id}/{_data["avatar"]}.{"gif" if _data["avatar"].startswith("a_") else "png"}"
@@ -141,6 +149,8 @@ class Guild:
         self.approximate_member_count: Optional[int] = _data.get("approximate_member_count")
         self.approximate_presence_count: Optional[int] = _data.get("approximate_presence_count")
         self.welcome_screen: Optional[WelcomeScreen] = WelcomeScreen(_data["welcome_screen"]) if _data["welcome_screen"] is not None else None
-        
+        self.stickers: Optional[list[Sticker]] = [Sticker(sticker) for sticker in _data["stickers"] if _data.get("stickers")]
+        self.progress_bar_enabled: bool = _data["premium_progress_bar_enabled"]
+        self.safety_alerts_channel_id = _data["safety_alerts_channel_id"]
         
 Server: TypeAlias = Guild
