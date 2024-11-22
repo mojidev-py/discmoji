@@ -24,16 +24,20 @@ from ._http import HttpManager
 import asyncio
 from .intents import BotIntents
 import websockets
-from .types import WebsocketPayload
-import contextlib
+from .types import WebsocketPayload,Opcodes,logger
 from contextlib import asynccontextmanager
 from typing import Self
+from random import uniform
+import json
 
 class DiscordWebsocket:
     def __init__(self,http: HttpManager,intents: BotIntents):
         self.ws = None
         self.token = http.token
         self.intents = intents
+        self.interval: int = None
+        self.seq: int | None = None 
+        self.url: str = None
     
     @asynccontextmanager
     # huge credit to graingert on discord!
@@ -48,7 +52,44 @@ class DiscordWebsocket:
                     
     
     async def _recieve_latest(self):
-        return WebsocketPayload(await self.ws.recv())
+        result: dict = json.loads(await self.ws.recv())
+        self.seq = result.get("s")
+        # .get because sequence field may be none at times
+        return WebsocketPayload(opcode=result["op"],data=result["d"])
 
-    async def _hand_shake(self):
-        ...
+    async def first_heart_beat(self):
+        msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=None)
+        await self.ws.send(msg.jsonize())
+    
+    async def _heart_beat_loop(self,seq: int):
+        while True:
+            await asyncio.sleep(self.interval)
+            msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=seq)
+            await self.ws.send(msg.jsonize())
+    
+    async def _handshake(self):
+        recv = await self._recieve_latest()
+        if recv.opcode == Opcodes.HELLO:
+            self.interval = recv.data["heartbeat_interval"]
+            await asyncio.sleep(uniform(0,1))
+            await self.first_heart_beat()
+            asyncio.create_task(self._heart_beat_loop(self.seq))
+        if recv.opcode == Opcodes.ACK:
+            logger.info(f"Initiated Heartbeat with gateway at interval of {self.interval / 1000} s.")
+        identify = WebsocketPayload(opcode=2,data = {
+            "token": self.token,
+            "properties": {
+                "os": "linux",
+                "browser": "discmoji",
+                "device": "discmoji"
+            },
+            "intents": self.intents
+        })
+        recv = await self._recieve_latest()
+        if recv.opcode == Opcodes.DISPATCH:
+            logger.info(f"Successfully established connection to gateway at session id: {recv.data["session_id"]}")
+            logger.info(f"Bot Name: {recv.data["application"]["name"]}")
+            self.url = recv.data["resume_gateway_url"]
+        
+        
+            

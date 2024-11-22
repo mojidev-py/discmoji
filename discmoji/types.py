@@ -39,7 +39,7 @@ class RequestBody:
 
 
 class WebsocketPayload:
-    def __init__(self,response: Optional[websockets.Data],opcode: int,data: dict):
+    def __init__(self,response: Optional[websockets.Data],opcode: int ,data: dict | int | None):
         self.__serialized: dict = json.loads(response)
         self.opcode = self.__serialized.get("op") if self.__serialized.get("op") else opcode
         self.data = self.__serialized.get("d") if self.__serialized.get("data") else data
@@ -399,7 +399,8 @@ def _get_nitro_rank(input: int):
     if input == 3:
         return "Tier 3"
 
-logger = logging.getLogger("discmoji").addHandler(logging.NullHandler())
+logger = logging.getLogger("discmoji")
+logger.addHandler(logging.NullHandler())
 formatter = logging.Formatter(f"%(name) %(levelname) at : %(message)",datefmt="%I:%M")
 
 def find_sticker_format_type(inp: int):
@@ -411,3 +412,19 @@ def find_sticker_format_type(inp: int):
         return "LOTTIE"
     if inp == 4:
         return "GIF"
+
+
+class Opcodes(Enum):
+    DISPATCH = 0
+    HEARTBEAT = 1
+    IDENTIFY = 2
+    PRESENCE_UPDATE = 3
+    VOICE_STATE_UPDATE = 4
+    RESUME = 6
+    RECONNECT = 7
+    REQUEST_GUILD_MEMBERS = 8
+    INVALID_SESSION = 9
+    HELLO = 10
+    ACK = 11
+    DISPATCH = 0
+    REQ_SOUNDBOARD_SOUNDS = 31
