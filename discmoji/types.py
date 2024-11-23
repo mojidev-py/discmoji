@@ -185,7 +185,7 @@ class PermissionsBits(enum.IntFlag):
     """Enum used by permissions related functions to create or check permissions.
     Use this permissions enum with bitwise operators, like such:
     ```
-    permissions = Permissions.create_invites | Permissions.kick_members | ...
+    permissions = PermissionsBits.create_invites | PermissionsBits.kick_members | ...
     ```
     These are different from intents, do not mix them up. \n
     `|` - adds a permission \n
@@ -194,8 +194,8 @@ class PermissionsBits(enum.IntFlag):
     use these operators as such:
     ```python
     (perms & Permissions.create_invites) == 1 # true
-    perms = Permissions.Example | Permissions.OtherExample # 2304 (example, not accurate)
-    (perms ~Permissions.LALALA) == 21030 # true (example, not accurate)
+    perms = PermissionsBits.Example | Permissions.OtherExample # 2304 (example, not accurate)
+    ~PermissionsBits.LALALA == 21030 # true (example, not accurate)
     ```
     It is advised to use permission check/creator functions to do this work for you, since this may not work as expected.
     """
@@ -426,5 +426,41 @@ class Opcodes(Enum):
     INVALID_SESSION = 9
     HELLO = 10
     ACK = 11
-    DISPATCH = 0
     REQ_SOUNDBOARD_SOUNDS = 31
+
+
+class IntentsBits(enum.IntFlag):
+    """A less abstracted interface than `discmoji.BotIntents` for making intents.
+    This enum is meant to be used with bitwise operators. \n
+    -| - adds an intent \n
+    & - checks if bot has that intent \n
+    ~ - checks if bot does not have that intent \n
+    ```python
+    # examples
+    perms = IntentsBits.Example | IntentsBits.OtherExample
+    (perms & IntentsBits.OtherExample) == True # true
+    ~perms == 0 # true
+    ```
+    Note that this returns an integer, not a BotIntents class.
+    """
+    GUILDS = 1 << 0
+    GUILD_MEMBERS = 1 << 1
+    GUILD_MODERATION = 1 << 2
+    GUILD_EXPRESSIONS = 1 << 3
+    GUILD_INTEGRATIONS = 1 << 4
+    GUILD_WEBHOOKS = 1 << 5
+    GUILD_INVITES = 1 << 6
+    GUILD_VOICE_STATES = 1 << 7
+    GUILD_PRESENCES = 1 << 8
+    GUILD_MESSAGES = 1 << 9
+    GUILD_MESSAGE_REACTIONS = 1 << 10
+    GUILD_MESSAGE_TYPING = 1 << 11
+    DM = 1 << 13
+    DM_TYPING = 1 << 14
+    MESSAGE_CONTENT = 1 << 15
+    GUILD_SCHEDULED_EVENTS = 1 << 16
+    AUTO_MOD_CONFIG = 1 << 20
+    AUTO_MOD_EXECUTION = 1 << 21
+    GUILD_MESSAGE_POLLS = 1 << 24
+    DM_POLLS = 1 << 25
+    
