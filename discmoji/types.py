@@ -357,8 +357,8 @@ class Permissions:
                 if bytes(item) & bytes_input == True:
                     try:    
                         setattr(return_class,key,True)
-                    except AttributeError:
-                        raise InternalDiscmojiException(AttributeError.args)
+                    except AttributeError as e:
+                        raise InternalDiscmojiException(e.args)
             return return_class
     
     
@@ -455,12 +455,13 @@ class IntentsBits(enum.IntFlag):
     GUILD_MESSAGES = 1 << 9
     GUILD_MESSAGE_REACTIONS = 1 << 10
     GUILD_MESSAGE_TYPING = 1 << 11
-    DM = 1 << 13
+    DM = 1 << 12
+    DM_REACTIONS = 1 << 13
     DM_TYPING = 1 << 14
     MESSAGE_CONTENT = 1 << 15
     GUILD_SCHEDULED_EVENTS = 1 << 16
-    AUTO_MOD_CONFIG = 1 << 20
-    AUTO_MOD_EXECUTION = 1 << 21
+    AUTOMOD_CONFIG = 1 << 20
+    AUTOMOD_EXECUTION = 1 << 21
     GUILD_MESSAGE_POLLS = 1 << 24
     DM_POLLS = 1 << 25
     
