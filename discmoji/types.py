@@ -354,7 +354,7 @@ class Permissions:
             return_class = cls()
             bytes_input = bytes(input)
             for key,item in PermissionsBits.__members__.items():
-                if bytes(item) & bytes_input == True:
+                if bytes_input & bytes(item) == True:
                     try:    
                         setattr(return_class,key,True)
                     except AttributeError as e:
@@ -384,7 +384,7 @@ def _get_system_flags(input: int):
     byte_input = bytes(input)
     value_list = []
     for key,value in SystemChannelFlags.__members__.items():
-        if bytes(value) & byte_input:
+        if byte_input & bytes(value):
             value_list.append({key:value})
     return value_list
 
@@ -464,4 +464,17 @@ class IntentsBits(enum.IntFlag):
     AUTOMOD_EXECUTION = 1 << 21
     GUILD_MESSAGE_POLLS = 1 << 24
     DM_POLLS = 1 << 25
+
+class ChannelFlags(enum.IntFlag):
+    PINNED = 1 << 1
+    REQUIRE_TAG = 1 << 4
+    HIDE_MEDIA_DOWNLOAD_OPTIONS = 1 << 15
     
+
+def _get_channel_flags(inp: int):
+    byteinp = bytes(inp)
+    returns = []
+    for item,value in ChannelFlags.__members__.items():
+        if byteinp & bytes(value):
+            returns.append(item)
+    return returns
