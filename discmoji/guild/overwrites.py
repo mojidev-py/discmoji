@@ -21,21 +21,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from ..snowflake import Snowflake
-from typing import Optional
-from .overwrites import PermissionOverwrite
-class Channel:
-    """Represents a channel. Also the base class which all other -Channel classes inherit from.
+from ..types import Permissions
+from typing import Literal
+
+class PermissionOverwrite:
+    """Represents an overwrite over original permissions.
     ## Attributes
     - id - `discmoji.Snowflake`
-      - ID of the channel.
-    - guild_id - `Optional[discmoji.Snowflake]`
-      - The ID of the guild this channel came from. May be none in some gateway payloads.
-    - position - `Optional[int]`
-      - The position of the channel in the guild's channel listing. May be none.
-    - permission_overwrites - `Optional[list[PermissionOverwrite]]`
-      - A list of permission overwrites for this channel."""
-    def __init__(self,_data: dict):
+      - the ID of the overwrite.
+    - type - `Literal["role","member"]`
+      - Indicates whether this overwrite applies to a role, or a specific member.
+    - allowed - `discmoji.Permissions`
+      - Permissions object with all allowed permissions set to True."""
+    def __init__(self, _data: dict):
         self.id: Snowflake = Snowflake(_data["id"])
-        self.guild_id: Optional[Snowflake] = Snowflake(_data["guild_id"]) if _data.get("guild_id") is not None else None
-        self.position: Optional[int] = _data.get("position")
-        self.permission_overwrites: Optional[list[PermissionOverwrite]] = [PermissionOverwrite(overwrite) for overwrite in _data["permission_overwrites"]] if _data.get("permission_overwrites") else None
+        self.type: Literal["role","member"]= "role" if _data["type"] == 0 else "member"
+        self.allowed = Permissions._convert_perms(_data["allow"])
+        
