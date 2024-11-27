@@ -478,3 +478,24 @@ def _get_channel_flags(inp: int):
         if byteinp & bytes(value):
             returns.append(item)
     return returns
+
+
+class ForumTag:
+    """Represents a tag that is able to be applied to a thread in a forum or media channel.
+    ## Attributes
+    - id - `discmoji.Snowflake`
+      - The id of the tag.
+    - name - `str`
+      - the name of the tag.
+    - moderated - `bool`
+      - Whether this tag has to be added by a user with the `MANAGE_THREAD` permission or not.
+    - emoji_id - `Optional[Snowflake]`
+      - The id of the emoji that's on the tag (if exists)
+    - emoji_name - `Optional[str]`
+      - The name of the emoji that's on the tag (if exists)"""
+    def __init__(self,_data: dict) -> None:
+        self.id: Snowflake = Snowflake(_data["id"])
+        self.name: str = _data["name"]
+        self.moderated: bool = _data["moderated"]
+        self.emoji_id: Optional[Snowflake] = Snowflake(_data["emoji_id"]) if _data.get("emoji_id") is not None else None
+        self.emoji_name: Optional[str] = _data["emoji_name"] if _data.get("emoji_name") else None

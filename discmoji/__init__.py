@@ -1,4 +1,4 @@
-"""# DISCMOJI 0.0.1
+"""# DISCMOJI 0.1.0
 A discord api wrapper, made for fun.
 Pre-alpha, so bugs may be present."""
 

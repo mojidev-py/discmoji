@@ -42,7 +42,8 @@ class DiscordWebsocket:
     @asynccontextmanager
     # huge credit to graingert on discord!
     async def initiate_connection(cls,ws: websockets.WebSocketClientProtocol,http: HttpManager,intents: BotIntents):
-        async with websockets.connect(asyncio.run(http.request('get','/gateway/bot',True)).data["url"]) as ws:
+        url = await http.request('get','/gateway/bot',True).data["url"]
+        async with websockets.connect(url) as ws:
                 cls.ws = ws
                 try:
                     goingtobeyield: Self = cls(ws,http,intents)
@@ -61,8 +62,26 @@ class DiscordWebsocket:
         msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=None)
         await self.ws.send(msg.jsonize())
     
+    async def resume(self):
+        msg = WebsocketPayload(opcode=Opcodes.RESUME,data={
+            "token": self.token,
+            "session_id": self.url,
+            "seq": self.seq
+        })
+        await self.ws.send(msg.jsonize())
+        recv: dict = json.loads(await self.ws.recv())
+        if recv.get("op") != 9:
+            logger.info(f"Successfully resumed connection with gateway. Payload: \n {recv}")
+        else:
+            logger.fatal(f"Invalid Session. Report this to devs with payload! {recv}")
+            
+    
     async def _heart_beat_loop(self,seq: int):
         while True:
+            recv = json.loads(await self.ws.recv())
+            logger.info(f"Payload recieved: \n {recv}")
+            if recv["op"] == Opcodes.RECONNECT:
+                await self.resume()
             await asyncio.sleep(self.interval)
             msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=seq)
             await self.ws.send(msg.jsonize())
@@ -85,7 +104,9 @@ class DiscordWebsocket:
             },
             "intents": self.intents
         })
+        await self.ws.send(identify.jsonize())
         recv = await self._recieve_latest()
+        
         if recv.opcode == Opcodes.DISPATCH:
             logger.info(f"Successfully established connection to gateway at session id: {recv.data["session_id"]}")
             logger.info(f"Bot Name: {recv.data["application"]["name"]}")

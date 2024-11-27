@@ -152,7 +152,7 @@ class BotIntents:
         return_class = cls()
         bytes_input = bytes(input)
         for key,item in IntentsBits.__members__.items():
-                if bytes(item) & bytes_input == True:
+                if bytes_input & bytes(item) == True:
                     try:    
                         setattr(return_class,key,True)
                     except AttributeError as e:
