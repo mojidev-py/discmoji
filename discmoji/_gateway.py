@@ -34,7 +34,7 @@ class DiscordWebsocket:
     def __init__(self,http: HttpManager,intents: BotIntents):
         self.ws = None
         self.token = http.token
-        self.intents = intents
+        self.intents = intents._deconv_intents()
         self.interval: int = None
         self.seq: int | None = None 
         self.url: str = None

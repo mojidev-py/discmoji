@@ -27,6 +27,11 @@ from .roles import Role
 from .emoji import Emoji
 from .welcomescreen import WelcomeScreen
 from .sticker import Sticker
+from ..exceptions import DiscmojiRetrievalError
+from .._http import HttpManager
+from ..bot import Bot
+from mappers.gp_mapper import GuildPreviewMapper
+from .gp_payload import _GuildPreviewPayload
 class Guild:
     """Represents a Guild/Server on Discord. 
     There is an alias for this called Server.
@@ -114,8 +119,8 @@ class Guild:
     def __init__(self,_data: dict[str, str | int | dict | None | bool]):
         self.id = Snowflake(_data["id"])
         self.name: str = _data["name"]
-        self.icon: str = f"https://cdn.discordapp.com/icons/{self.id}/{_data["avatar"]}.{"gif" if _data["avatar"].startswith("a_") else "png"}"
-        self.splash: str = f"https://cdn.discordapp.com/splashes/{self.id}/{_data["splash"]}.{"gif" if _data["avatar"].startswith("a_") else "png"}"
+        self.icon: str = f"https://cdn.discordapp.com/icons/{self.id}/{_data["icon"]}.{"gif" if _data["icon"].startswith("a_") else "png"}"
+        self.splash: str = f"https://cdn.discordapp.com/splashes/{self.id}/{_data["splash"]}.{"gif" if _data["splash"].startswith("a_") else "png"}"
         self.discovery_splash: Optional[str] = f"https://cdn.discordapp.com/discovery-splashes/{self.id}/{_data.get("discovery_splash")}.{"gif" if _data.get("discovery_splash").startswith("a_") else "png"}" if _data.get("discovery_splash") is not None else None
         self.owner: Optional[bool] = _data.get("owner")
         self.owner_id: Snowflake = Snowflake(_data["owner_id"])
@@ -152,5 +157,26 @@ class Guild:
         self.stickers: Optional[list[Sticker]] = [Sticker(sticker) for sticker in _data["stickers"] if _data.get("stickers")]
         self.progress_bar_enabled: bool = _data["premium_progress_bar_enabled"]
         self.safety_alerts_channel_id = _data["safety_alerts_channel_id"]
+
+
+    async def get_own_preview(self,bot: Bot):
+        """
+        **Co-routine** \n
+        Retrieves the current guild's community preview.
+        ## Parameters
+        - bot - `discmoji.Bot`
+          - Needed for permissions when retrieving data. (This is a minor inconvenience as we develop through later versions)
+        ## Returns
+        - **discmoji.GuildPreview**
+           - The guild's preview.
+        - **DiscmojiRetrievalError**
+           - Failed to retrieve community preview."""
+        req = await bot.http.request("get",f"/guilds/{self.id}/preview")
+        if req.status >= 400:
+            raise DiscmojiRetrievalError("get_own_preview()","Unspecified error occured while trying to retrieve current guild's preview.")    
+        else:
+            content = GuildPreviewMapper(_GuildPreviewPayload(req)).map()
+            return content
+        
         
 Server: TypeAlias = Guild
