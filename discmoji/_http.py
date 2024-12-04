@@ -22,8 +22,8 @@ SOFTWARE.
 """
 import aiohttp
 from .types import RequestBody
-from guild.gpayload import _GuildPayloadConverter
 from typing import Callable,Any
+from .exceptions import InternalDiscmojiException
 class HttpManager:
    """Internal class that manages requests to endpoints."""
    def __init__(self,token: str):
@@ -38,8 +38,6 @@ class HttpManager:
    async def request(self,method: str, route: str,auth: bool = False, data: dict = None, **kwargs):
         headers = self.normal | self.auth if auth else self.normal
         async with aiohttp.ClientSession(base_url=self.base_url,headers=headers) as client:
-            match method:
-                case "post" | "get" | "patch" | "delete" | "put":
                     methods: dict[str,Callable[[Any],Any]] = {
                         "get": client.get,
                         "post": client.post,
@@ -49,9 +47,7 @@ class HttpManager:
                     }
                     async with methods[method](url=f"{self.version}{route}",json=data if data else None,params=kwargs) as response:
                        if response.status == 201 or response.status == 200:
-                           if route.startswith("guilds"):
-                               return _GuildPayloadConverter(RequestBody(response))
-                           else: 
-                               return RequestBody(response)                    
-                case _:
-                    raise RuntimeError("Not a valid method. Report this to devs! (might have been a mispelling tbh)")
+                            return RequestBody(response)
+                       else:
+                           raise InternalDiscmojiException(f"Method {method} failed to return a success code of 200 or 201.")
+                                               
