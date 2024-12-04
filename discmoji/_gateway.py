@@ -80,9 +80,13 @@ class DiscordWebsocket:
         while True:
             recv = json.loads(await self.ws.recv())
             logger.info(f"Payload recieved: \n {recv}")
+            await asyncio.sleep(self.interval)
+            # placed above since no wait during sending reconnect event
             if recv["op"] == Opcodes.RECONNECT:
                 await self.resume()
-            await asyncio.sleep(self.interval)
+            if recv["op"] == Opcodes.HEARTBEAT:
+                send = WebsocketPayload(opcode=recv["op"],data=recv["d"])
+                await self.ws.send(send.jsonize())
             msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=seq)
             await self.ws.send(msg.jsonize())
     

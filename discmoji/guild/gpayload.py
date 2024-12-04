@@ -21,6 +21,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from ..types import WebsocketPayload, RequestBody
+from .channel import *
+from .guild import *
+from .emoji import *
+from .guild_member import *
+from .roles import Role,RoleTags
+from .sticker import *
+from .welcomescreen import *
+from .overwrites import *
 class _GuildPayloadConverter:
     def __init__(self,json_data: WebsocketPayload | RequestBody):
         self.__to_be_conv = json_data
@@ -28,6 +36,11 @@ class _GuildPayloadConverter:
     def __init_subclass__(cls) -> None:
         raise NotImplementedError("Any type of class with a underscore behind it cannot be subclassed.")
 
-    
+    def construct(self):
+        typelist: list[Channel|ForumChannel|VoiceChannel|Guild|GuildMember|Emoji|Role|RoleTags|Sticker|WelcomeScreen|WelcomeScreenChannel|PermissionOverwrite] = [Channel,ForumChannel,VoiceChannel,Guild,GuildMember,Emoji,Role,RoleTags,Sticker,WelcomeScreen,WelcomeScreenChannel,PermissionOverwrite]
+        # I am so goddamn sorry for this monstrosity man I just wanted type hints!!!
+        for item in typelist:
+            if item.__dict__.keys() == self.__to_be_conv.data.keys():
+                return item(self.__to_be_conv)
     
     
