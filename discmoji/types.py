@@ -34,7 +34,7 @@ import logging
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
         self.headers = response.headers
-        self.data = json.loads(asyncio.run(response.content.read()).decode())
+        self.data: dict = json.loads(asyncio.run(response.content.read()).decode())
         self.status = response.status
 
 

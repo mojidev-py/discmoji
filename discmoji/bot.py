@@ -27,5 +27,5 @@ from ._gateway import DiscordWebsocket
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits):
-        self.http = HttpManager(token)
-        self.dws = DiscordWebsocket(self.http,intents)
+        self.__http = HttpManager(token)
+        self.__dws = DiscordWebsocket(self.http,intents)

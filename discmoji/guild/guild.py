@@ -27,8 +27,7 @@ from .roles import Role
 from .emoji import Emoji
 from .welcomescreen import WelcomeScreen
 from .sticker import Sticker
-from ..exceptions import DiscmojiRetrievalError
-from .._http import HttpManager
+from ..exceptions import DiscmojiRetrievalError,Forbidden,UnknownHTTPError
 from ..bot import Bot
 from mappers.gp_mapper import GuildPreviewMapper
 from .gp_payload import _GuildPreviewPayload
@@ -169,14 +168,72 @@ class Guild:
         ## Returns
         - **discmoji.GuildPreview**
            - The guild's preview.
+        
+        ## Raises
         - **DiscmojiRetrievalError**
            - Failed to retrieve community preview."""
-        req = await bot.http.request("get",f"/guilds/{self.id}/preview")
+        req = await bot.__http.request("get",f"/guilds/{self.id}/preview")
         if req.status >= 400:
             raise DiscmojiRetrievalError("get_own_preview()","Unspecified error occured while trying to retrieve current guild's preview.")    
         else:
             content = GuildPreviewMapper(_GuildPreviewPayload(req)).map()
             return content
+    
+    
+    async def edit_guild(self,bot: Bot,**kwargs):
+        """**Co-routine** \n
+        Allows you to edit the guild's settings. 
+        ## Parameters
+         - bot - `discmoji.Bot`
+           - Needed for authentication.
+         - kwargs - `Any`
+           - The fields in the guild you want to change. Check documentation for possible fields. (must be keyword arguments)
+        ## Returns
+        - **Self/discmoji.Guild**
+          - The guild with changed settings/fields
+        ## Raises
+        - **Forbidden**
+          - The bot isn't allowed to change a field.
+        - **UnknownHTTPError**
+          - An unspecified error occured."""
+        req = await bot.__http.request("patch",f"/guilds/{self.id}",kwargs=kwargs)
+        #                                                          ^^^^^^^^^^^
+        #                                                    Kinda weird, but will work
+        if req.status == 403:
+            raise Forbidden("Bot does not have permissions to edit field on current guild.")
+        elif req.status >= 400:
+            raise UnknownHTTPError(req.status,"Was not able to change a field on current guild.")
+        else:
+            for key,value in req.data.items():
+                setattr(self,key,value)
+            return self
+            # returns self for good chaining
+    
+    
+    async def delete_guild(self,bot: Bot):
+        """*Dangerous Method* \n
+        **Co-routine** \n
+        Deletes the current guild. Beware, as this is **irreversible**. User must be owner.
+        ## Parameters
+        - bot - `discmoji.Bot`
+          - Needed for authentication.
+        ## Returns
+        **None**
+        ## Raises
+        - **Forbidden**
+          - User is not owner of the guild.
+        - **UnknownHTTPError**
+          - An unspecified error occured.
+        """
+        req = await bot.__http.request("delete",f"/guilds/{self.id}")
+        if req.status == 204:
+            return
+        if req.status == 403:
+            raise Forbidden("Bot is not owner of the guild.")
+        if req.status >= 400:
+            raise UnknownHTTPError(req.status, "Was not able to delete the guild.")
+          
         
         
-Server: TypeAlias = Guild
+        
+type Server = Guild
