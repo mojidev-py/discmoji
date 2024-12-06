@@ -31,6 +31,7 @@ from ..exceptions import DiscmojiRetrievalError,Forbidden,UnknownHTTPError
 from ..bot import Bot
 from mappers.gp_mapper import GuildPreviewMapper
 from .gp_payload import _GuildPreviewPayload
+from .channel import Channel
 class Guild:
     """Represents a Guild/Server on Discord. 
     There is an alias for this called Server.
@@ -156,6 +157,7 @@ class Guild:
         self.stickers: Optional[list[Sticker]] = [Sticker(sticker) for sticker in _data["stickers"] if _data.get("stickers")]
         self.progress_bar_enabled: bool = _data["premium_progress_bar_enabled"]
         self.safety_alerts_channel_id = _data["safety_alerts_channel_id"]
+        self.__channel_cache = []
 
 
     async def get_own_preview(self,bot: Bot):
@@ -232,6 +234,34 @@ class Guild:
             raise Forbidden("Bot is not owner of the guild.")
         if req.status >= 400:
             raise UnknownHTTPError(req.status, "Was not able to delete the guild.")
+
+    async def channels(self,bot: Bot):
+      """**Co-routine** \n
+      Returns the channels of the current guild.
+      ## Parameters
+      - bot - `discmoji.Bot`
+         - Needed for authentication.
+      
+      ## Returns
+      - `list[discmoji.Channel]`
+        - A list of all the channels in the guild.
+      ## Raises
+      - **DiscmojiRetrievalError**
+        - An unspecified error occured."""
+      req = await bot.__http.request("get",f"/guilds/{self.id}/channels")
+      if req.status == 200:
+        self.__channel_cache = [Channel(channel) for channel in req.data]
+        return [Channel(channel) for channel in req.data]
+        # raw data is sent into Channel since it's convenient and more readable
+        # and won't cause any problems in the future
+      else:
+        raise DiscmojiRetrievalError("channels()","Could not retrieve guild channels.")
+    
+    async def get_channel(self,bot: Bot):
+      """**Co-routine** \n
+      Gets a channel from the guild's current channels."""
+      ...
+    
           
         
         
