@@ -32,6 +32,8 @@ from ..bot import Bot
 from mappers.gp_mapper import GuildPreviewMapper
 from .gp_payload import _GuildPreviewPayload
 from .channel import Channel
+from .c_payload import _ChannelPayload
+from mappers.c_mapper import ChannelMapper
 class Guild:
     """Represents a Guild/Server on Discord. 
     There is an alias for this called Server.
@@ -176,7 +178,7 @@ class Guild:
            - Failed to retrieve community preview."""
         req = await bot.__http.request("get",f"/guilds/{self.id}/preview")
         if req.status >= 400:
-            raise DiscmojiRetrievalError("get_own_preview()","Unspecified error occured while trying to retrieve current guild's preview.")    
+            raise DiscmojiRetrievalError(f"get_own_preview(bot: {bot})","Unspecified error occured while trying to retrieve current guild's preview.")    
         else:
             content = GuildPreviewMapper(_GuildPreviewPayload(req)).map()
             return content
@@ -236,7 +238,8 @@ class Guild:
             raise UnknownHTTPError(req.status, "Was not able to delete the guild.")
 
     async def channels(self,bot: Bot):
-      """**Co-routine** \n
+      """
+      **Co-routine** \n
       Returns the channels of the current guild.
       ## Parameters
       - bot - `discmoji.Bot`
@@ -255,13 +258,82 @@ class Guild:
         # raw data is sent into Channel since it's convenient and more readable
         # and won't cause any problems in the future
       else:
-        raise DiscmojiRetrievalError("channels()","Could not retrieve guild channels.")
+        raise DiscmojiRetrievalError(f"channels(bot: {bot})","Could not retrieve guild channels.")
     
-    async def get_channel(self,bot: Bot):
-      """**Co-routine** \n
-      Gets a channel from the guild's current channels."""
-      ...
+    async def create_channel(self,bot: Bot,**kwargs):
+      """
+      **Co-routine** \n
+      Creates a channel in the current guild.
+      
+      ## Parameters
+      - bot - `discmoji.Bot`
+        - Needed for authentication.
+      - kwargs - `Any`
+        - Fields you want to specify for the new channel.
+      
+      ## Returns
+      **discmoji.Channel**
+        - The new channel
+      
+      ## Raises
+      **UnknownHTTPError**
+        - An unspecified error occured.      
+      """
+      formatted_kwargs = []
+      for value in kwargs.values():
+        if value is not int | str | Snowflake | bool | dict:
+          formatted_kwargs.append(value.__dict__)
+        else:
+          formatted_kwargs.append(value)
+      req = await bot.__http.request("post",f"/guilds/{self.id}/channels",kwargs=kwargs)
+      if req.status <= 400:
+        return ChannelMapper(_ChannelPayload(req.data)).map()
+      else:
+        raise UnknownHTTPError(req.status,"Failed to create channel.")
     
+    async def modify_channel_position(self,bot: Bot,**kwargs):
+      """Co-routine \n
+      Modifies the provided channel's position on the guild's channel listing.
+      
+      ## Parameters
+      - bot - `discmoji.Bot`
+        - Needed for authentication.
+      - kwargs - `Any`
+        - Any keyword arguments that align with the field's name you want to change.
+      
+      ## Returns
+      None
+      
+      ## Raises
+      - UnknownHttpError
+        - An unspecified error occurred."""
+      req = await bot.__http.request("patch",f"/guilds/{self.id}/channels",kwargs=kwargs)
+      if req.status >= 400:
+        raise UnknownHTTPError(req.status,"Failed to update channel position.")
+    
+    async def active_guild_threads(self,bot: Bot,with_thread_members: bool = False):
+      """Co-routine \n
+      Lists the active guild thread channels, with the members that chatted in them, if enabled.
+      
+      ## Parameters
+      - bot - `discmoji.Bot`
+        - Needed for authentication.
+      - with_thread_members - `bool = False`
+        - Specifies whether you want to get the thread members in that channel, or not. Defaults to false.
+      
+      ## Returns
+      - `list[discmoji.Channel]`
+        - The active guild threads.
+      - `list[list[discmoji.Channel | discmoji.ThreadMember]]`
+        - A list, containing 2 lists that contain the active guild threads, and the thread members respectively if enabled."""
+      req = await bot.__http.request("get",f"/guilds/{self.id}/threads/active")
+      if not with_thread_members:
+        return [Channel(channel) for channel in req.data["threads"]]
+      else:
+        pass
+      # will implement discmoji.ThreadMember soon
+        
+      
           
         
         
