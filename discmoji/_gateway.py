@@ -41,7 +41,7 @@ class DiscordWebsocket:
     
     @asynccontextmanager
     # huge credit to graingert on discord!
-    async def initiate_connection(cls,ws: websockets.WebSocketClientProtocol,http: HttpManager,intents: BotIntents):
+    async def initiate_connection(cls,http: HttpManager,intents: BotIntents):
         url = await http.request('get','/gateway/bot',True).data["url"]
         async with websockets.connect(url) as ws:
                 cls.ws = ws

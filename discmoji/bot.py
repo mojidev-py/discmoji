@@ -23,9 +23,16 @@ SOFTWARE.
 from .intents import BotIntents, IntentsBits
 from ._http import HttpManager
 from ._gateway import DiscordWebsocket
-
+from .types import logger,formatter
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits):
-        self.__http = HttpManager(token)
-        self.__dws = DiscordWebsocket(self.http,intents)
+        self.http = HttpManager(token)
+        self.dws = DiscordWebsocket(self.http,intents)
+        self.intents = intents
+    
+    
+    async def connect(self):
+        logger.info("Initiating connection process with gateway...")
+        async with self.dws.initiate_connection(self.http,self.intents) as connection:
+            await connection._handshake()

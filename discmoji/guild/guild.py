@@ -176,7 +176,7 @@ class Guild:
         ## Raises
         - **DiscmojiRetrievalError**
            - Failed to retrieve community preview."""
-        req = await bot.__http.request("get",f"/guilds/{self.id}/preview")
+        req = await bot.http.request("get",f"/guilds/{self.id}/preview")
         if req.status >= 400:
             raise DiscmojiRetrievalError(f"get_own_preview(bot: {bot})","Unspecified error occured while trying to retrieve current guild's preview.")    
         else:
@@ -200,7 +200,7 @@ class Guild:
           - The bot isn't allowed to change a field.
         - **UnknownHTTPError**
           - An unspecified error occured."""
-        req = await bot.__http.request("patch",f"/guilds/{self.id}",kwargs=kwargs)
+        req = await bot.http.request("patch",f"/guilds/{self.id}",kwargs=kwargs)
         #                                                          ^^^^^^^^^^^
         #                                                    Kinda weird, but will work
         if req.status == 403:
@@ -229,7 +229,7 @@ class Guild:
         - **UnknownHTTPError**
           - An unspecified error occured.
         """
-        req = await bot.__http.request("delete",f"/guilds/{self.id}")
+        req = await bot.http.request("delete",f"/guilds/{self.id}")
         if req.status == 204:
             return
         if req.status == 403:
@@ -251,7 +251,7 @@ class Guild:
       ## Raises
       - **DiscmojiRetrievalError**
         - An unspecified error occured."""
-      req = await bot.__http.request("get",f"/guilds/{self.id}/channels")
+      req = await bot.http.request("get",f"/guilds/{self.id}/channels")
       if req.status == 200:
         self.__channel_cache = [Channel(channel) for channel in req.data]
         return [Channel(channel) for channel in req.data]
@@ -285,7 +285,7 @@ class Guild:
           formatted_kwargs.append(value.__dict__)
         else:
           formatted_kwargs.append(value)
-      req = await bot.__http.request("post",f"/guilds/{self.id}/channels",kwargs=kwargs)
+      req = await bot.http.request("post",f"/guilds/{self.id}/channels",kwargs=kwargs)
       if req.status <= 400:
         return ChannelMapper(_ChannelPayload(req.data)).map()
       else:
@@ -307,7 +307,7 @@ class Guild:
       ## Raises
       - UnknownHttpError
         - An unspecified error occurred."""
-      req = await bot.__http.request("patch",f"/guilds/{self.id}/channels",kwargs=kwargs)
+      req = await bot.http.request("patch",f"/guilds/{self.id}/channels",kwargs=kwargs)
       if req.status >= 400:
         raise UnknownHTTPError(req.status,"Failed to update channel position.")
     
@@ -332,10 +332,4 @@ class Guild:
       else:
         pass
       # will implement discmoji.ThreadMember soon
-        
-      
-          
-        
-        
-        
 type Server = Guild
