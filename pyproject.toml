@@ -32,5 +32,6 @@ github = "https://github.com/mojidev-py/discmoji/"
 [tool.setuptools]
 packages = [
     "discmoji",
+    "discmoji.guild"
 ]
 
