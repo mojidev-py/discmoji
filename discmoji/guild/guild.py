@@ -332,4 +332,4 @@ class Guild:
       else:
         pass
       # will implement discmoji.ThreadMember soon
-type Server = Guild
+type Server = Guild 
