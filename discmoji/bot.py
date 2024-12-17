@@ -23,7 +23,8 @@ SOFTWARE.
 from .intents import BotIntents, IntentsBits
 from ._http import HttpManager
 from ._gateway import DiscordWebsocket
-from ._types import logger,formatter
+from ._types import logger
+import asyncio
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits):
@@ -32,7 +33,13 @@ class Bot:
         self.intents = intents
     
     
-    async def connect(self):
+    async def _connect(self):
         logger.info("Initiating connection process with gateway...")
-        async with self.dws.initiate_connection(self.http,self.intents) as connection:
+        async with self.dws.initiate_connection(http = self.http,intents= self.intents) as connection:
             await connection._handshake()
+    
+    def connect_thread(self):
+        """An abstraction over `_connect()` that runs the coroutine in another thread. \n
+        this function is the only function you should use to connect your bot."""
+        with asyncio.Runner() as runner:
+            runner.run(self._connect())

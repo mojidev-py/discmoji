@@ -22,7 +22,6 @@ SOFTWARE.
 """
 import aiohttp
 import websockets
-import asyncio
 import json
 from enum import Enum, IntEnum
 from typing import Any, Literal,Optional,Self
@@ -30,21 +29,23 @@ from .snowflake import Snowflake
 import enum
 from .exceptions import InternalDiscmojiException
 import logging
+import sys
+import colorama
 
 class RequestBody:
     def __init__(self,response: aiohttp.ClientResponse):
         self.headers = response.headers
-        self.data: dict = json.loads(asyncio.run(response.content.read()).decode())
+        self.data: dict = json.loads(response.content.read_nowait().decode())
         self.status = response.status
 
 
 class WebsocketPayload:
     def __init__(self,response: Optional[websockets.Data],opcode: int ,data: dict | int | None):
-        self.__serialized: dict = json.loads(response)
-        self.opcode = self.__serialized.get("op") if self.__serialized.get("op") else opcode
-        self.data = self.__serialized.get("d") if self.__serialized.get("data") else data
-        self.seq = self.__serialized.get("s")
-        self.event = self.__serialized.get("t")
+        self.__serialized: dict = json.loads(response) if response else None
+        self.opcode = self.__serialized.get("op") if self.__serialized else opcode
+        self.data = self.__serialized.get("d") if self.__serialized else data
+        self.seq = self.__serialized.get("s") if self.__serialized else None
+        self.event = self.__serialized.get("t") if self.__serialized else None
     
     def jsonize(self) -> str:
         if isinstance(self.data,dict) and self.opcode not in range(0,31):
@@ -400,8 +401,11 @@ def _get_nitro_rank(input: int):
         return "Tier 3"
 
 logger = logging.getLogger("discmoji")
-logger.addHandler(logging.NullHandler())
-formatter = logging.Formatter(f"%(name) %(levelname) at : %(message)",datefmt="%I:%M")
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.INFO)
+ch.setFormatter(logging.Formatter(f"{colorama.Fore.RED}%(name)s {colorama.Fore.BLUE}%(levelname)s at %(asctime)s: %(message)s",datefmt="%I:%M"))
+logger.addHandler(ch)
 
 def find_sticker_format_type(inp: int):
     if inp == 1:

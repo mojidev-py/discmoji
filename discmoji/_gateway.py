@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ._types import WebsocketPayload,Opcodes,logger
+from ._types import WebsocketPayload,Opcodes
 from .intents import BotIntents
 from ._http import HttpManager
 import asyncio
@@ -28,36 +28,38 @@ import websockets
 from contextlib import asynccontextmanager
 from typing import Self
 from random import uniform
+import logging
 import json
-
+logger = logging.getLogger("discmoji")
 class DiscordWebsocket:
     def __init__(self,http: HttpManager,intents: BotIntents):
-        self.ws = None
         self.token = http.token
         self.intents = intents._deconv_intents()
         self.interval: int = None
         self.seq: int | None = None 
         self.url: str = None
     
+    @classmethod
     @asynccontextmanager
     # huge credit to graingert on discord!
     async def initiate_connection(cls,http: HttpManager,intents: BotIntents):
         rq = await http.request('get','gateway/bot',True)
-        url = rq.data["url"]
+        url = f"{rq.data["url"]}/?v=10&encoding=json"
         async with websockets.connect(url) as ws:
                 cls.ws = ws
                 try:
-                    goingtobeyield: Self = cls(ws,http,intents)
+                    goingtobeyield: Self = cls(http,intents)
                     yield goingtobeyield
-                except websockets.ConnectionClosedError:
-                    raise RuntimeError("Gateway closed connection.")
+                except websockets.ConnectionClosedError as e:
+                    raise RuntimeError(f"Gateway closed connection. {e}")
                     
     
     async def _recieve_latest(self):
         result: dict = json.loads(await self.ws.recv())
         self.seq = result.get("s")
+        logger.info(result)
         # .get because sequence field may be none at times
-        return WebsocketPayload(opcode=result["op"],data=result["d"])
+        return WebsocketPayload(response=None,opcode=result["op"],data=result["d"])
 
     async def first_heart_beat(self):
         msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=None)
@@ -97,10 +99,11 @@ class DiscordWebsocket:
             self.interval = recv.data["heartbeat_interval"]
             await asyncio.sleep(uniform(0,1))
             await self.first_heart_beat()
+            recv = await self._recieve_latest()
             asyncio.create_task(self._heart_beat_loop(self.seq))
         if recv.opcode == Opcodes.ACK:
             logger.info(f"Initiated Heartbeat with gateway at interval of {self.interval / 1000} s.")
-        identify = WebsocketPayload(opcode=2,data = {
+            identify = WebsocketPayload(response = None,opcode = 2,data = {
             "token": self.token,
             "properties": {
                 "os": "linux",
@@ -109,7 +112,7 @@ class DiscordWebsocket:
             },
             "intents": self.intents
         })
-        await self.ws.send(identify.jsonize())
+            await self.ws.send(identify.jsonize())
         recv = await self._recieve_latest()
         
         if recv.opcode == Opcodes.DISPATCH:
