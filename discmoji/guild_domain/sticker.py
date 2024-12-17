@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional
-from ..types import find_sticker_format_type
+from .._types import find_sticker_format_type
 from ..user import User
 class Sticker:
     """Represents a discord Sticker.

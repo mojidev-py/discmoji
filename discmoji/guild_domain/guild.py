@@ -22,18 +22,18 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional,TypeAlias
-from ..types import _find_verification_level,_find_notif_level,_find_expl_level,_get_system_flags,_get_nitro_rank,Locales
+from .._types import _find_verification_level,_find_notif_level,_find_expl_level,_get_system_flags,_get_nitro_rank,Locales
 from .roles import Role
 from .emoji import Emoji
 from .welcomescreen import WelcomeScreen
 from .sticker import Sticker
 from ..exceptions import DiscmojiRetrievalError,Forbidden,UnknownHTTPError
 from ..bot import Bot
-from mappers.gp_mapper import GuildPreviewMapper
+from .mappers.gp_mapper import GuildPreviewMapper
 from .gp_payload import _GuildPreviewPayload
 from .channel import Channel
 from .c_payload import _ChannelPayload
-from mappers.c_mapper import ChannelMapper
+from .mappers.c_mapper import ChannelMapper
 class Guild:
     """Represents a Guild/Server on Discord. 
     There is an alias for this called Server.
@@ -176,7 +176,7 @@ class Guild:
         ## Raises
         - **DiscmojiRetrievalError**
            - Failed to retrieve community preview."""
-        req = await bot.http.request("get",f"/guilds/{self.id}/preview")
+        req = await bot.http.request("get",f"guilds/{self.id}/preview")
         if req.status >= 400:
             raise DiscmojiRetrievalError(f"get_own_preview(bot: {bot})","Unspecified error occured while trying to retrieve current guild's preview.")    
         else:
@@ -200,7 +200,7 @@ class Guild:
           - The bot isn't allowed to change a field.
         - **UnknownHTTPError**
           - An unspecified error occured."""
-        req = await bot.http.request("patch",f"/guilds/{self.id}",kwargs=kwargs)
+        req = await bot.http.request("patch",f"guilds/{self.id}",kwargs=kwargs)
         #                                                          ^^^^^^^^^^^
         #                                                    Kinda weird, but will work
         if req.status == 403:
@@ -229,7 +229,7 @@ class Guild:
         - **UnknownHTTPError**
           - An unspecified error occured.
         """
-        req = await bot.http.request("delete",f"/guilds/{self.id}")
+        req = await bot.http.request("delete",f"guilds/{self.id}")
         if req.status == 204:
             return
         if req.status == 403:
@@ -251,7 +251,7 @@ class Guild:
       ## Raises
       - **DiscmojiRetrievalError**
         - An unspecified error occured."""
-      req = await bot.http.request("get",f"/guilds/{self.id}/channels")
+      req = await bot.http.request("get",f"guilds/{self.id}/channels")
       if req.status == 200:
         self.__channel_cache = [Channel(channel) for channel in req.data]
         return [Channel(channel) for channel in req.data]
@@ -285,7 +285,7 @@ class Guild:
           formatted_kwargs.append(value.__dict__)
         else:
           formatted_kwargs.append(value)
-      req = await bot.http.request("post",f"/guilds/{self.id}/channels",kwargs=kwargs)
+      req = await bot.http.request("post",f"guilds/{self.id}/channels",kwargs=kwargs)
       if req.status <= 400:
         return ChannelMapper(_ChannelPayload(req.data)).map()
       else:
@@ -307,7 +307,7 @@ class Guild:
       ## Raises
       - UnknownHttpError
         - An unspecified error occurred."""
-      req = await bot.http.request("patch",f"/guilds/{self.id}/channels",kwargs=kwargs)
+      req = await bot.http.request("patch",f"guilds/{self.id}/channels",kwargs=kwargs)
       if req.status >= 400:
         raise UnknownHTTPError(req.status,"Failed to update channel position.")
     
@@ -326,7 +326,7 @@ class Guild:
         - The active guild threads.
       - `list[list[discmoji.Channel | discmoji.ThreadMember]]`
         - A list, containing 2 lists that contain the active guild threads, and the thread members respectively if enabled."""
-      req = await bot.__http.request("get",f"/guilds/{self.id}/threads/active")
+      req = await bot.__http.request("get",f"guilds/{self.id}/threads/active")
       if not with_thread_members:
         return [Channel(channel) for channel in req.data["threads"]]
       else:

@@ -22,7 +22,7 @@ SOFTWARE.
 """
 from ..snowflake import Snowflake
 from typing import Optional
-from ..types import RoleTags, Permissions,PermissionsBits
+from .._types import RoleTags, Permissions,PermissionsBits
 class Role:
     """Represents a discord Role.
     ## Attributes

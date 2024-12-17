@@ -1,5 +1,5 @@
-from ..types import RequestBody,WebsocketPayload
+from .._types import WebsocketPayload,RequestBody
 
-class _StickerPayload:
+class _GuildMemberPayload:
     def __init__(self,json_data: WebsocketPayload | RequestBody):
         self.__to_be_conv = json_data

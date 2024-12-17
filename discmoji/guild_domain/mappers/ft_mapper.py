@@ -1,5 +1,5 @@
 from ..ft_payload import _ForumTagsPayload
-from ...types import ForumTag
+from ... import ForumTag
 
 class ForumTagMapper:
     def __init__(self, dto: _ForumTagsPayload):

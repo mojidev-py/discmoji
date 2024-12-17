@@ -20,11 +20,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from ._types import WebsocketPayload,Opcodes,logger
+from .intents import BotIntents
 from ._http import HttpManager
 import asyncio
-from .intents import BotIntents
 import websockets
-from .types import WebsocketPayload,Opcodes,logger
 from contextlib import asynccontextmanager
 from typing import Self
 from random import uniform
@@ -42,7 +42,8 @@ class DiscordWebsocket:
     @asynccontextmanager
     # huge credit to graingert on discord!
     async def initiate_connection(cls,http: HttpManager,intents: BotIntents):
-        url = await http.request('get','/gateway/bot',True).data["url"]
+        rq = await http.request('get','gateway/bot',True)
+        url = rq.data["url"]
         async with websockets.connect(url) as ws:
                 cls.ws = ws
                 try:

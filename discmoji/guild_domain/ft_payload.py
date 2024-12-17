@@ -1,7 +1,5 @@
-from ..types import RequestBody,WebsocketPayload
+from .._types import RequestBody,WebsocketPayload
 
-
-
-class _ChannelPayload:
+class _ForumTagsPayload:
     def __init__(self,json_data: WebsocketPayload | RequestBody):
         self.__to_be_conv = json_data

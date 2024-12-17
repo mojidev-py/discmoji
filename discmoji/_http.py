@@ -21,14 +21,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import aiohttp
-from .types import RequestBody
+from ._types import RequestBody
 from typing import Callable,Any
 from .exceptions import InternalDiscmojiException
 class HttpManager:
    """Internal class that manages requests to endpoints."""
    def __init__(self,token: str):
-        self.base_url = "https://discord.com/"
-        self.version = "api/v10/"
+        self.base_url = "https://discord.com"
+        self.version = "/api/v10/"
         self.token = token
         self.normal = {"User-Agent":"DiscordBot (https://github.com/mojidev-py/discmoji,0.0.1)"}
         self.auth = {"Authorization":f"Bot {self.token}"}

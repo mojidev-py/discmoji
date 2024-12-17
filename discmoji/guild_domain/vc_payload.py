@@ -1,5 +1,6 @@
-from ..types import WebsocketPayload,RequestBody
+from .._types import RequestBody,WebsocketPayload
 
-class _WelcomeScreenChannelPayload:
+
+class _VoiceChannelPayload:
     def __init__(self,json_data: WebsocketPayload | RequestBody):
         self.__to_be_conv = json_data

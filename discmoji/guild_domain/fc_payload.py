@@ -1,4 +1,4 @@
-from ..types import WebsocketPayload, RequestBody
+from .._types import WebsocketPayload, RequestBody
 
 class _ForumChannelPayload:
     def __init__(self,json_data: WebsocketPayload | RequestBody):

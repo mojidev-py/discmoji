@@ -23,7 +23,7 @@ SOFTWARE.
 from .intents import BotIntents, IntentsBits
 from ._http import HttpManager
 from ._gateway import DiscordWebsocket
-from .types import logger,formatter
+from ._types import logger,formatter
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits):

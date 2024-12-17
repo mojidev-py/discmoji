@@ -1,4 +1,4 @@
-from ..types import RequestBody,WebsocketPayload
+from .. import RequestBody,WebsocketPayload
 
 
 class _GuildPreviewPayload:

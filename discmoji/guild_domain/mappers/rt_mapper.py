@@ -1,5 +1,5 @@
 from ..rt_payload import _RoleTagsPayload
-from ...types import RoleTags
+from ... import RoleTags
 
 
 class RoleTagMapper:

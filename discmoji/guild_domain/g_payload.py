@@ -20,21 +20,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..snowflake import Snowflake
-from ..types import Permissions
-from typing import Literal
+from .._types import WebsocketPayload, RequestBody
+class _GuildPayload:
+    def __init__(self,json_data: WebsocketPayload | RequestBody):
+        self.__to_be_conv = json_data
+    
 
-class PermissionOverwrite:
-    """Represents an overwrite over original permissions.
-    ## Attributes
-    - id - `discmoji.Snowflake`
-      - the ID of the overwrite.
-    - type - `Literal["role","member"]`
-      - Indicates whether this overwrite applies to a role, or a specific member.
-    - allowed - `discmoji.Permissions`
-      - Permissions object with all allowed permissions set to True."""
-    def __init__(self, _data: dict):
-        self.id: Snowflake = Snowflake(_data["id"])
-        self.type: Literal["role","member"]= "role" if _data["type"] == 0 else "member"
-        self.allowed = Permissions._convert_perms(_data["allow"])
-        
+
+

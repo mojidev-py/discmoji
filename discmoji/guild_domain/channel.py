@@ -24,8 +24,8 @@ from ..snowflake import Snowflake
 from typing import Optional
 from .overwrites import PermissionOverwrite
 from datetime import datetime
-from ..types import _get_channel_flags
-from ..types import ForumTag as Tag
+from .._types import _get_channel_flags
+from .._types import ForumTag as Tag
 class Channel:
     """Represents a channel. Also the base class which all other Channel classes inherit from.
     ## Attributes

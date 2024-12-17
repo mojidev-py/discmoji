@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from .snowflake import Snowflake
-from .types import Locales, UserFlags, _flags_parse, _return_nitro_type
+from ._types import Locales, UserFlags, _flags_parse, _return_nitro_type
 from .decoration import AvatarDecoration
 
 class User:

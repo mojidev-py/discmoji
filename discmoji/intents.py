@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from .types import IntentsBits
+from ._types import IntentsBits
 from typing import Self
 from .exceptions import InternalDiscmojiException
 class BotIntents:
@@ -163,7 +163,7 @@ class BotIntents:
         """An internal utility function that turns the Intents object back into an integer. """
         integer = 0
         for item,value in self.__dict__.items():
-            if type(value) == function:
+            if callable(value):
                 continue
             else:
                 if value:
