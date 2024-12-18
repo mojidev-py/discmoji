@@ -1,4 +1,5 @@
 .venv/*
-inkling/*.json
+discmoji/__pycache__
+discmoji/guild_domain/__pycache__
 dist
 discmoji.egg-info

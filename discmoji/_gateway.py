@@ -54,23 +54,6 @@ class DiscordWebsocket:
                     raise RuntimeError(f"Gateway closed connection. {e}")
                     
     
-    async def send_heartbeats(self,delay: int):
-        n = 0
-        logger.info(f"Initiating heartbeat at interval of {delay}ms.")
-        while True:
-            first_hb_jitter = delay
-            if n == 0:
-                first_hb_jitter *= uniform(0,1)
-                await asyncio.sleep(first_hb_jitter / 1000)
-            else:
-                await asyncio.sleep(delay / 1000)
-            n += 1
-            sequence = {
-                "seq": self.seq if self.seq else None
-            }
-            payload = WebsocketPayload(None,1,sequence)
-            await self.ws.send(payload.jsonize())
-    
     async def send_identify(self):
         payload = WebsocketPayload(None,2,{
             "token": self.token,
@@ -90,6 +73,20 @@ class DiscordWebsocket:
             "intents":self.intents
             })
         await self.ws.send(payload.jsonize())
+   
+   
+   
+    async def send_heartbeats(self,delay: int):
+        n = 0
+        logger.info(f"Initiating heartbeat at interval of {delay}ms.")
+        while True:
+            await asyncio.sleep(delay / 1000)
+            n += 1
+            sequence = {
+                "seq": self.seq if self.seq else None
+            }
+            payload = WebsocketPayload(None,1,sequence)
+            await self.ws.send(payload.jsonize())
     
     async def resume_session(self):
         payload = WebsocketPayload(None,6,{
@@ -101,18 +98,17 @@ class DiscordWebsocket:
     
     async def _establish(self):
         async for message in self.ws:    
-            logger.info(f"Payload Recieved: {message}")
             decoded: dict = json.loads(message)
             self.seq = decoded["s"]
             payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])
             match payloaded.opcode:
                     case 10:
-                        asyncio.ensure_future(self.send_heartbeats(payloaded.data["heartbeat_interval"]))
                         await self.send_identify()
+                        asyncio.ensure_future(self.send_heartbeats(payloaded.data["heartbeat_interval"]))
                     case 0:
                         if payloaded.data.get("v") is not None:
                             self.session_id = payloaded.data["session_id"]
-                            logger.info(f"Established connection to discord gateway at session id: {payloaded.data["session_id"]} \n User: {payloaded.data["user"]["name"]}")      
+                            logger.info(f"Established connection to discord gateway at session id: {payloaded.data["session_id"]} \n User: {payloaded.data["user"]["username"]}")      
                 
             
 

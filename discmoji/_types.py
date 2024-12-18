@@ -57,7 +57,7 @@ class WebsocketPayload:
             return json.dumps(data)
         elif isinstance(self.data, dict) and self.opcode in range(0,31):
             data = {
-                "op": 0,
+                "op": self.opcode,
                 "d": self.data
             }            
             # type: ignore
