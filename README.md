@@ -5,7 +5,8 @@
  ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mojidev-py/discmoji)
 
 
-
+> ### NOTE:
+> Discmoji is in a very early development stage, like literally so early that only gateway connections are usable right now.
 
 ## ❔ What is Discmoji?
 Discmoji is an API wrapper for Discord, made for fun!
