@@ -48,3 +48,6 @@ asyncio.run(Client.connect)
 > 1.0.0 is going to come out in 2025. No solid dates yet!
 >### ❔ Will this _ever_ be finished?
 > Fingers Crossed!
+
+### Example
+![Example of how console looks like with discmoji running]({141AA152-BF23-45FA-908B-DFBEB548EB0D}.png)
