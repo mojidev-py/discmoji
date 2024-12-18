@@ -36,7 +36,7 @@ class Bot:
     async def _connect(self):
         logger.info("Initiating connection process with gateway...")
         async with self.dws.initiate_connection(http = self.http,intents= self.intents) as connection:
-            await connection._handshake()
+            await connection._establish()
     
     def connect_thread(self):
         """An abstraction over `_connect()` that runs the coroutine in another thread. \n

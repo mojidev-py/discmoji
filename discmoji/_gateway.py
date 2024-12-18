@@ -30,14 +30,14 @@ from typing import Self
 from random import uniform
 import logging
 import json
+import sys
+
+
 logger = logging.getLogger("discmoji")
 class DiscordWebsocket:
     def __init__(self,http: HttpManager,intents: BotIntents):
         self.token = http.token
         self.intents = intents._deconv_intents()
-        self.interval: int = None
-        self.seq: int | None = None 
-        self.url: str = None
     
     @classmethod
     @asynccontextmanager
@@ -54,71 +54,70 @@ class DiscordWebsocket:
                     raise RuntimeError(f"Gateway closed connection. {e}")
                     
     
-    async def _recieve_latest(self):
-        result: dict = json.loads(await self.ws.recv())
-        self.seq = result.get("s")
-        logger.info(result)
-        # .get because sequence field may be none at times
-        return WebsocketPayload(response=None,opcode=result["op"],data=result["d"])
-
-    async def first_heart_beat(self):
-        msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=None)
-        await self.ws.send(msg.jsonize())
-    
-    async def resume(self):
-        msg = WebsocketPayload(opcode=Opcodes.RESUME,data={
-            "token": self.token,
-            "session_id": self.url,
-            "seq": self.seq
-        })
-        await self.ws.send(msg.jsonize())
-        recv: dict = json.loads(await self.ws.recv())
-        if recv.get("op") != 9:
-            logger.info(f"Successfully resumed connection with gateway. Payload: \n {recv}")
-        else:
-            logger.fatal(f"Invalid Session. Report this to devs with payload! {recv}")
-            
-    
-    async def _heart_beat_loop(self,seq: int):
+    async def send_heartbeats(self,delay: int):
+        n = 0
+        logger.info(f"Initiating heartbeat at interval of {delay}ms.")
         while True:
-            recv = json.loads(await self.ws.recv())
-            logger.info(f"Payload recieved: \n {recv}")
-            await asyncio.sleep(self.interval)
-            # placed above since no wait during sending reconnect event
-            if recv["op"] == Opcodes.RECONNECT:
-                await self.resume()
-            if recv["op"] == Opcodes.HEARTBEAT:
-                send = WebsocketPayload(opcode=recv["op"],data=recv["d"])
-                await self.ws.send(send.jsonize())
-            msg = WebsocketPayload(opcode=Opcodes.HEARTBEAT,data=seq)
-            await self.ws.send(msg.jsonize())
+            first_hb_jitter = delay
+            if n == 0:
+                first_hb_jitter *= uniform(0,1)
+                await asyncio.sleep(first_hb_jitter / 1000)
+            else:
+                await asyncio.sleep(delay / 1000)
+            n += 1
+            sequence = {
+                "seq": self.seq if self.seq else None
+            }
+            payload = WebsocketPayload(None,1,sequence)
+            await self.ws.send(payload.jsonize())
     
-    async def _handshake(self):
-        recv = await self._recieve_latest()
-        if recv.opcode == Opcodes.HELLO:
-            self.interval = recv.data["heartbeat_interval"]
-            await asyncio.sleep(uniform(0,1))
-            await self.first_heart_beat()
-            recv = await self._recieve_latest()
-            asyncio.create_task(self._heart_beat_loop(self.seq))
-        if recv.opcode == Opcodes.ACK:
-            logger.info(f"Initiated Heartbeat with gateway at interval of {self.interval / 1000} s.")
-            identify = WebsocketPayload(response = None,opcode = 2,data = {
+    async def send_identify(self):
+        payload = WebsocketPayload(None,2,{
             "token": self.token,
             "properties": {
-                "os": "linux",
+                "os": sys.platform,
                 "browser": "discmoji",
                 "device": "discmoji"
             },
-            "intents": self.intents
+            "presence": {
+                "activities": [{
+                    "name": "made using discmoji",
+                    "type": 0
+                }],
+                "status": "online",
+                "afk": False
+                },
+            "intents":self.intents
+            })
+        await self.ws.send(payload.jsonize())
+    
+    async def resume_session(self):
+        payload = WebsocketPayload(None,6,{
+            "token": self.token,
+            "session_id": self.session_id,
+            "seq": self.seq
         })
-            await self.ws.send(identify.jsonize())
-        recv = await self._recieve_latest()
         
-        if recv.opcode == Opcodes.DISPATCH:
-            logger.info(f"Successfully established connection to gateway at session id: {recv.data["session_id"]}")
-            logger.info(f"Bot Name: {recv.data["application"]["name"]}")
-            self.url = recv.data["resume_gateway_url"]
+    
+    async def _establish(self):
+        async for message in self.ws:    
+            logger.info(f"Payload Recieved: {message}")
+            decoded: dict = json.loads(message)
+            self.seq = decoded["s"]
+            payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])
+            match payloaded.opcode:
+                    case 10:
+                        asyncio.ensure_future(self.send_heartbeats(payloaded.data["heartbeat_interval"]))
+                        await self.send_identify()
+                    case 0:
+                        if payloaded.data.get("v") is not None:
+                            self.session_id = payloaded.data["session_id"]
+                            logger.info(f"Established connection to discord gateway at session id: {payloaded.data["session_id"]} \n User: {payloaded.data["user"]["name"]}")      
+                
+            
+
+            
+            
         
         
             

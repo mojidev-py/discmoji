@@ -49,12 +49,19 @@ class WebsocketPayload:
     
     def jsonize(self) -> str:
         if isinstance(self.data,dict) and self.opcode not in range(0,31):
-            self.data['op'] = 0 # type: ignore
-            return json.dumps(self.data)
+            data = {
+                "op": 0,
+                "d": self.data
+            }
+            # type: ignore
+            return json.dumps(data)
         elif isinstance(self.data, dict) and self.opcode in range(0,31):
-            self.data['op'] = self.opcode # type: ignore
-            # type ignore because on my vscode it keeps complaining about an undefined variable ;(
-            return json.dumps(self.data)
+            data = {
+                "op": 0,
+                "d": self.data
+            }            
+            # type: ignore
+            return json.dumps(data)
     
 class Locales(Enum):
     ID = "Indonesian"
@@ -404,7 +411,7 @@ logger = logging.getLogger("discmoji")
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler(sys.stdout)
 ch.setLevel(logging.INFO)
-ch.setFormatter(logging.Formatter(f"{colorama.Fore.RED}%(name)s {colorama.Fore.BLUE}%(levelname)s at %(asctime)s: %(message)s",datefmt="%I:%M"))
+ch.setFormatter(logging.Formatter(f"{colorama.Fore.RED}%(name)s {colorama.Fore.BLUE}%(levelname)s{colorama.Fore.RESET} at %(asctime)s: %(message)s",datefmt="%I:%M"))
 logger.addHandler(ch)
 
 def find_sticker_format_type(inp: int):
