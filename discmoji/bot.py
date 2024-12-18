@@ -39,7 +39,7 @@ class Bot:
             await connection._establish()
     
     def connect_thread(self):
-        """An abstraction over `_connect()` that runs the coroutine in another thread. \n
+        """An abstraction over `_connect()` that runs synchronously, for QoL purposes. \n
         this function is the only function you should use to connect your bot."""
         with asyncio.Runner() as runner:
             runner.run(self._connect())
