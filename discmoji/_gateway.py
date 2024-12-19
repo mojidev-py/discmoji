@@ -95,9 +95,11 @@ class DiscordWebsocket:
             "seq": self.seq
         })
         
+        
     
     async def _establish(self):
-        async for message in self.ws:    
+        async for message in self.ws:
+            logger.debug(f"Recieved Payload: {message}")    
             decoded: dict = json.loads(message)
             self.seq = decoded["s"]
             payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])

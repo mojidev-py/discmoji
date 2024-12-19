@@ -12,3 +12,4 @@ from .exceptions import *
 from .decoration import AvatarDecoration
 from .snowflake import Snowflake
 from .bot import Bot
+from .command import BotCommand

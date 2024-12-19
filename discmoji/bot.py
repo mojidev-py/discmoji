@@ -23,14 +23,27 @@ SOFTWARE.
 from .intents import BotIntents, IntentsBits
 from ._http import HttpManager
 from ._gateway import DiscordWebsocket
+from .command import BotCommand
 from ._types import logger
 import asyncio
 class Bot:
     """Represents your application."""
-    def __init__(self,token: str,intents: BotIntents | IntentsBits):
+    def __init__(self,token: str,intents: BotIntents | IntentsBits,prefix: str):
         self.http = HttpManager(token)
         self.dws = DiscordWebsocket(self.http,intents)
         self.intents = intents
+        self.prefix = prefix
+        self.prefix_command = BotCommand
+        """A decorator that registers a prefix command for this bot."""
+        self.prefix_command.bot = self
+        self._commands: list[BotCommand] = []
+    
+    
+    async def _listen_for_cmd_invoke(self):
+        async for message in self.dws.ws:
+            # listens for message in gateway manager's (open) websocket, since it's going to be running in the async with below
+            pass
+    
     
     
     async def _connect(self):
@@ -43,3 +56,4 @@ class Bot:
         this function is the only function you should use to connect your bot."""
         with asyncio.Runner() as runner:
             runner.run(self._connect())
+    
