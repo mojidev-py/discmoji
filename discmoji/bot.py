@@ -24,42 +24,30 @@ from .intents import BotIntents, IntentsBits
 from ._http import HttpManager
 from ._gateway import DiscordWebsocket
 from .command import BotCommand
-from ._types import logger,WebsocketPayload
+from ._types import logger
 import asyncio
-import json
+from guild_domain.g_payload import _GuildPayload
+from guild_domain.mappers.g_mapper import GuildMapper
+from .exceptions import UnknownHTTPError
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits,prefix: str):
         self.http = HttpManager(token)
+        self.prefix_command = BotCommand
+        self.prefix_command.bot = self
+        self._commands: list[BotCommand] = []
         self.dws = DiscordWebsocket(self.http,intents)
         self.intents = intents
         self.prefix = prefix
-        self.prefix_command = BotCommand
         """A decorator that registers a prefix command for this bot."""
-        self.prefix_command.bot = self
-        self._commands: list[BotCommand] = []
-    
-    
-    async def _listen_for_cmd_invoke(self):
-        """Do NOT use this function. It is internal to managing prefix commands. If you are subclassing, do not override this function."""
-        async for message in self.dws.ws:
-            # listens for message in gateway manager's (open) websocket, since it's going to be running in the async with below
-            decoded = json.loads(message)
-            payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])
-            if decoded["t"] == "MESSAGE_CREATE":
-                for command in self._commands:
-                    full_qual_name = self.prefix + command.name
-                    if full_qual_name in payloaded.data["content"]:
-                        args = payloaded.data["content".split(" ")]
-                        await command.callback(*args)
     
     
     
     async def _connect(self):
         logger.info("Initiating connection process with gateway...")
-        async with self.dws.initiate_connection(http = self.http,intents= self.intents) as connection:
+        async with self.dws.initiate_connection(http = self.http,intents = self.intents, commands = self._commands, prefix = self.prefix) as connection:
             await connection._establish()
-            await self._listen_for_cmd_invoke()
+            
     
     def connect_thread(self):
         """An abstraction over `_connect()` that runs synchronously, for QoL purposes. \n
@@ -67,3 +55,17 @@ class Bot:
         with asyncio.Runner() as runner:
             runner.run(self._connect())
     
+    async def get_guild(self,id: int):
+        """ co-routine \n
+        Retrieves a guild from its ID.
+        ## Returns
+        `discmoji.Guild` \n
+        Success result.
+        ## Raises
+        `discmoji.UnknownHTTPError` \n
+        Failed to retrieve guild.
+        """
+        rq = self.http.request('get',f'guilds/{id}')
+        if rq.status >= 400:
+            raise UnknownHTTPError(rq.status,"Failed to retrieve guild.")
+        return GuildMapper(_GuildPayload(rq.data)).map()

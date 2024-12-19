@@ -25,9 +25,8 @@ import warnings
 import asyncio
 
 class BotCommand:
-    def __init__(self,name: str,callback: Callable):
+    def __init__(self,name: str, /):
         self.name = name
-        self.callback = callback
         self.error_handlers = []
     
     def __call__(self,function: Callable):
@@ -40,7 +39,7 @@ class BotCommand:
                     tasks.append(handler)
                 asyncio.run(*tasks)
         self.callback = function
-        self.bot._commands += self
+        self.bot._commands.append(self)
         if not self.name: self.name : str = function.__name__
         return self
     

@@ -31,6 +31,7 @@ from random import uniform
 import logging
 import json
 import sys
+from .command import BotCommand
 
 
 logger = logging.getLogger("discmoji")
@@ -42,11 +43,13 @@ class DiscordWebsocket:
     @classmethod
     @asynccontextmanager
     # huge credit to graingert on discord!
-    async def initiate_connection(cls,http: HttpManager,intents: BotIntents):
+    async def initiate_connection(cls,http: HttpManager,intents: BotIntents,commands: list[BotCommand],prefix: str):
         rq = await http.request('get','gateway/bot',True)
         url = f"{rq.data["url"]}/?v=10&encoding=json"
         async with websockets.connect(url) as ws:
                 cls.ws = ws
+                cls._commands = commands
+                cls.prefix = prefix
                 try:
                     goingtobeyield: Self = cls(http,intents)
                     yield goingtobeyield
@@ -99,7 +102,7 @@ class DiscordWebsocket:
     
     async def _establish(self):
         async for message in self.ws:
-            logger.debug(f"Recieved Payload: {message}")    
+            logger.debug(f"Recieved Payload: {message}") 
             decoded: dict = json.loads(message)
             self.seq = decoded["s"]
             payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])
@@ -108,9 +111,14 @@ class DiscordWebsocket:
                         await self.send_identify()
                         asyncio.ensure_future(self.send_heartbeats(payloaded.data["heartbeat_interval"]))
                     case 0:
-                        if payloaded.data.get("v") is not None:
+                        if payloaded.data.get("application") is not None:
                             self.session_id = payloaded.data["session_id"]
-                            logger.info(f"Established connection to discord gateway at session id: {payloaded.data["session_id"]} \n User: {payloaded.data["user"]["username"]}")      
+                            logger.info(f"Established connection to discord gateway at session id: {payloaded.data["session_id"]} \n User: {payloaded.data["user"]["username"]}")
+                        if decoded["t"] in "Message Create".upper().replace(" ","_"):
+                            for command in self._commands:
+                                if command.name in f"{self.prefix}{command.name}":
+                                    args = payloaded.data["content"].split()[1:]
+                                    await command.callback(*args)
                 
             
 
