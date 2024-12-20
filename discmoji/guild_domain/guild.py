@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from ..snowflake import Snowflake
-from typing import Optional,TypeAlias
+from typing import Optional
 from .._types import _find_verification_level,_find_notif_level,_find_expl_level,_get_system_flags,_get_nitro_rank,Locales
 from .roles import Role
 from .emoji import Emoji
@@ -34,6 +34,9 @@ from .gp_payload import _GuildPreviewPayload
 from .channel import Channel
 from .c_payload import _ChannelPayload
 from .mappers.c_mapper import ChannelMapper
+from .threadmember import ThreadMember
+from .gm_payload import _GuildMemberPayload
+from mappers.gm_mapper import GuildMemberMapper
 class Guild:
     """Represents a Guild/Server on Discord. 
     There is an alias for this called Server.
@@ -324,12 +327,34 @@ class Guild:
       ## Returns
       - `list[discmoji.Channel]`
         - The active guild threads.
-      - `list[list[discmoji.Channel | discmoji.ThreadMember]]`
-        - A list, containing 2 lists that contain the active guild threads, and the thread members respectively if enabled."""
+      - `tuple[list[discmoji.Channel | discmoji.ThreadMember]]`
+        - A tuple, containing 2 lists that contain the active guild threads, and the thread members respectively if enabled."""
       req = await bot.__http.request("get",f"guilds/{self.id}/threads/active")
       if not with_thread_members:
         return [Channel(channel) for channel in req.data["threads"]]
       else:
-        pass
-      # will implement discmoji.ThreadMember soon
+        return [Channel(channel) for channel in req.data["threads"]],[ThreadMember(member) for member in req.data["members"]]
+      
+    
+    async def get_member(self,bot: Bot,id: int):
+      """Co-routine \n
+      Retrieves a member from the guild.
+      
+      ## Parameters
+      - id - `int`
+        - The id of the member you want to retrieve.
+      
+      ## Returns
+      - `discmoji.Member`
+        - The member you requested.
+      
+      ## Raises
+      - **DiscmojiRetrievalError**
+        - An unspecified error occurred."""
+      req = await bot.http.request("get",f"guilds/{self.id}/members/{id}")
+      if req.status == 200:
+        return GuildMemberMapper(_GuildMemberPayload(req.data)).map()
+      else:
+        raise DiscmojiRetrievalError(f"get_member(id: {id})","Could not retrieve member.")
+
 type Server = Guild 
