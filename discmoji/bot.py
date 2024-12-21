@@ -26,9 +26,6 @@ from ._gateway import DiscordWebsocket
 from .command import BotCommand
 from ._types import logger
 import asyncio
-from guild_domain.g_payload import _GuildPayload
-from guild_domain.mappers.g_mapper import GuildMapper
-from .exceptions import UnknownHTTPError
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits,prefix: str):
@@ -54,18 +51,3 @@ class Bot:
         this function is the only function you should use to connect your bot."""
         with asyncio.Runner() as runner:
             runner.run(self._connect())
-    
-    async def get_guild(self,id: int):
-        """ co-routine \n
-        Retrieves a guild from its ID.
-        ## Returns
-        `discmoji.Guild` \n
-        Success result.
-        ## Raises
-        `discmoji.UnknownHTTPError` \n
-        Failed to retrieve guild.
-        """
-        rq = self.http.request('get',f'guilds/{id}')
-        if rq.status >= 400:
-            raise UnknownHTTPError(rq.status,"Failed to retrieve guild.")
-        return GuildMapper(_GuildPayload(rq.data)).map()

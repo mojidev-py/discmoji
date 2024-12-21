@@ -510,3 +510,73 @@ class ForumTag:
         self.moderated: bool = _data["moderated"]
         self.emoji_id: Optional[Snowflake] = Snowflake(_data["emoji_id"]) if _data.get("emoji_id") is not None else None
         self.emoji_name: Optional[str] = _data["emoji_name"] if _data.get("emoji_name") else None
+
+class AppInfo:
+    """Represents extra metadata associated with your application."""
+    def __init__(self,_data: dict):
+        pass
+
+class MessageTypes(Enum):
+    DEFAULT = 0
+    RECIPIENT_ADD = 1
+    RECIPIENT_REMOVE = 2
+    CALL = 3
+    CHANNEL_NAME_CHANGE = 4
+    CHANNEL_ICON_CHANGE = 5
+    CHANNEL_PINNED_MESSAGE = 6
+    USER_JOIN = 7
+    GUILD_BOOST = 8
+    GUILD_BOOST_TIER_1 = 9
+    GUILD_BOOST_TIER_2 = 10
+    GUILD_BOOST_TIER_3 = 11
+    CHANNEL_FOLLOW_ADD = 12
+    GUILD_DISCOVERY_DISQUALIFIED = 14
+    GUILD_DISCOVERY_REQUALIFIED = 15
+    GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16
+    GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17
+    THREAD_CREATED = 18
+    REPLY = 19
+    CHAT_INPUT_COMMAND = 20
+    THREAD_STARTER_MESSAGE = 21
+    GUILD_INVITE_REMINDER = 22
+    CONTEXT_MENU_COMMAND = 23
+    AUTOMOD_ACTION = 24
+    ROLE_SUBSCRIPTION_PURCHASE = 25
+    INTERACTION_PREMIUM_UPSELL = 26
+    STAGE_START = 27
+    STAGE_END = 28
+    STAGE_SPEAKER = 29
+    STAGE_TOPIC = 31
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32
+    GUILD_INCIDENT_ALERT_MODE_ENABLED = 36
+    GUILD_INCIDENT_ALERT_MODE_DISABLED = 37
+    GUILD_INCIDENT_REPORT_RAID = 38
+    GUILD_INCIDENT_REPORT_FALSE_ALARM = 39
+    PURCHASE_NOTIFICATION = 44
+    POLL_RESULT = 46
+
+def find_message_type(input: int):
+    for item,value in MessageTypes.__members__:
+        if input == value:
+            return item.lower().capitalize().replace("_"," ")
+
+class MessageFlags(Enum):
+    CROSSPOSTED =1 << 0	
+    IS_CROSSPOST = 1 << 1	
+    SUPPRESS_EMBEDS = 1 << 2	
+    SOURCE_MESSAGE_DELETED = 1 << 3	
+    URGENT = 1 << 4	
+    HAS_THREAD = 1 << 5	
+    EPHEMERAL =	1 << 6	
+    LOADING = 1 << 7	
+    FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8	
+    SUPPRESS_NOTIFICATIONS = 1 << 12	
+    IS_VOICE_MESSAGE = 1 << 13
+
+def get_msg_flags(input: int):
+    new_inp = bytes(input)
+    returned = []
+    for item in MessageFlags.__members__.keys():
+        if input & new_inp:
+            returned.append(item.lower().capitalize().replace("_"," "))
+    return returned

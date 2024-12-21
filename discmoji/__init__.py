@@ -13,3 +13,4 @@ from .decoration import AvatarDecoration
 from .snowflake import Snowflake
 from .bot import Bot
 from .command import BotCommand
+from .message_domain import *

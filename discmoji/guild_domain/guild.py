@@ -334,6 +334,7 @@ class Guild:
         return [Channel(channel) for channel in req.data["threads"]]
       else:
         return [Channel(channel) for channel in req.data["threads"]],[ThreadMember(member) for member in req.data["members"]]
+        # raw because it's easier ig
       
     
     async def get_member(self,bot: Bot,id: int):
@@ -356,5 +357,22 @@ class Guild:
         return GuildMemberMapper(_GuildMemberPayload(req.data)).map()
       else:
         raise DiscmojiRetrievalError(f"get_member(id: {id})","Could not retrieve member.")
+    
+    
+    @classmethod
+    async def get_guild(cls,bot: Bot,id: int):
+        """ co-routine \n
+        Retrieves a guild from its ID.
+        ## Returns
+        `discmoji.Guild` \n
+        Success result.
+        ## Raises
+        `discmoji.UnknownHTTPError` \n
+        Failed to retrieve guild.
+        """
+        rq = await bot.http.request('get',f'guilds/{id}')
+        if rq.status >= 400:
+            raise UnknownHTTPError(rq.status,"Failed to retrieve guild.")
+        return cls(rq.data)
 
 type Server = Guild 
