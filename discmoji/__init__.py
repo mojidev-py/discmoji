@@ -14,3 +14,4 @@ from .snowflake import Snowflake
 from .bot import Bot
 from .command import BotCommand
 from .message_domain import *
+from .contexts import PrefixContext

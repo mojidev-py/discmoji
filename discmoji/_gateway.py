@@ -20,9 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ._types import WebsocketPayload,Opcodes
+from ._types import WebsocketPayload
 from .intents import BotIntents
 from ._http import HttpManager
+from .contexts import PrefixContext
 import asyncio
 import websockets
 from contextlib import asynccontextmanager
