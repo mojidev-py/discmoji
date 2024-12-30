@@ -23,7 +23,6 @@ SOFTWARE.
 from ._types import WebsocketPayload
 from .intents import BotIntents
 from ._http import HttpManager
-from .contexts import PrefixContext
 import asyncio
 import websockets
 from contextlib import asynccontextmanager
@@ -33,6 +32,9 @@ import logging
 import json
 import sys
 from .command import BotCommand
+from .message_domain.message import Message
+from .contexts import PrefixContext
+import colorama
 
 
 logger = logging.getLogger("discmoji")
@@ -51,6 +53,7 @@ class DiscordWebsocket:
                 cls.ws = ws
                 cls._commands = commands
                 cls.prefix = prefix
+                cls.http = http
                 try:
                     goingtobeyield: Self = cls(http,intents)
                     yield goingtobeyield
@@ -119,7 +122,12 @@ class DiscordWebsocket:
                             for command in self._commands:
                                 if command.name in f"{self.prefix}{command.name}":
                                     args = payloaded.data["content"].split()[1:]
-                                    await command.callback(*args)
+                                    new = PrefixContext(msg=Message(payloaded.data),http=self.http)
+                                    try:
+                                        await command.callback(new,*args)
+                                    except Exception as e:
+                                        if not command.error_handlers:
+                                            logger.error(f"{colorama.Fore.RED}Exception in command {command.name}: {e.args}{colorama.Fore.RESET}")
                 
             
 

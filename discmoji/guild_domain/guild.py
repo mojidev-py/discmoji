@@ -37,6 +37,7 @@ from .mappers.c_mapper import ChannelMapper
 from .threadmember import ThreadMember
 from .gm_payload import _GuildMemberPayload
 from mappers.gm_mapper import GuildMemberMapper
+from .._http import HttpManager
 class Guild:
     """Represents a Guild/Server on Discord. 
     There is an alias for this called Server.
@@ -360,7 +361,7 @@ class Guild:
     
     
     @classmethod
-    async def get_guild(cls,bot: Bot,id: int):
+    async def get_guild(cls,bot: Bot | HttpManager ,id: int):
         """ co-routine \n
         Retrieves a guild from its ID.
         ## Returns
@@ -370,7 +371,7 @@ class Guild:
         `discmoji.UnknownHTTPError` \n
         Failed to retrieve guild.
         """
-        rq = await bot.http.request('get',f'guilds/{id}')
+        rq = await bot.http.request('get',f'guilds/{id}') if isinstance(bot,Bot) else bot.request("get",f"guilds/{id}")
         if rq.status >= 400:
             raise UnknownHTTPError(rq.status,"Failed to retrieve guild.")
         return cls(rq.data)

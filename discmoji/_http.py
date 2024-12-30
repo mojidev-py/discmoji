@@ -30,7 +30,7 @@ class HttpManager:
         self.base_url = "https://discord.com"
         self.version = "/api/v10/"
         self.token = token
-        self.normal = {"User-Agent":"DiscordBot (https://github.com/mojidev-py/discmoji,0.0.1)"}
+        self.normal = {"User-Agent":"DiscordBot (https://github.com/mojidev-py/discmoji,0.0.1)","Content-Type":"application/json"}
         self.auth = {"Authorization":f"Bot {self.token}"}
         
     
@@ -46,8 +46,5 @@ class HttpManager:
                         "put": client.put
                     }
                     async with methods[method](url=f"{self.version}{route}",json=data if data else None,params=kwargs) as response:
-                       if response.status == 201 or response.status == 200:
-                            return RequestBody(response)
-                       else:
-                           raise InternalDiscmojiException(f"Method {method} failed to return a success code of 200 or 201.")
+                         return RequestBody(response)
                                                

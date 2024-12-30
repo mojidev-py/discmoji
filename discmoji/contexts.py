@@ -20,8 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from .guild_domain.guild import Guild
-from .guild_domain.channel import Channel
 from .message_domain.message import Message
 from .message_domain.embed import Embed
 from .message_domain.attachment import Attachment
@@ -30,8 +28,7 @@ from .exceptions import UnknownHTTPError
 
 class PrefixContext:
     """A class that provides extra data during a `BotCommand`'s invocation."""
-    def __init__(self,guild: Guild,msg: Message,http: HttpManager):
-        self.guild = guild
+    def __init__(self,msg: Message,http: HttpManager):
         self.msg = msg
         self.author = msg.author
         self.__http = http
@@ -40,11 +37,14 @@ class PrefixContext:
     async def send(self,content: str = None,embed: Embed = None,attachments: Attachment = None, **kwargs) -> Message:
         if all((content == None,embed == None,attachments == None,kwargs == None)):
             raise RuntimeError("At least one argument has to be not None.")
-        rq = await self.__http.request("post",f"channels/{self.msg.channel_id}/messages",data = {
+        data = {
             "content": content,
             "embeds": [embed]
             # no attachments yet, needs extra logic in request method 
-        })
+        }
+        if embed is None:
+            data.pop("embeds")
+        rq = await self.__http.request("post",f"channels/{self.msg.channel_id}/messages",data = data,auth=True)
         if rq.status >= 400:
             raise UnknownHTTPError(rq.status,f"Could not send message in channel {self.msg.channel_id}")
         return Message(rq.data)

@@ -26,6 +26,7 @@ from ._gateway import DiscordWebsocket
 from .command import BotCommand
 from ._types import logger
 import asyncio
+from .contexts import PrefixContext
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits,prefix: str):

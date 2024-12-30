@@ -71,9 +71,9 @@ class User:
         self.banner: str | None = f"https://cdn.discordapp.com/banners/{self.id}/{data.get("banner")}.{"gif" if data.get("banner").startswith("a_") else "png"}" if data.get("banner") is not None else None
         self.accent_color: str | None = hex(data.get("accent_color")).removeprefix("0x") if data.get("accent_color") is not None else None
         self.locale: str | None = Locales.__dict__.get(data.get("locale").upper().replace("-","_")) if data.get("locale") is not None else None
-        self.flags = _flags_parse(UserFlags,data.get("flags"))
-        self.nitro_type = _return_nitro_type(data.get("premium_type"))
-        self.public_flags = _flags_parse(UserFlags,data.get("flags"))
+        self.flags = _flags_parse(data.get("flags"))
+        self.nitro_type = _return_nitro_type(data.get("premium_type")) 
+        self.public_flags = _flags_parse(data.get("flags"))
         self.avatar_decoration = AvatarDecoration(data.get("avatar_decoration_data"))
         
         

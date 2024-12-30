@@ -23,8 +23,8 @@ SOFTWARE.
 from ..snowflake import Snowflake
 from ..user import User
 import datetime
-from guild_domain.roles import Role
-from guild_domain.channel import Channel
+from ..guild_domain.roles import Role
+from ..guild_domain.channel import Channel
 from .attachment import Attachment
 from .embed import Embed
 from .reactions import Reaction
@@ -79,7 +79,7 @@ class Message:
     def __init__(self,_dict: dict):
         self.id: Snowflake = Snowflake(_dict["id"])
         self.channel_id: Snowflake = Snowflake(_dict["channel_id"])
-        self.author: User = User(_dict["author"])
+        self.author: User = User(_dict["author"]) if _dict.get("author") else None
         self.content: str = _dict["content"]
         self.timestamp = datetime.datetime.fromisoformat(_dict["timestamp"])
         self.edited_time = datetime.datetime.fromisoformat(_dict["edited_timestamp"]) if _dict.get("edited_timestamp") else None
@@ -93,6 +93,7 @@ class Message:
         self.reactions = [Reaction(data) for data in _dict["reactions"]] if _dict.get("reactions") else None
         self.pinned: bool = _dict["pinned"]
         self.webhook_id = Snowflake(_dict["webhook_id"]) if _dict.get("webhook_id") else None
+        print(_dict["type"])
         self.type = find_message_type(_dict["type"])
         self.flags = get_msg_flags(_dict["flags"])
         self.message_ref = MessageReference(_dict["message_reference"]) if _dict.get("message_reference") else None

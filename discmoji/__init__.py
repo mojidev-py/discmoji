@@ -1,6 +1,7 @@
 """# DISCMOJI 0.1.0
 A discord api wrapper, made for fun.
-Pre-alpha, so bugs may be present."""
+Alpha, so bugs may be present.
+Report any bugs you see at https://github.com/mojidev-py/discmoji"""
 __package__ = "discmoji"
 
 from .guild_domain import *

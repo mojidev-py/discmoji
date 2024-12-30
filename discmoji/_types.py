@@ -116,13 +116,13 @@ class UserFlags(IntEnum):
 
 def _flags_parse(input: int) -> list[dict[str,int | Any]] | None:
     parsed = []
+    if input == None:
+        return
     bytesinput = bytes(input)
     for key,value in UserFlags.__members__.items():
         for num in bytesinput:
             if bytes(num) == value:
               parsed.append({key:value})
-    if input == None:
-        return
     return parsed
 
 def _return_nitro_type(data: int) -> Literal["Nitro Classic","Nitro","Nitro Basic"] | None:
@@ -516,7 +516,7 @@ class AppInfo:
     def __init__(self,_data: dict):
         pass
 
-class MessageTypes(Enum):
+class MessageTypes(enum.IntFlag):
     DEFAULT = 0
     RECIPIENT_ADD = 1
     RECIPIENT_REMOVE = 2
@@ -556,9 +556,9 @@ class MessageTypes(Enum):
     POLL_RESULT = 46
 
 def find_message_type(input: int):
-    for item,value in MessageTypes.__members__:
-        if input == value:
-            return item.lower().capitalize().replace("_"," ")
+    for key in MessageTypes.__members__:
+        if input == MessageTypes.__members__[key]:
+            return key.lower().capitalize().replace("_"," ")
 
 class MessageFlags(Enum):
     CROSSPOSTED =1 << 0	
@@ -574,9 +574,10 @@ class MessageFlags(Enum):
     IS_VOICE_MESSAGE = 1 << 13
 
 def get_msg_flags(input: int):
-    new_inp = bytes(input)
     returned = []
-    for item in MessageFlags.__members__.keys():
-        if input & new_inp:
+    n = 0
+    for item,value in MessageFlags._member_map_.items():
+        n += 1
+        if input & value.value:
             returned.append(item.lower().capitalize().replace("_"," "))
     return returned
