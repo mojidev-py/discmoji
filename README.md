@@ -2,7 +2,7 @@
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/mojidev-py/discmoji/badge)](https://www.codefactor.io/repository/github/mojidev-py/discmoji)  ![License](https://img.shields.io/badge/License-MIT-blue?labelColor=gray&style=flat) [![PyPI - Version](https://img.shields.io/pypi/v/discmoji)](https://pypi.org/project/discmoji/)
- ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mojidev-py/discmoji)
+ ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mojidev-py/discmoji) [![PyPI Downloads](https://static.pepy.tech/badge/discmoji)](https://pepy.tech/projects/discmoji)
 
 
 > ### NOTE:
