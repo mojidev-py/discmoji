@@ -25,6 +25,7 @@ import warnings
 import asyncio
 
 class BotCommand:
+    """Represents one of a bot's prefix commands."""
     def __init__(self,name: str, /):
         self.name = name
         self.error_handlers = []

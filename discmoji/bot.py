@@ -26,24 +26,26 @@ from ._gateway import DiscordWebsocket
 from .command import BotCommand
 from ._types import logger
 import asyncio
-from .contexts import PrefixContext
+from .listeners import Listener
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits,prefix: str):
         self.http = HttpManager(token)
         self.prefix_command = BotCommand
-        self.prefix_command.bot = self
+        self.listener = Listener
+        self.listener.bot,self.prefix_command.bot = self,self
         self._commands: list[BotCommand] = []
         self.dws = DiscordWebsocket(self.http,intents)
         self.intents = intents
         self.prefix = prefix
+        self._listeners = []
         """A decorator that registers a prefix command for this bot."""
     
     
     
     async def _connect(self):
         logger.info("Initiating connection process with gateway...")
-        async with self.dws.initiate_connection(http = self.http,intents = self.intents, commands = self._commands, prefix = self.prefix) as connection:
+        async with self.dws.initiate_connection(http = self.http,intents = self.intents, commands = self._commands, listeners = self._listeners, prefix = self.prefix) as connection:
             await connection._establish()
             
     

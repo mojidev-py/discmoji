@@ -36,7 +36,7 @@ from .c_payload import _ChannelPayload
 from .mappers.c_mapper import ChannelMapper
 from .threadmember import ThreadMember
 from .gm_payload import _GuildMemberPayload
-from mappers.gm_mapper import GuildMemberMapper
+from .mappers.gm_mapper import GuildMemberMapper
 from .._http import HttpManager
 class Guild:
     """Represents a Guild/Server on Discord. 
@@ -355,7 +355,9 @@ class Guild:
         - An unspecified error occurred."""
       req = await bot.http.request("get",f"guilds/{self.id}/members/{id}")
       if req.status == 200:
-        return GuildMemberMapper(_GuildMemberPayload(req.data)).map()
+        return_result = GuildMemberMapper(_GuildMemberPayload(req.data)).map()
+        return_result.guild = self
+        return return_result
       else:
         raise DiscmojiRetrievalError(f"get_member(id: {id})","Could not retrieve member.")
     

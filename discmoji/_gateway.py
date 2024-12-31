@@ -20,7 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ._types import WebsocketPayload
+from . import Listener
+from ._types import WebsocketPayload,Opcodes
 from .intents import BotIntents
 from ._http import HttpManager
 import asyncio
@@ -35,7 +36,9 @@ from .command import BotCommand
 from .message_domain.message import Message
 from .contexts import PrefixContext
 import colorama
+import warnings
 
+from .message_domain.reactions import Reaction
 
 logger = logging.getLogger("discmoji")
 class DiscordWebsocket:
@@ -46,7 +49,7 @@ class DiscordWebsocket:
     @classmethod
     @asynccontextmanager
     # huge credit to graingert on discord!
-    async def initiate_connection(cls,http: HttpManager,intents: BotIntents,commands: list[BotCommand],prefix: str):
+    async def initiate_connection(cls,http: HttpManager,intents: BotIntents,commands: list[BotCommand],listeners: list[Listener],prefix: str):
         rq = await http.request('get','gateway/bot',True)
         url = f"{rq.data["url"]}/?v=10&encoding=json"
         async with websockets.connect(url) as ws:
@@ -54,11 +57,16 @@ class DiscordWebsocket:
                 cls._commands = commands
                 cls.prefix = prefix
                 cls.http = http
+                cls.listeners = listeners
                 try:
                     goingtobeyield: Self = cls(http,intents)
                     yield goingtobeyield
-                except websockets.ConnectionClosedError as e:
-                    raise RuntimeError(f"Gateway closed connection. {e}")
+                except (websockets.ConnectionClosedError,websockets.ConnectionClosedOK) as e:
+                    if isinstance(e,websockets.ConnectionClosedError):
+                        raise RuntimeError(f"Gateway improperly closed connection. {e.rcvd.code}")
+                    else:
+                        warnings.warn(f"Gateway closed connection. Will attempt a RESUME. {e}")
+                        await cls.resume_session(goingtobeyield)
                     
     
     async def send_identify(self):
@@ -101,6 +109,8 @@ class DiscordWebsocket:
             "session_id": self.session_id,
             "seq": self.seq
         })
+        await self.ws.send(payload.jsonize())
+        
         
         
     
@@ -110,6 +120,16 @@ class DiscordWebsocket:
             decoded: dict = json.loads(message)
             self.seq = decoded["s"]
             payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])
+            for listener in self.listeners:
+                if listener.name.upper() == payloaded.data['t']:
+                    if listener.name.startswith("message"):
+                        await listener.callback(Message(payloaded.data))
+                    if listener.name.startswith("reaction"):
+                        await listener.callback(Reaction(payloaded.data))
+                    else:
+                        pass
+                    # TODO:
+                    # add more support for listeners
             match payloaded.opcode:
                     case 10:
                         await self.send_identify()
@@ -128,6 +148,10 @@ class DiscordWebsocket:
                                     except Exception as e:
                                         if not command.error_handlers:
                                             logger.error(f"{colorama.Fore.RED}Exception in command {command.name}: {e.args}{colorama.Fore.RESET}")
+                    case 7:
+                        logger.info("Successfully Resumed Session.")
+
+                        
                 
             
 

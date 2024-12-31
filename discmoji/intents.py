@@ -159,7 +159,7 @@ class BotIntents:
                         raise InternalDiscmojiException(e.args)
         return return_class
   
-  def _deconv_intents(self):
+  def _deconv_intents(self) -> int:
         """An internal utility function that turns the Intents object back into an integer. """
         integer = 0
         for item,value in self.__dict__.items():

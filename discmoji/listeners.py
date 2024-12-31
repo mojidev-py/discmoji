@@ -20,14 +20,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from ..snowflake import Snowflake
-import datetime
+from typing import Callable
 
 
-class ThreadMember:
-    """Represents a member in a thread."""
-    def __init__(self,_dict: dict):
-        self.id = Snowflake(_dict["id"])
-        self.user_id = Snowflake(_dict["user_id"])
-        self.join_date = datetime.datetime.fromisoformat(_dict["join_timestamp"])
+class Listener:
+    """Represents a listener for a certain gateway event. Fires callback once it recieves one.
+    Also allows you to implement checks to further filter through events.
+    ## Note
+    The check feature requires you to implement the check for a RAW payload. As of v0.1.2, no abstraction for an event has been implemented yet. Will be implemented next update.
+    
+    Event names are listed in the discord developer documentation.
+    Event names should be entered like this: 'message_create', as the listener will do the name matching for you."""
+    def __init__(self,name: str,check: Callable = None):
+        self.name = name
+        self.check = check
+    
+    
+    def __call__(self,func: Callable):
+        self.callback = func
+        self.bot._listeners.append(self)
+                    
+            
+            
+            
         
