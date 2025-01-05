@@ -14,7 +14,7 @@ requires-python = ">=3.8"
 keywords = ["API", "wrapper","discord","library"]
 license = {text = "MIT"}
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
     "Typing :: Typed"
@@ -24,7 +24,7 @@ dependencies = [
     "asyncio",
     "aiohttp"
 ]
-version = "0.1.1"
+version = "0.1.2"
 
 [project.urls]
 github = "https://github.com/mojidev-py/discmoji/"
@@ -32,6 +32,7 @@ github = "https://github.com/mojidev-py/discmoji/"
 [tool.setuptools]
 packages = [
     "discmoji",
-    "discmoji.guild_domain"
+    "discmoji.guild_domain",
+    "discmoji.message_domain"
 ]
 
