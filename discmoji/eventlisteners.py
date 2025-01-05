@@ -23,7 +23,7 @@ SOFTWARE.
 from typing import Callable
 
 
-class Listener:
+class EventListener:
     """Represents a listener for a certain gateway event. Fires callback once it recieves one.
     Also allows you to implement checks to further filter through events.
     ## Note

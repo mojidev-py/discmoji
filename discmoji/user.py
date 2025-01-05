@@ -74,7 +74,7 @@ class User:
         self.flags = _flags_parse(data.get("flags"))
         self.nitro_type = _return_nitro_type(data.get("premium_type")) 
         self.public_flags = _flags_parse(data.get("flags"))
-        self.avatar_decoration = AvatarDecoration(data.get("avatar_decoration_data"))
+        self.avatar_decoration = AvatarDecoration(data.get("avatar_decoration_data")) if data.get("avatar_decoration_data") else None
         
         
         

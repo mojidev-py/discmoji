@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from . import Listener
+from .eventlisteners import EventListener
 from ._types import WebsocketPayload,Opcodes
 from .intents import BotIntents
 from ._http import HttpManager
@@ -49,7 +49,7 @@ class DiscordWebsocket:
     @classmethod
     @asynccontextmanager
     # huge credit to graingert on discord!
-    async def initiate_connection(cls,http: HttpManager,intents: BotIntents,commands: list[BotCommand],listeners: list[Listener],prefix: str):
+    async def initiate_connection(cls,http: HttpManager,intents: BotIntents,commands: list[BotCommand],listeners: list[EventListener],prefix: str):
         rq = await http.request('get','gateway/bot',True)
         url = f"{rq.data["url"]}/?v=10&encoding=json"
         async with websockets.connect(url) as ws:
@@ -116,13 +116,14 @@ class DiscordWebsocket:
     
     async def _establish(self):
         async for message in self.ws:
-            logger.debug(f"Recieved Payload: {message}") 
+            logger.info(f"Recieved Payload: {message}")
             decoded: dict = json.loads(message)
             self.seq = decoded["s"]
             payloaded = WebsocketPayload(None,decoded["op"],decoded["d"])
             for listener in self.listeners:
-                if listener.name.upper() == payloaded.data['t']:
+                if listener.name.upper() == decoded["t"]:
                     if listener.name.startswith("message"):
+                        print("recieved")
                         await listener.callback(Message(payloaded.data))
                     if listener.name.startswith("reaction"):
                         await listener.callback(Reaction(payloaded.data))
@@ -140,7 +141,7 @@ class DiscordWebsocket:
                             logger.info(f"Established connection to discord gateway at session id: {payloaded.data["session_id"]} \n User: {payloaded.data["user"]["username"]}")
                         if decoded["t"] in "Message Create".upper().replace(" ","_"):
                             for command in self._commands:
-                                if command.name in f"{self.prefix}{command.name}":
+                                if command.name.startswith(f"{self.prefix}{command.name}"):
                                     args = payloaded.data["content"].split()[1:]
                                     new = PrefixContext(msg=Message(payloaded.data),http=self.http)
                                     try:

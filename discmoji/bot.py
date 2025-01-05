@@ -26,13 +26,13 @@ from ._gateway import DiscordWebsocket
 from .command import BotCommand
 from ._types import logger
 import asyncio
-from .listeners import Listener
+from .eventlisteners import EventListener
 class Bot:
     """Represents your application."""
     def __init__(self,token: str,intents: BotIntents | IntentsBits,prefix: str):
         self.http = HttpManager(token)
         self.prefix_command = BotCommand
-        self.listener = Listener
+        self.listener = EventListener
         self.listener.bot,self.prefix_command.bot = self,self
         self._commands: list[BotCommand] = []
         self.dws = DiscordWebsocket(self.http,intents)

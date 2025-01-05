@@ -93,7 +93,6 @@ class Message:
         self.reactions = [Reaction(data) for data in _dict["reactions"]] if _dict.get("reactions") else None
         self.pinned: bool = _dict["pinned"]
         self.webhook_id = Snowflake(_dict["webhook_id"]) if _dict.get("webhook_id") else None
-        print(_dict["type"])
         self.type = find_message_type(_dict["type"])
         self.flags = get_msg_flags(_dict["flags"])
         self.message_ref = MessageReference(_dict["message_reference"]) if _dict.get("message_reference") else None

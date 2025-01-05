@@ -12,7 +12,7 @@ from ._http import HttpManager
 from .bot import Bot
 from .contexts import PrefixContext
 from .command import BotCommand
-from .listeners import Listener
+from .eventlisteners import EventListener
 from .intents import BotIntents
 from .exceptions import *
 from .user import User
