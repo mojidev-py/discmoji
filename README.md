@@ -6,7 +6,7 @@
 
 
 > ### NOTE:
-> Discmoji is in a very early development stage, like literally so early that only gateway connections are usable right now.
+> Discmoji is ok for basic bot making at the moment. We are planning on adding support for slash commands and such in v0.1.4.
 
 ## ❔ What is Discmoji?
 Discmoji is an API wrapper for Discord, made for fun!
@@ -22,22 +22,20 @@ Discmoji needs contributors! contact me (mojidev-py) at `pycharmdudeig@gmail.com
 Replace `DISCORD_BOT_TOKEN` with your actual bot token.
 ```python
 from discmoji import *
-import asyncio
 
 DISCORD_BOT_TOKEN = "1234567890"
 
-Client = Bot(token=DISCORD_BOT_TOKEN,intents=123213123) 
+Client = Bot(token=DISCORD_BOT_TOKEN,intents=123213123,prefix="?") 
 
-@Client.command(name="example_command")
-async def commd(ctx: Invoked):
-    Client.get_guild(1234567)
-    Client.send_message("message")
+@Client.prefix_command(name="example_command")
+async def commd(ctx: PrefixContext):
+    ctx.send("Test from your most amazing bot!")
 
 @commd.error()
 async def example_error(ctx: Invoked,error: Exception):
     print("Something bad happened!")
 
-asyncio.run(Client.connect)
+Client.connect()
 ```
 ## 📣 ANNOUNCEMENTS/FAQ
 
