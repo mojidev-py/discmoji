@@ -23,7 +23,7 @@ SOFTWARE.
 from .intents import BotIntents, IntentsBits
 from ._http import HttpManager
 from ._gateway import DiscordWebsocket
-from .command import BotCommand
+from .command import BotCommand,SlashCommand
 from ._types import logger
 import asyncio
 from .eventlisteners import EventListener
@@ -35,6 +35,8 @@ class Bot:
         self.listener = EventListener
         self.listener.bot,self.prefix_command.bot = self,self
         self._commands: list[BotCommand] = []
+        self._app_cmds: list[SlashCommand] = []
+        self.slash_command = SlashCommand
         self.dws = DiscordWebsocket(self.http,intents)
         self.intents = intents
         self.prefix = prefix

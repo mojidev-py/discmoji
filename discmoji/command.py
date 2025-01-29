@@ -53,3 +53,33 @@ class BotCommand:
         def decorator(func: Callable):
             self.error_handlers.append(func)
         return decorator
+
+
+class SlashCommand:
+    """Represents a application command for your bot. These commands are special, as you need to sync these commands with Discord for them to show up."""
+    def __init__(self,name: str, desc: str):
+        self.name = name
+        self.desc = desc
+        self.error_handlers = []
+
+    def __call__(self,function: Callable):
+        if not function:
+            try:
+                return self.callback()
+            except:
+                tasks = []
+                for handler in self.error_handlers:
+                    tasks.append(handler)
+                asyncio.run(*tasks)
+        self.callback = function
+        self.bot._commands.append(self)
+        if not self.name: self.name : str = function.__name__
+        return self
+
+    def error(self):
+        warnings.warn("Prefix commands are highly discouraged for public bot development. We offer this option only for people that NEED prefix commands.",DeprecationWarning)
+        """A decorator for handling errors that may occur while running this command's invocation.
+        All error handlers you describe for this command have to have a type inheriting from Exception as their first argument."""
+        def decorator(func: Callable):
+            self.error_handlers.append(func)
+        return decorator
