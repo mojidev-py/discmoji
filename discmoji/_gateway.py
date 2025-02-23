@@ -28,7 +28,6 @@ import asyncio
 import websockets
 from contextlib import asynccontextmanager
 from typing import Self
-from random import uniform
 import logging
 import json
 import sys
