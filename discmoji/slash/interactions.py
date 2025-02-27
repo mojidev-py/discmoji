@@ -15,8 +15,6 @@ class Interaction:
         self.app_id = Snowflake(_data["application_id"])
         self._type = _data["type"]
         self.data = InteractionParams(_data["data"])
-        # NOTE:
-        # InteractionParams is an empty object for now. Do not test yet
         self.guild = Guild(_data.get("guild")) if _data.get("guild") else None
         self.channel = Channel(_data.get("channel")) if _data.get("channel") else None
         self.member = GuildMember(_data.get("member")) if _data.get("member") else None
