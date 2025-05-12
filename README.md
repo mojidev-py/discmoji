@@ -40,8 +40,8 @@ Client.connect()
 ## 📣 ANNOUNCEMENTS/FAQ
 
 
->### (UPDATED) DEVELOPMENT SCHEDULE
-> Commits will be much less often in this lib, as new commits will result in more content being added. I (mojidev) took a 2 week hiatus because i felt burnt out, so development will get started soon.
+>### BACK FROM HIATUS
+> BACK FROM HIATUS (just got really demotivated in programming, sorry for the delay)
 >###  🤞  1.0.0?
 > 1.0.0 is going to come out in 2025. No solid dates yet!
 >### ❔ Will this _ever_ be finished?
