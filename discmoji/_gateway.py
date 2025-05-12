@@ -148,6 +148,9 @@ class DiscordWebsocket:
                                     except Exception as e:
                                         if not command.error_handlers:
                                             logger.error(f"{colorama.Fore.RED}Exception in command {command.name}: {e.args}{colorama.Fore.RESET}")
+                        if decoded["t"] == "INTERACTION_CREATE":
+                            # start processing here
+                            ...
                     case 7:
                         logger.info("Successfully Resumed Session.")
 
