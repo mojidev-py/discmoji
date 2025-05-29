@@ -36,6 +36,7 @@ from .message_domain.message import Message
 from .contexts import PrefixContext
 import colorama
 import warnings
+from .slash.interactions import Interaction
 
 from .message_domain.reactions import Reaction
 
@@ -150,7 +151,10 @@ class DiscordWebsocket:
                                             logger.error(f"{colorama.Fore.RED}Exception in command {command.name}: {e.args}{colorama.Fore.RESET}")
                         if decoded["t"] == "INTERACTION_CREATE":
                             # start processing here
-                            ...
+                            recieved_interaction = decoded["data"]
+                            new = Interaction(recieved_interaction)
+                            try:
+                                await command.callback(new,*recieved_interaction["options"])
                     case 7:
                         logger.info("Successfully Resumed Session.")
 
